@@ -1,6 +1,10 @@
 package UI;
 
 import javax.swing.*;
+
+import user.UserBean;
+import user.UserMgr;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,7 +12,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class LoginForm extends JFrame {
-
+	
+	UserMgr mgr;
+	
     public LoginForm() {
        
         setTitle("MooBee");
@@ -80,6 +86,9 @@ public class LoginForm extends JFrame {
     }
 
     private void openSignupForm() {
+    	
+    	mgr = new UserMgr();
+    	
         JFrame signupFrame = new JFrame("회원가입 창");
         signupFrame.setSize(400, 500);
         signupFrame.setLocationRelativeTo(null);
@@ -93,7 +102,7 @@ public class LoginForm extends JFrame {
         signupNameField.setBounds(50, 50, 300, 40);
         signupFrame.add(signupNameField);
 
-        JLabel emailLabel = new JLabel("이메일");
+        JLabel emailLabel = new JLabel("이메일(아이디)");
         emailLabel.setBounds(50, 90, 300, 30);
         signupFrame.add(emailLabel);
 
@@ -126,6 +135,27 @@ public class LoginForm extends JFrame {
         signupFrame.add(signupPhoneField);
 
         JButton signupSubmitButton = new JButton("회원가입");
+        signupSubmitButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object obj = e.getSource();
+				if(obj==signupSubmitButton) {
+					UserBean bean = new UserBean();
+					bean.setUserId(signupEmailField.getText());
+					bean.setName(signupNameField.getText());
+					bean.setPassword(new String(signupPasswordField.getPassword()));
+					bean.setPhone(signupPhoneField.getText());
+					bean.setBirthDate("2000-01-01");
+					boolean success = mgr.insertUser(bean);
+		            if (success) {
+		                JOptionPane.showMessageDialog(signupFrame, "회원가입이 완료되었습니다.");
+		                signupFrame.dispose();
+		            } else {
+		                JOptionPane.showMessageDialog(signupFrame, "회원가입에 실패했습니다.");
+		            }
+				}
+			}
+		});
         signupSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         signupSubmitButton.setBounds(50, 380, 300, 40);
         signupSubmitButton.addActionListener(e -> signupFrame.dispose()); 

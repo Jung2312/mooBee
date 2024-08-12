@@ -1,5 +1,6 @@
 CREATE TABLE tblUser(
 userId VARCHAR(30) PRIMARY KEY,
+name varchar(30),
 password VARCHAR(30) NOT NULL,
 paymentAmount INT DEFAULT 0,
 birthDate DATE NOT NULL,

@@ -22,13 +22,17 @@ public class UserMgr {
 		boolean flag =false;
 		try {
 			con = pool.getConnection();
-			sql = "insert tbluser values (?,?,?,?)";
+			sql = "insert tbluser values (?,?,?,?,?,?,?,?,?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1,bean.getUserId());
-			pstmt.setString(2,bean.getPassword());
-			pstmt.setString(3,bean.getBirthDate());
-			pstmt.setString(4,bean.getPhone());
-
+			pstmt.setString(2,bean.getName());		
+			pstmt.setString(3,bean.getPassword());
+			pstmt.setInt(4, 0);
+			pstmt.setString(5,bean.getBirthDate());
+			pstmt.setString(6,bean.getPhone());
+			pstmt.setString(7, "Bronze");
+			pstmt.setFloat(8, 36.5f);
+			pstmt.setBoolean(9, false);
 			int cnt = pstmt.executeUpdate(); 
 			if(cnt ==1)
 				flag = true;
@@ -57,11 +61,12 @@ public class UserMgr {
 			while (rs.next()) { 
 				UserBean bean = new UserBean();
 				bean.setUserId(rs.getString(1));
-				bean.setBirthDate(rs.getString(2));
-				bean.setPhone(rs.getString(3));
-				bean.setPaymentAmount(rs.getInt(4));
-				bean.setGrade(rs.getString(5));
-				bean.setTemp(rs.getFloat(6));
+				bean.setName(rs.getString(2));
+				bean.setBirthDate(rs.getString(3));
+				bean.setPhone(rs.getString(4));
+				bean.setPaymentAmount(rs.getInt(5));
+				bean.setGrade(rs.getString(6));
+				bean.setTemp(rs.getFloat(7));
 				vlist.addElement(bean);
 			}
 		} catch (Exception e) {
@@ -86,13 +91,14 @@ public class UserMgr {
 			rs = pstmt.executeQuery();
 			if(rs.next()) { //2개 이상의 레코드는 절대 리턴되지않음
 				bean.setUserId(rs.getString(1)); //1은 첫번째 컬럼
-				bean.setPassword(rs.getString(2));
-				bean.setPhone(rs.getString(3));
-				bean.setBirthDate(rs.getString(4));
-				bean.setPaymentAmount(rs.getInt(5));
-				bean.setGrade(rs.getString(6));
-				bean.setTemp(rs.getFloat(7));
-				bean.setManager(rs.getInt(8));
+				bean.setName(rs.getString(2));
+				bean.setPassword(rs.getString(3));
+				bean.setPhone(rs.getString(4));
+				bean.setBirthDate(rs.getString(5));
+				bean.setPaymentAmount(rs.getInt(6));
+				bean.setGrade(rs.getString(7));
+				bean.setTemp(rs.getFloat(8));
+				bean.setManager(rs.getInt(9));
 			}	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,12 +115,13 @@ public class UserMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update  tbluser set password = ?, brithDate = ? ,phone = ?";
+			sql = "update  tbluser set name =?, password = ?, birthDate = ? ,phone = ? WHERE userId = ?";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1,bean.getPassword());
-			pstmt.setString(2,bean.getBirthDate());
-			pstmt.setString(3,bean.getPassword());
-			
+			pstmt.setString(1, bean.getName());
+			pstmt.setString(2,bean.getPassword());
+			pstmt.setString(3,bean.getBirthDate());
+			pstmt.setString(4,bean.getPhone());
+			pstmt.setString(5, bean.getUserId());
 			if(pstmt.executeUpdate()==1) flag =true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,7 +152,5 @@ public class UserMgr {
 	public static void main(String[] args) {
 		UserMgr mgr = new UserMgr();
 		UserBean bean = new UserBean();
-		
 	}
-
 }

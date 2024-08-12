@@ -16,8 +16,7 @@ public class LoginForm extends JFrame {
 	UserMgr mgr;
 	
     public LoginForm() {
-    	mgr = new UserMgr();
-    	
+       
         setTitle("MooBee");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -68,16 +67,9 @@ public class LoginForm extends JFrame {
         loginSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         loginSubmitButton.setBounds(50, 170, 300, 40);
         loginSubmitButton.addActionListener(e -> {
-            String userId = loginEmailField.getText();
-            String password = new String(loginPasswordField.getPassword());
-            boolean isValidUser = mgr.login(userId, password);
-            if (isValidUser) {
-                JOptionPane.showMessageDialog(loginFrame, "로그인 성공!");
-                loginFrame.dispose(); // 로그인 성공 시 창 닫기
-                // 로그인 후 이동할 다른 화면 추가 가능
-            } else {
-                JOptionPane.showMessageDialog(loginFrame, "로그인 실패. 이메일 또는 비밀번호가 잘못되었습니다.");
-            }
+            loginFrame.dispose();  // 로그인 창 닫기
+            openMainForm();  // 메인 폼 열기
+            dispose(); // LoginForm 창 닫기
         });
         loginFrame.add(loginSubmitButton);
 
@@ -97,6 +89,10 @@ public class LoginForm extends JFrame {
         loginFrame.setVisible(true);
     }
 
+    private void openMainForm() {
+        new MainForm();  // MainForm 호출
+    }
+    
     private void openSignupForm() {
     	
     	mgr = new UserMgr();
@@ -174,26 +170,26 @@ public class LoginForm extends JFrame {
         
         JButton signupSubmitButton = new JButton("회원가입");
         signupSubmitButton.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            Object obj = e.getSource();
-            if(obj==signupSubmitButton) {
-               UserBean bean = new UserBean();
-               bean.setUserId(signupEmailField.getText());
-               bean.setName(signupNameField.getText());
-               bean.setPassword(new String(signupPasswordField.getPassword()));
-               bean.setPhone(signupPhoneField.getText());
-               bean.setBirthDate(signupDobField.getText());
-               boolean success = mgr.insertUser(bean);
-                  if (success) {
-                      JOptionPane.showMessageDialog(signupFrame, "회원가입이 완료되었습니다.");
-                      signupFrame.dispose();
-                  } else {
-                      JOptionPane.showMessageDialog(signupFrame, "회원가입에 실패했습니다.");
-                  }
-            }
-         }
-      });
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object obj = e.getSource();
+				if(obj==signupSubmitButton) {
+					UserBean bean = new UserBean();
+					bean.setUserId(signupEmailField.getText());
+					bean.setName(signupNameField.getText());
+					bean.setPassword(new String(signupPasswordField.getPassword()));
+					bean.setPhone(signupPhoneField.getText());
+					bean.setBirthDate("2000-01-01");
+					boolean success = mgr.insertUser(bean);
+		            if (success) {
+		                JOptionPane.showMessageDialog(signupFrame, "회원가입이 완료되었습니다.");
+		                signupFrame.dispose();
+		            } else {
+		                JOptionPane.showMessageDialog(signupFrame, "회원가입에 실패했습니다.");
+		            }
+				}
+			}
+		});
         signupSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         signupSubmitButton.setBounds(50, 450, 300, 40);
         signupSubmitButton.addActionListener(e -> signupFrame.dispose()); // 버튼 클릭 시 창 닫기
@@ -204,7 +200,7 @@ public class LoginForm extends JFrame {
 
     private void openForgotPasswordWindow() {
         JFrame forgotPasswordFrame = new JFrame("비밀번호 찾기 창");
-        forgotPasswordFrame.setSize(400, 300);
+        forgotPasswordFrame.setSize(400, 400); // 창 사이즈 확대
         forgotPasswordFrame.setLocationRelativeTo(null);
         forgotPasswordFrame.setLayout(null);
 
@@ -217,22 +213,57 @@ public class LoginForm extends JFrame {
         forgotPasswordFrame.add(forgotPasswordNameField);
 
         JLabel emailLabel = new JLabel("이메일");
-        emailLabel.setBounds(50, 90, 300, 30);
+        emailLabel.setBounds(50, 100, 300, 30);
         forgotPasswordFrame.add(emailLabel);
 
         JTextField forgotPasswordEmailField = new JTextField();
-        forgotPasswordEmailField.setBounds(50, 120, 300, 40);
+        forgotPasswordEmailField.setBounds(50, 130, 300, 40);
         forgotPasswordFrame.add(forgotPasswordEmailField);
+
+        JLabel phoneLabel = new JLabel("전화번호");
+        phoneLabel.setBounds(50, 180, 300, 30);
+        forgotPasswordFrame.add(phoneLabel);
+
+        JTextField forgotPasswordPhoneField = new JTextField();
+        forgotPasswordPhoneField.setBounds(50, 210, 300, 40);
+        forgotPasswordFrame.add(forgotPasswordPhoneField);
 
         JButton forgotPasswordSubmitButton = new JButton("비밀번호 찾기");
         forgotPasswordSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
-        forgotPasswordSubmitButton.setBounds(50, 170, 300, 40);
-        forgotPasswordSubmitButton.addActionListener(e -> forgotPasswordFrame.dispose()); 
+        forgotPasswordSubmitButton.setBounds(50, 270, 300, 40);
+        forgotPasswordSubmitButton.addActionListener(e -> {
+            forgotPasswordFrame.dispose(); // 창 닫기
+            openVerificationWindow(); // 인증번호 창 열기
+        });
         forgotPasswordFrame.add(forgotPasswordSubmitButton);
 
         forgotPasswordFrame.setVisible(true);
     }
 
+
+    private void openVerificationWindow() {
+        JFrame verificationFrame = new JFrame("인증번호 입력");
+        verificationFrame.setSize(400, 200);
+        verificationFrame.setLocationRelativeTo(null);
+        verificationFrame.setLayout(null);
+
+        JLabel verificationLabel = new JLabel("인증번호");
+        verificationLabel.setBounds(50, 20, 300, 30);
+        verificationFrame.add(verificationLabel);
+
+        JTextField verificationField = new JTextField();
+        verificationField.setBounds(50, 50, 300, 40);
+        verificationFrame.add(verificationField);
+
+        JButton verifyButton = new JButton("확인");
+        verifyButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
+        verifyButton.setBounds(50, 100, 300, 40);
+        verifyButton.addActionListener(e -> verificationFrame.dispose()); // 창 닫기
+        verificationFrame.add(verifyButton);
+
+        verificationFrame.setVisible(true);
+    }
+    
     public static void main(String[] args) {
         new LoginForm();
     }

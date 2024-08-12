@@ -3,8 +3,8 @@ package user;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Vector;
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import DAO.DBConnectionMgr;
 
 public class UserMgr {
@@ -13,69 +13,86 @@ public class UserMgr {
 	
 	public UserMgr() {
 		pool = DBConnectionMgr.getInstance();
-	}
-	//저장 post
-	public boolean insertUser(UserBean bean) {
-		Connection con = null;
-		PreparedStatement pstmt =null;
-		String sql = null;
-		boolean flag =false;
-		try {
-			con = pool.getConnection();
-			sql = "insert tbluser values (?,?,?,?,?,?,?,?,?)";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1,bean.getUserId());
-			pstmt.setString(2,bean.getName());		
-			pstmt.setString(3,bean.getPassword());
-			pstmt.setInt(4, 0);
-			pstmt.setString(5,bean.getBirthDate());
-			pstmt.setString(6,bean.getPhone());
-			pstmt.setString(7, "Bronze");
-			pstmt.setFloat(8, 36.5f);
-			pstmt.setBoolean(9, false);
-			int cnt = pstmt.executeUpdate(); 
-			if(cnt ==1)
-				flag = true;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con,pstmt);
-		}
 		
-		return flag;
 	}
-	
-	//리스트
-	public Vector<UserBean> listUser(){
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = null;
-		Vector<UserBean>vlist = new Vector<UserBean>();
-		try {
-			con = pool.getConnection();
-			sql = "select * from tbluser";
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			while (rs.next()) { 
-				UserBean bean = new UserBean();
-				bean.setUserId(rs.getString(1));
-				bean.setName(rs.getString(2));
-				bean.setBirthDate(rs.getString(3));
-				bean.setPhone(rs.getString(4));
-				bean.setPaymentAmount(rs.getInt(5));
-				bean.setGrade(rs.getString(6));
-				bean.setTemp(rs.getFloat(7));
-				vlist.addElement(bean);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt, rs);
+	//비밀번호 암호화
+	public class SHA256 {
+		public static String encrypt(String text) throws NoSuchAlgorithmException {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			md.update(text.getBytes());
+			return bytesToHex(md.digest());
 		}
-		return vlist;
+
+		private static String bytesToHex(byte[] bytes) {
+			StringBuilder sb = new StringBuilder();
+			for(byte b : bytes) {
+				sb.append(String.format("%02x", b));
+			}
+			return sb.toString();
+		}
 	}
+	// 로그인 메서드 추가
+    public boolean login(String userId, String password) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = null;
+        boolean isValidUser = false;
+        try {
+            con = pool.getConnection();
+            sql = "SELECT password FROM tbluser WHERE userId = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+            	 String storedPassword = rs.getString("password");
+                 // 비밀번호 암호화 후 비교
+                 String encryptedPassword = SHA256.encrypt(password);
+                 if (encryptedPassword.equals(storedPassword)) {
+                     isValidUser = true; // 로그인 성공
+                 }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return isValidUser;
+    }
+
+    // 저장 post
+    public boolean insertUser(UserBean bean) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        String sql = null;
+        boolean flag = false;
+        try {
+            con = pool.getConnection();
+            sql = "insert into tbluser values (?,?,?,?,?,?,?,?,?)";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, bean.getUserId());
+            pstmt.setString(2, bean.getName());
+            // 비밀번호 암호화 후 저장
+            String encryptedPassword = SHA256.encrypt(bean.getPassword());
+            pstmt.setString(3, encryptedPassword);
+            pstmt.setInt(4, 0);
+            pstmt.setString(5, bean.getBirthDate());
+            pstmt.setString(6, bean.getPhone());
+            pstmt.setString(7, "Bronze");
+            pstmt.setFloat(8, 36.5f);
+            pstmt.setBoolean(9, false);
+            int cnt = pstmt.executeUpdate(); 
+            if(cnt == 1) {
+                flag = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt);
+        }
+        return flag;
+    }
+	
 	//select 검색
 	public UserBean getUser(String userId) {
 		Connection con = null;
@@ -98,7 +115,7 @@ public class UserMgr {
 				bean.setPaymentAmount(rs.getInt(6));
 				bean.setGrade(rs.getString(7));
 				bean.setTemp(rs.getFloat(8));
-				bean.setManager(rs.getInt(9));
+				bean.setManager(rs.getBoolean(9));
 			}	
 		} catch (Exception e) {
 			e.printStackTrace();

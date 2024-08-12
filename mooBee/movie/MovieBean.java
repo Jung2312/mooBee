@@ -16,6 +16,15 @@ public class MovieBean {
 	private String audiAcc;
 	private String rating;
 	
+	// 영화진흥원
+	private String boxofficeType;
+	private String ruum;
+	private String rank;
+	private String movieCd;
+	private String movieNm;
+	private String openDt;
+	
+	
 	public int getDocid() {
 		return docid;
 	}
@@ -169,5 +178,79 @@ public class MovieBean {
 	public void setRating(String rating) {
 		this.rating = rating;
 	}
+
+
+	// 영화진흥원
+	public String getBoxofficeType() {
+		return boxofficeType;
+	}
+
+
+
+	public void setBoxofficeType(String boxofficeType) {
+		this.boxofficeType = boxofficeType;
+	}
+
+
+
+	public String getRuum() {
+		return ruum;
+	}
+
+
+
+	public void setRuum(String ruum) {
+		this.ruum = ruum;
+	}
+
+
+
+	public String getRank() {
+		return rank;
+	}
+
+
+
+	public void setRank(String rank) {
+		this.rank = rank;
+	}
+
+
+
+	public String getMovieCd() {
+		return movieCd;
+	}
+
+
+
+	public void setMovieCd(String movieCd) {
+		this.movieCd = movieCd;
+	}
+
+
+
+	public String getMovieNm() {
+		return movieNm;
+	}
+
+
+
+	public void setMovieNm(String movieNm) {
+		this.movieNm = movieNm;
+	}
+
+
+
+	public String getOpenDt() {
+		return openDt;
+	}
+
+
+
+	public void setOpenDt(String openDt) {
+		this.openDt = openDt;
+	}
+	
+	
 
 }

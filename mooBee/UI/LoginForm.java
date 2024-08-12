@@ -16,7 +16,8 @@ public class LoginForm extends JFrame {
 	UserMgr mgr;
 	
     public LoginForm() {
-       
+    	mgr = new UserMgr();
+    	
         setTitle("MooBee");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,7 +67,18 @@ public class LoginForm extends JFrame {
         JButton loginSubmitButton = new JButton("로그인");
         loginSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         loginSubmitButton.setBounds(50, 170, 300, 40);
-        loginSubmitButton.addActionListener(e -> loginFrame.dispose()); 
+        loginSubmitButton.addActionListener(e -> {
+            String userId = loginEmailField.getText();
+            String password = new String(loginPasswordField.getPassword());
+            boolean isValidUser = mgr.login(userId, password);
+            if (isValidUser) {
+                JOptionPane.showMessageDialog(loginFrame, "로그인 성공!");
+                loginFrame.dispose(); // 로그인 성공 시 창 닫기
+                // 로그인 후 이동할 다른 화면 추가 가능
+            } else {
+                JOptionPane.showMessageDialog(loginFrame, "로그인 실패. 이메일 또는 비밀번호가 잘못되었습니다.");
+            }
+        });
         loginFrame.add(loginSubmitButton);
 
         JLabel forgotPasswordLabel = new JLabel("<HTML><U>비밀번호 찾기</U></HTML>"); // 밑줄 추가
@@ -89,8 +101,8 @@ public class LoginForm extends JFrame {
     	
     	mgr = new UserMgr();
     	
-        JFrame signupFrame = new JFrame("회원가입 창");
-        signupFrame.setSize(400, 500);
+    	JFrame signupFrame = new JFrame("회원가입 창");
+        signupFrame.setSize(400, 550);
         signupFrame.setLocationRelativeTo(null);
         signupFrame.setLayout(null);
 
@@ -102,7 +114,7 @@ public class LoginForm extends JFrame {
         signupNameField.setBounds(50, 50, 300, 40);
         signupFrame.add(signupNameField);
 
-        JLabel emailLabel = new JLabel("이메일(아이디)");
+        JLabel emailLabel = new JLabel("이메일");
         emailLabel.setBounds(50, 90, 300, 30);
         signupFrame.add(emailLabel);
 
@@ -134,31 +146,57 @@ public class LoginForm extends JFrame {
         signupPhoneField.setBounds(50, 330, 300, 40);
         signupFrame.add(signupPhoneField);
 
+        JLabel dobLabel = new JLabel("생년월일");
+        dobLabel.setBounds(50, 370, 300, 30);
+        signupFrame.add(dobLabel);
+
+        JTextField signupDobField = new JTextField("ex) 2000-01-01");
+        signupDobField.setBounds(50, 400, 300, 40);
+        signupDobField.setForeground(Color.GRAY); // Placeholder 색상 설정
+        signupDobField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (signupDobField.getText().equals("ex) 2000-01-01")) {
+                    signupDobField.setText("");
+                    signupDobField.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (signupDobField.getText().isEmpty()) {
+                    signupDobField.setForeground(Color.GRAY);
+                    signupDobField.setText("ex) 2000-01-01");
+                }
+            }
+        });
+        signupFrame.add(signupDobField);
+        
         JButton signupSubmitButton = new JButton("회원가입");
         signupSubmitButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Object obj = e.getSource();
-				if(obj==signupSubmitButton) {
-					UserBean bean = new UserBean();
-					bean.setUserId(signupEmailField.getText());
-					bean.setName(signupNameField.getText());
-					bean.setPassword(new String(signupPasswordField.getPassword()));
-					bean.setPhone(signupPhoneField.getText());
-					bean.setBirthDate("2000-01-01");
-					boolean success = mgr.insertUser(bean);
-		            if (success) {
-		                JOptionPane.showMessageDialog(signupFrame, "회원가입이 완료되었습니다.");
-		                signupFrame.dispose();
-		            } else {
-		                JOptionPane.showMessageDialog(signupFrame, "회원가입에 실패했습니다.");
-		            }
-				}
-			}
-		});
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            Object obj = e.getSource();
+            if(obj==signupSubmitButton) {
+               UserBean bean = new UserBean();
+               bean.setUserId(signupEmailField.getText());
+               bean.setName(signupNameField.getText());
+               bean.setPassword(new String(signupPasswordField.getPassword()));
+               bean.setPhone(signupPhoneField.getText());
+               bean.setBirthDate(signupDobField.getText());
+               boolean success = mgr.insertUser(bean);
+                  if (success) {
+                      JOptionPane.showMessageDialog(signupFrame, "회원가입이 완료되었습니다.");
+                      signupFrame.dispose();
+                  } else {
+                      JOptionPane.showMessageDialog(signupFrame, "회원가입에 실패했습니다.");
+                  }
+            }
+         }
+      });
         signupSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
-        signupSubmitButton.setBounds(50, 380, 300, 40);
-        signupSubmitButton.addActionListener(e -> signupFrame.dispose()); 
+        signupSubmitButton.setBounds(50, 450, 300, 40);
+        signupSubmitButton.addActionListener(e -> signupFrame.dispose()); // 버튼 클릭 시 창 닫기
         signupFrame.add(signupSubmitButton);
 
         signupFrame.setVisible(true);

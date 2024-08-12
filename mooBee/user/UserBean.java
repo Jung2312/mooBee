@@ -9,7 +9,7 @@ public class UserBean {
 	private String phone;
 	private String grade;
 	private Float temp;
-	private int manager;
+	private boolean manager;
 	
 	public String getUserId() {
 		return userId;
@@ -59,10 +59,10 @@ public class UserBean {
 	public void setTemp(Float temp) {
 		this.temp = temp;
 	}
-	public int getManager() {
+	public boolean getManager() {
 		return manager;
 	}
-	public void setManager(int manager) {
+	public void setManager(boolean manager) {
 		this.manager = manager;
 	}
 }

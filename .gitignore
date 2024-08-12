@@ -25,3 +25,4 @@ replay_pid*
 /.metadata/
 
 mooBee/DAO/DBConnectionMgr.java
+mooBee/DAO/Config.java

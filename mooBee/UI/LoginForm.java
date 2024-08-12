@@ -16,7 +16,7 @@ public class LoginForm extends JFrame {
 	UserMgr mgr;
 	
     public LoginForm() {
-       
+    	mgr = new UserMgr();
         setTitle("MooBee");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,11 +67,20 @@ public class LoginForm extends JFrame {
         loginSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         loginSubmitButton.setBounds(50, 170, 300, 40);
         loginSubmitButton.addActionListener(e -> {
-            loginFrame.dispose();  // 로그인 창 닫기
-            openMainForm();  // 메인 폼 열기
-            dispose(); // LoginForm 창 닫기
+        	String userId = loginEmailField.getText();
+            String password = new String(loginPasswordField.getPassword());
+            boolean isValidUser = mgr.login(userId, password);
+            if (isValidUser) {
+                JOptionPane.showMessageDialog(loginFrame, "로그인 성공!");
+                loginFrame.dispose(); // 로그인 성공 시 창 닫기
+                loginFrame.dispose();  // 로그인 창 닫기
+                openMainForm();  // 메인 폼 열기
+            } else {
+                JOptionPane.showMessageDialog(loginFrame, "로그인 실패. 이메일 또는 비밀번호가 잘못되었습니다.");
+            }
         });
         loginFrame.add(loginSubmitButton);
+  
 
         JLabel forgotPasswordLabel = new JLabel("<HTML><U>비밀번호 찾기</U></HTML>"); // 밑줄 추가
         forgotPasswordLabel.setBounds(50, 220, 300, 30);

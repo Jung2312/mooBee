@@ -13,6 +13,7 @@ public class MembershipMgr {
 	public MembershipMgr() {
 		pool = DBConnectionMgr.getInstance();
 	}
+	//등급에 따라 검색
 	public membershipBean getmembership(String grade) {
 		Connection con = null;
 		PreparedStatement pstmt = null;

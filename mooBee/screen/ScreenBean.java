@@ -5,6 +5,7 @@ public class ScreenBean {
 	private int cinemaNum;
 	private int docid;
 	private String screenDate;
+	private String screenTime;
 	
 	public int getScreenNum() {
 		return screenNum;
@@ -30,5 +31,10 @@ public class ScreenBean {
 	public void setScreenDate(String screenDate) {
 		this.screenDate = screenDate;
 	}
-	
+	public String getScreenTime() {
+		return screenTime;
+	}
+	public void setScreenTime(String screenTime) {
+		this.screenTime = screenTime;
+	}
 }

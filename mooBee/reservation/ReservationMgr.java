@@ -118,12 +118,11 @@ public class ReservationMgr {
 			Vector<ReservationBean>vlist = new Vector<ReservationBean>();
 			try {
 				con = pool.getConnection();
-				sql = "select * from tblreservation where cinemaNum = ?,viewDate =? ,docId = ?, seatId =?";
+				sql = "select * from tblreservation where cinemaNum = ?,viewDate =? ,docId = ?";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, cinemaNum);
 				pstmt.setString(2, viewDate);
 				pstmt.setInt(3, docid);
-				pstmt.setInt(4, seatId);
 				rs = pstmt.executeQuery();
 				while (rs.next()) { 
 					ReservationBean bean = new ReservationBean();

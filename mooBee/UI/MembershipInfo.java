@@ -64,7 +64,7 @@ public class MembershipInfo {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 779, 489);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
 		JPanel Membership_Panel = new JPanel();

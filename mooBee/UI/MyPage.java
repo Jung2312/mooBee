@@ -13,6 +13,9 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -83,17 +86,17 @@ public class MyPage {
 		JButton ViewMembership = new JButton("멤버십 혜택 보기");
 		ViewMembership.setBounds(49, 136, 125, 23);
 		MyInfoPanel.add(ViewMembership);
-		
+
 		JLabel lblNewLabel_1 = new JLabel("연간 누적 금액 100,000원");
 		lblNewLabel_1.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 		lblNewLabel_1.setBounds(127, 31, 270, 34);
 		MyInfoPanel.add(lblNewLabel_1);
-		
+
 		JEditorPane Membership_Background = new JEditorPane();
 		Membership_Background.setBounds(44, 28, 67, 34);
 		MyInfoPanel.add(Membership_Background);
 		Membership_Background.setBackground(new Color(204, 204, 0));
-		
+
 		JLabel Current_Membership = new JLabel("GOLD");
 		Current_Membership.setBounds(44, 28, 67, 34);
 		MyInfoPanel.add(Current_Membership);
@@ -122,37 +125,50 @@ public class MyPage {
 			}
 		});
 
-		JButton MenuTab = new JButton("메뉴");
-		MenuTab.setBounds(839, 36, 97, 34);
-		MyPagePanel.add(MenuTab);
-		MenuTab.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-
 		JPopupMenu popupMenu = new JPopupMenu();
-		popupMenu.setBorderPainted(false);
-		addPopup(MenuTab, popupMenu);
 
-		JButton GoTicket = new JButton("  영화 예매 ");
-		GoTicket.addActionListener(new ActionListener() {
+		JButton MenuTab = new JButton("메뉴");
+		MenuTab.setBounds(826, 36, 97, 34);
+		MyPagePanel.add(MenuTab);
+
+		MenuTab.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
+				popupMenu.show(MenuTab, MenuTab.getWidth(), MenuTab.getHeight());
 			}
 		});
+
+		JMenuItem GoTicket = new JMenuItem("영화 예매");
 		popupMenu.add(GoTicket);
 
-		JButton GoMyPage = new JButton("마이페이지");
+		JMenuItem GoMyPage = new JMenuItem("마이페이지");
 		popupMenu.add(GoMyPage);
 
-		JButton GoNotice = new JButton("  공지사항  ");
+		GoMyPage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MyPage mp = new MyPage();
+				frame.setVisible(true);
+				frame.dispose();
+			}
+		});
+
+		JMenuItem GoNotice = new JMenuItem("공지사항");
 		popupMenu.add(GoNotice);
 
-		JButton Logout = new JButton("  로그아웃  ");
+		JMenuItem Logout = new JMenuItem("로그아웃");
 		popupMenu.add(Logout);
 
 		JButton HomeButton = new JButton("홈");
 		HomeButton.setBounds(61, 36, 97, 34);
 		MyPagePanel.add(HomeButton);
+
+		HomeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainForm mf = new MainForm();
+				mf.setVisible(true);
+				frame.dispose();
+			}
+		});
 
 		JButton ModifyUserInfo = new JButton("회원정보 수정");
 		ModifyUserInfo.setBounds(826, 613, 125, 23);
@@ -182,6 +198,20 @@ public class MyPage {
 
 		HomeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+			}
+		});
+
+		Logout.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int response = JOptionPane.showConfirmDialog(frame, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+
+				if (response == JOptionPane.YES_OPTION) {
+					// 로그아웃 처리
+					frame.dispose(); // 현재 창을 닫고 로그아웃 처리 (예를 들어 로그인 화면으로 돌아가기)
+				}
+				// 아니오를 누르면 아무 일도 하지 않음 (팝업 창만 닫힘)
 			}
 		});
 

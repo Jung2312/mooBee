@@ -126,7 +126,14 @@ public class ReservationForm extends JFrame {
         seatSelectionButton.setPreferredSize(new Dimension(100, 80));
         bottomPanel.add(seatSelectionButton, BorderLayout.EAST);
 
-     
+        seatSelectionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new SeatSelectionForm(); 
+                dispose(); 
+            }
+        });
+
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

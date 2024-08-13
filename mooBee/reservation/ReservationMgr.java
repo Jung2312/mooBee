@@ -109,8 +109,8 @@ public class ReservationMgr {
 		}
 		return vlist;
 	}
-	//영화관, 관람 시간 ,영화, 좌석 번호로 예매내역확인
-		public Vector<ReservationBean> listRSVN(int cinemaNum, String viewDate,int docid, int seatId){
+	//영화관, 관람 시간 ,영화로 예매내역확인
+		public Vector<ReservationBean> listRSVN(int cinemaNum, String viewDate,int docid){
 			Connection con = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -118,12 +118,11 @@ public class ReservationMgr {
 			Vector<ReservationBean>vlist = new Vector<ReservationBean>();
 			try {
 				con = pool.getConnection();
-				sql = "select * from tblreservation where cinemaNum = ?,viewDate =? ,docId = ?, seatId =?";
+				sql = "select * from tblreservation where cinemaNum = ?,viewDate =? ,docId = ?";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, cinemaNum);
 				pstmt.setString(2, viewDate);
 				pstmt.setInt(3, docid);
-				pstmt.setInt(4, seatId);
 				rs = pstmt.executeQuery();
 				while (rs.next()) { 
 					ReservationBean bean = new ReservationBean();

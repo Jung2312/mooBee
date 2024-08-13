@@ -55,6 +55,7 @@ public class MovieMgr {
 		return sdf.format(date);
 	}
 
+	// 개봉일이 00일인 경우 포맷
 	public static String adjustDate(String dateStr) throws DateTimeParseException {
 		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -68,11 +69,11 @@ public class MovieMgr {
 		String monthStr = dateStr.substring(4, 6);
 		String dayStr = dateStr.substring(6, 8);
 		String formatDate = null;
-		
+
 		int year = Integer.parseInt(yearStr);
 		int month = Integer.parseInt(monthStr);
 		int day = Integer.parseInt(dayStr);
-		LocalDate date; 
+		LocalDate date;
 		// 일이 00일인지 확인
 		if (day == 0) {
 			date = LocalDate.of(year, month, day + 1);
@@ -115,9 +116,8 @@ public class MovieMgr {
 
 							String releaseDate = movie.optString("repRlsDate");
 							releaseDate = adjustDate(releaseDate);
-	
+
 							con = pool.getConnection();
-							sql = "delete";
 
 							// 영화 정보 추출
 							String movieSeq = movie.optString("movieSeq");
@@ -132,7 +132,7 @@ public class MovieMgr {
 									pstmt = con.prepareStatement(sql);
 									pstmt.setString(1, releaseDate);
 									pstmt.executeUpdate();
-									
+
 									// 중복된 레코드가 있는 경우 삽입하지 않음
 									continue;
 								}
@@ -165,9 +165,9 @@ public class MovieMgr {
 							String audiAcc = movie.optString("audiAcc");
 							String rating = movie.optJSONObject("ratings").optJSONArray("rating").optJSONObject(0)
 									.optString("ratingGrade");
-							
-							if(rating.equals("")) {
-								rating="15세이상관람가";
+
+							if (rating.equals("")) {
+								rating = "15세이상관람가";
 							}
 
 							sql = "insert into tblmovie VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -279,13 +279,11 @@ public class MovieMgr {
 	// 일별 박스오피스 순위 api 값 추출
 	public void getBoxOfficeData(MovieBean bean) {
 		String movieCd = bean.getMovieCd();
+
 		apiUrl = getBoxOfficeURL + "?key=" + apiKEY;
 		try {
 
-			// URL Encoding
-			String encodedMovieCd = java.net.URLEncoder.encode(movieCd, "UTF-8");
-
-			String fullApiUrl = apiUrl + "&movieCd=" + encodedMovieCd + "&targetDt=" + getDateFormat(1);
+			String fullApiUrl = apiUrl + "&movieCd=" + movieCd + "&targetDt=" + getDateFormat(1);
 
 			getResponse(fullApiUrl);
 
@@ -295,18 +293,24 @@ public class MovieMgr {
 			// "boxOfficeResult" 존재 여부 확인
 			if (jsonResponse.has("boxOfficeResult")) {
 				JSONObject boxOfficeResult = jsonResponse.getJSONObject("boxOfficeResult");
-
-				// "movieList" 존재 여부 확인
+				// "dailyBoxOfficeList" 존재 여부 확인
 				if (boxOfficeResult.has("dailyBoxOfficeList")) {
 					JSONArray dailyBoxOfficeList = boxOfficeResult.getJSONArray("dailyBoxOfficeList");
+
 					// 빈 결과가 아니라면 영화 코드 추출
-					for (Object object : dailyBoxOfficeList) {
-						bean.setBoxofficeType(jsonResponse.getString("boxofficeType"));
-						bean.setRuum(jsonResponse.getString("rnum"));
-						bean.setRank(jsonResponse.getString("rank"));
-						bean.setMovieCd(jsonResponse.getString("movieCd"));
-						bean.setMovieNm(jsonResponse.getString("movieNm"));
-						bean.setOpenDt(jsonResponse.getString("openDt"));
+					for (int i = 0; i < dailyBoxOfficeList.length(); i++) {
+						JSONObject movieData = dailyBoxOfficeList.getJSONObject(i);
+
+						if (movieData.getString("movieCd").equals(movieCd)) {
+							bean.setBoxofficeType("일간 박스오피스");
+							bean.setRuum(movieData.optString("rnum"));
+							bean.setRank(movieData.optString("rank"));
+							bean.setMovieCd(movieData.optString("movieCd"));
+							bean.setMovieNm(movieData.optString("movieNm"));
+							bean.setOpenDt(movieData.optString("openDt"));
+							bean.setAudiAcc(movieData.optString("audiAcc"));
+							break;
+						}
 					}
 				} else {
 					System.out.println("No 'dailyBoxOfficeList' field in response.");
@@ -335,7 +339,6 @@ public class MovieMgr {
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				MovieBean bean = new MovieBean();
-
 				bean.setDocid(rs.getInt(1));
 				bean.setMovieSeq(rs.getString(2));
 				bean.setTitle(rs.getString(3));
@@ -357,8 +360,11 @@ public class MovieMgr {
 				 */
 
 				String movieCd = getMovieCd(bean.getTitle(), bean.getDirectorNm()); // 영화진흥원 대표 코드 가져오기
-				bean.setMovieCd(movieCd);
-				// getBoxOfficeData(bean); // 영화진흥원 박스오피스 가져오기
+				if (movieCd != null) {
+					bean.setMovieCd(movieCd);
+					getBoxOfficeData(bean);
+				}
+				
 				vlist.addElement(bean); // 리턴 안하는 경우 사용
 			}
 		} catch (Exception e) {
@@ -392,6 +398,7 @@ public class MovieMgr {
 				bean.setDirectorNm(rs.getString("directorNm"));
 				bean.setActorNm(rs.getString("actorNm"));
 				bean.setPlot(rs.getString("plot"));
+
 			}
 
 		} catch (Exception e) {
@@ -399,12 +406,18 @@ public class MovieMgr {
 		} finally {
 			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
 		}
+
 		return bean;
 	}
 
-	public static void main(String[] args) {
-		MovieMgr mgr = new MovieMgr();
-		mgr.insertMovie();
-	}
+	/*
+	 * public static void main(String[] args) { MovieMgr mgr = new MovieMgr();
+	 * Vector<MovieBean> vc; vc = mgr.listMovie();
+	 * 
+	 * for (int i = 0; i < vc.size(); i++) { MovieBean bean = vc.get(i);
+	 * System.out.println(bean.getAudiAcc()); System.out.println(bean.getRank()); }
+	 * 
+	 * }
+	 */
 
 }

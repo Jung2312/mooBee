@@ -83,30 +83,14 @@ public class MyPage {
 		MyPage_sap.setBounds(44, 121, 827, 2);
 		MyInfoPanel.add(MyPage_sap);
 
-		JButton ViewMembership = new JButton("멤버십 혜택 보기");
-		ViewMembership.setBounds(49, 136, 125, 23);
-		MyInfoPanel.add(ViewMembership);
+		JButton ViewMembership_Btn = new JButton("멤버십 혜택 보기");
+		ViewMembership_Btn.setBounds(49, 136, 125, 23);
+		MyInfoPanel.add(ViewMembership_Btn);
 
-		JLabel lblNewLabel_1 = new JLabel("연간 누적 금액 100,000원");
-		lblNewLabel_1.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		lblNewLabel_1.setBounds(127, 31, 270, 34);
-		MyInfoPanel.add(lblNewLabel_1);
-
-		JEditorPane Membership_Background = new JEditorPane();
-		Membership_Background.setBounds(44, 28, 67, 34);
-		MyInfoPanel.add(Membership_Background);
-		Membership_Background.setBackground(new Color(204, 204, 0));
-
-		JLabel Current_Membership = new JLabel("GOLD");
-		Current_Membership.setBounds(44, 28, 67, 34);
-		MyInfoPanel.add(Current_Membership);
-		Current_Membership.setHorizontalAlignment(SwingConstants.CENTER);
-		Current_Membership.setFont(new Font("나눔고딕", Font.BOLD, 15));
-
-		ViewMembership.addActionListener(new ActionListener() {
+		ViewMembership_Btn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Point buttonLocation = ViewMembership.getLocationOnScreen();
+				Point buttonLocation = ViewMembership_Btn.getLocationOnScreen();
 				MembershipInfo MembershipWindow = new MembershipInfo();
 
 				int parentX = frame.getX();
@@ -125,6 +109,162 @@ public class MyPage {
 			}
 		});
 
+		JLabel Year_Cost = new JLabel("연간 누적 금액 200,000원");
+		Year_Cost.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		Year_Cost.setBounds(127, 31, 270, 34);
+		MyInfoPanel.add(Year_Cost);
+
+		JLabel Current_Membership = new JLabel("GOLD");
+		Current_Membership.setBounds(44, 28, 67, 34);
+		MyInfoPanel.add(Current_Membership);
+		Current_Membership.setHorizontalAlignment(SwingConstants.CENTER);
+		Current_Membership.setFont(new Font("나눔고딕", Font.BOLD, 15));
+
+		JEditorPane Membership_Background = new JEditorPane();
+		Membership_Background.setBounds(44, 28, 67, 34);
+		MyInfoPanel.add(Membership_Background);
+		Membership_Background.setBackground(new Color(204, 204, 0));
+
+		// 매너 온도 동그라미 패널 추가
+		CirclePanel mannerCircle = new CirclePanel(70, new Color(50, 205, 50)); // 동그라미의 크기와 색상을 지정
+		mannerCircle.setBounds(711, 31, 74, 70); // 위치와 크기 설정
+		MyInfoPanel.add(mannerCircle);
+		mannerCircle.setLayout(null);
+		
+		JLabel MyMannerTemp = new JLabel("36.5º");
+		MyMannerTemp.setBounds(10, 10, 55, 55);
+		MyMannerTemp.setFont(new Font("나눔고딕", Font.PLAIN, 18));
+		MyMannerTemp.setHorizontalAlignment(SwingConstants.CENTER);
+		mannerCircle.add(MyMannerTemp);
+
+		JButton Degree_Btn = new JButton("매너온도란?");
+		Degree_Btn.setBounds(797, 10, 105, 23);
+		MyInfoPanel.add(Degree_Btn);
+
+		Degree_Btn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Point buttonLocation = Degree_Btn.getLocationOnScreen();
+				MannerTemp MannerTempWindow = new MannerTemp();
+
+				int parentX = frame.getX();
+				int parentY = frame.getY();
+				int parentWidth = frame.getWidth();
+				int parentHeight = frame.getHeight();
+
+				int windowWidth = MannerTempWindow.getWidth();
+				int windowHeight = MannerTempWindow.getHeight();
+
+				int x = parentX + (parentWidth - windowWidth) / 2;
+				int y = parentY + (parentHeight - windowHeight) / 2;
+				MannerTempWindow.getFrame().setLocation(x, y);
+
+				MannerTempWindow.showWindow();
+			}
+		});
+
+		JPanel MyReservation_Panel = new JPanel();
+		MyReservation_Panel.setBounds(44, 181, 400, 271);
+		MyInfoPanel.add(MyReservation_Panel);
+		MyReservation_Panel.setLayout(null);
+
+		JLabel MyReservation_Label = new JLabel("My 예매 내역");
+		MyReservation_Label.setFont(new Font("나눔고딕", Font.BOLD, 25));
+		MyReservation_Label.setBounds(12, 10, 193, 42);
+		MyReservation_Panel.add(MyReservation_Label);
+
+		JLabel MyReservMovie_Label1 = new JLabel("명탐정코난 - 100만달러의 펜타그램(더빙)");
+		MyReservMovie_Label1.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReservMovie_Label1.setBounds(12, 62, 357, 23);
+		MyReservation_Panel.add(MyReservMovie_Label1);
+
+		JLabel MyReservMovie_Label2 = new JLabel("파일럿");
+		MyReservMovie_Label2.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReservMovie_Label2.setBounds(12, 95, 357, 23);
+		MyReservation_Panel.add(MyReservMovie_Label2);
+
+		JLabel MyReservMovie_Label3 = new JLabel("데드풀과 울버린");
+		MyReservMovie_Label3.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReservMovie_Label3.setBounds(12, 128, 357, 23);
+		MyReservation_Panel.add(MyReservMovie_Label3);
+
+		JLabel MyReservMovie_Label4 = new JLabel("인사이드 아웃2");
+		MyReservMovie_Label4.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReservMovie_Label4.setBounds(12, 161, 357, 23);
+		MyReservation_Panel.add(MyReservMovie_Label4);
+
+		JLabel MyReservMovie_Label5 = new JLabel("사랑의 하츄핑");
+		MyReservMovie_Label5.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReservMovie_Label5.setBounds(12, 194, 357, 23);
+		MyReservation_Panel.add(MyReservMovie_Label5);
+
+		JButton GoMyTicket_Btn = new JButton("예매 내역 보러가기");
+		GoMyTicket_Btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MyReservation mrv = new MyReservation(); // MyReservation 창 생성
+				mrv.setPreviousPage(frame); // MyPage를 이전 페이지로 설정
+				mrv.getFrame().setVisible(true); // MyReservation 창을 표시
+				frame.dispose(); // 현재 MyPage 창을 닫음
+			}
+		});
+		GoMyTicket_Btn.setBounds(251, 238, 137, 23);
+		MyReservation_Panel.add(GoMyTicket_Btn);
+
+		JPanel MyReview_Panel = new JPanel();
+		MyReview_Panel.setBounds(454, 181, 400, 271);
+		MyInfoPanel.add(MyReview_Panel);
+		MyReview_Panel.setLayout(null);
+
+		JLabel MyReview_Label = new JLabel("내가 작성한 리뷰");
+		MyReview_Label.setFont(new Font("나눔고딕", Font.BOLD, 25));
+		MyReview_Label.setBounds(12, 10, 310, 42);
+		MyReview_Panel.add(MyReview_Label);
+
+		JLabel MyReviewMovie_Label1 = new JLabel("남은 인생 10년");
+		MyReviewMovie_Label1.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReviewMovie_Label1.setBounds(12, 62, 341, 23);
+		MyReview_Panel.add(MyReviewMovie_Label1);
+
+		JLabel MyReviewMovie_Label2 = new JLabel("범죄도시4");
+		MyReviewMovie_Label2.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReviewMovie_Label2.setBounds(12, 95, 341, 23);
+		MyReview_Panel.add(MyReviewMovie_Label2);
+
+		JLabel MyReviewMovie_Label3 = new JLabel("");
+		MyReviewMovie_Label3.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReviewMovie_Label3.setBounds(12, 128, 341, 23);
+		MyReview_Panel.add(MyReviewMovie_Label3);
+
+		JLabel MyReviewMovie_Label4 = new JLabel("");
+		MyReviewMovie_Label4.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReviewMovie_Label4.setBounds(12, 161, 341, 23);
+		MyReview_Panel.add(MyReviewMovie_Label4);
+
+		JLabel MyReviewMovie_Label5 = new JLabel("");
+		MyReviewMovie_Label5.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+		MyReviewMovie_Label5.setBounds(12, 194, 341, 23);
+		MyReview_Panel.add(MyReviewMovie_Label5);
+
+		JButton GoMyReview_Btn = new JButton("내 리뷰 보러가기");
+		GoMyReview_Btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MyReview mr = new MyReview(); // MyReservation 창 생성
+				mr.setPreviousPage(frame); // MyPage를 이전 페이지로 설정
+				mr.getFrame().setVisible(true); // MyReservation 창을 표시
+				frame.dispose(); // 현재 MyPage 창을 닫음
+			}
+		});
+		GoMyReview_Btn.setBounds(263, 238, 125, 23);
+		MyReview_Panel.add(GoMyReview_Btn);
+
+		GoMyReview_Btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MyReview mr = new MyReview();
+				frame.setVisible(true);
+				frame.dispose();
+			}
+		});
+
 		JPopupMenu popupMenu = new JPopupMenu();
 
 		JButton MenuTab = new JButton("메뉴");
@@ -140,6 +280,14 @@ public class MyPage {
 
 		JMenuItem GoTicket = new JMenuItem("영화 예매");
 		popupMenu.add(GoTicket);
+
+		GoTicket.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ReservationForm();
+				frame.dispose();
+			}
+		});
 
 		JMenuItem GoMyPage = new JMenuItem("마이페이지");
 		popupMenu.add(GoMyPage);
@@ -170,13 +318,13 @@ public class MyPage {
 			}
 		});
 
-		JButton ModifyUserInfo = new JButton("회원정보 수정");
-		ModifyUserInfo.setBounds(826, 613, 125, 23);
-		MyPagePanel.add(ModifyUserInfo);
+		JButton ModifyUserInfo_Btn = new JButton("회원정보 수정");
+		ModifyUserInfo_Btn.setBounds(826, 613, 125, 23);
+		MyPagePanel.add(ModifyUserInfo_Btn);
 
-		ModifyUserInfo.addActionListener(new ActionListener() {
+		ModifyUserInfo_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Point buttonLocation = ModifyUserInfo.getLocationOnScreen();
+				Point buttonLocation = ModifyUserInfo_Btn.getLocationOnScreen();
 				// ModifyUser 창을 열기
 				ModifyUser modifyUserWindow = new ModifyUser();
 

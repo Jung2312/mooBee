@@ -46,11 +46,11 @@ public class MainForm extends JFrame {
 		MainForm_Panel.add(Trailer);
 		Trailer.setBackground(Color.GRAY);
 
-		JPopupMenu popupMenu = new JPopupMenu();
-
 		JButton MenuTab = new JButton("메뉴");
 		MenuTab.setBounds(826, 36, 97, 34);
 		MainForm_Panel.add(MenuTab);
+
+		JPopupMenu popupMenu = new JPopupMenu();
 
 		MenuTab.addActionListener(new ActionListener() {
 			@Override
@@ -64,7 +64,7 @@ public class MainForm extends JFrame {
 
 		JMenuItem GoMyPage = new JMenuItem("마이페이지");
 		popupMenu.add(GoMyPage);
-		
+
 		GoMyPage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MyPage mp = new MyPage();
@@ -78,6 +78,22 @@ public class MainForm extends JFrame {
 
 		JMenuItem Logout = new JMenuItem("로그아웃");
 		popupMenu.add(Logout);
+
+		btnMovieBooking.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ReservationForm();
+				dispose();
+			}
+		});
+
+		GoTicket.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ReservationForm();
+				dispose();
+			}
+		});
 
 		setVisible(true);
 	}

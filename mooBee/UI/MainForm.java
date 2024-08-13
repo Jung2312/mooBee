@@ -62,6 +62,24 @@ public class MainForm extends JFrame {
             }
         });
 
+
+        btnMovieBooking.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ReservationForm();  
+                dispose();  
+            }
+        });
+
+
+        GoTicket.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ReservationForm();  
+                dispose();  
+            }
+        });
+
         setVisible(true);
     }
 

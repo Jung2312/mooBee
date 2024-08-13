@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -27,20 +30,180 @@ public class MovieMgr {
 	// 요청(Request) 요청 변수
 	private final static String getListURL = "https://kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json";
 	private final static String getBoxOfficeURL = "https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json";
-	
+	private final static String getkmDBURL = "https://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2";
+
 	// api key
 	String apiKEY = Config.apiKEY;
+	String kmdbKEY = Config.kmdbKEY;
 
 	private StringBuilder response;
 	private String apiUrl;
-	
+
 	public MovieMgr() {
 		pool = DBConnectionMgr.getInstance();
 	}
 
-	// kmdb 데이터 저장 메소드 추가 필요
+	// 날짜 포맷팅
+	public static String getDateFormat(int num) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, -num); // -1일 기준으로 계산
+
+		Date date = calendar.getTime();
+
+		return sdf.format(date);
+	}
+
+	public static String adjustDate(String dateStr) throws DateTimeParseException {
+		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+		// 길이 맞춤
+		if (dateStr.length() != 8) {
+			throw new DateTimeParseException("Date string must be in 'yyyyMMdd' format", dateStr, 0);
+		}
+
+		// 년, 월, 일 자르기
+		String yearStr = dateStr.substring(0, 4);
+		String monthStr = dateStr.substring(4, 6);
+		String dayStr = dateStr.substring(6, 8);
+		String formatDate = null;
+		
+		int year = Integer.parseInt(yearStr);
+		int month = Integer.parseInt(monthStr);
+		int day = Integer.parseInt(dayStr);
+		LocalDate date; 
+		// 일이 00일인지 확인
+		if (day == 0) {
+			date = LocalDate.of(year, month, day + 1);
+		} else {
+			date = LocalDate.of(year, month, day);
+		}
+		return date.format(outputFormatter);
+	}
+
 	// 인수1. releaseDte = 현재날짜
-	// 인수2. listCount = 10
+	// 인수2. listCount = 출력하고자 하는 페이지 수
+	public boolean insertMovie() {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql;
+		int listCount = 500; // 변경 가능
+		boolean flag = false;
+		String apiUrl = getkmDBURL + "&detail=Y&ServiceKey=" + kmdbKEY + "&listCount=" + listCount + "&releaseDts="
+				+ getDateFormat(30) + "&releaseDte=" + getDateFormat(0);
+
+		try {
+			getResponse(apiUrl);
+
+			// json parse
+			JSONObject jsonResponse = new JSONObject(response.toString());
+
+			// "Data" 필드가 있는지 확인
+			if (jsonResponse.has("Data")) {
+				JSONArray dataArray = jsonResponse.getJSONArray("Data");
+
+				for (int i = 0; i < dataArray.length(); i++) {
+					JSONObject dataObject = dataArray.getJSONObject(i);
+
+					// "Result" 필드가 있는지 확인
+					if (dataObject.has("Result")) {
+						JSONArray movieList = dataObject.getJSONArray("Result");
+
+						for (int j = 0; j < movieList.length(); j++) {
+							JSONObject movie = movieList.getJSONObject(j);
+
+							String releaseDate = movie.optString("repRlsDate");
+							releaseDate = adjustDate(releaseDate);
+	
+							con = pool.getConnection();
+							sql = "delete";
+
+							// 영화 정보 추출
+							String movieSeq = movie.optString("movieSeq");
+
+							// 개봉일(30일)이 지난 경우 테이블에서 삭제
+							sql = "SELECT releaseDate FROM tblmovie WHERE movieSeq = ?";
+							try (PreparedStatement checkStmt = con.prepareStatement(sql)) {
+								checkStmt.setString(1, movieSeq);
+								ResultSet rs = checkStmt.executeQuery();
+								if (rs.next()) {
+									sql = "DELETE FROM tblmovie WHERE releaseDate < ?";
+									pstmt = con.prepareStatement(sql);
+									pstmt.setString(1, releaseDate);
+									pstmt.executeUpdate();
+									
+									// 중복된 레코드가 있는 경우 삽입하지 않음
+									continue;
+								}
+							}
+
+							String posters = movie.optString("posters");
+							String vodUrl = movie.optJSONObject("vods").optJSONArray("vod").optJSONObject(0)
+									.optString("vodUrl");
+
+							if (posters.equals("")) {
+								continue;
+							}
+
+							String[] poster = posters.split("\\s*\\|\\s*|\\s*\\n\\s*");
+
+							String title = movie.optString("title");
+							String director = movie.optJSONObject("directors").optJSONArray("director").optJSONObject(0)
+									.optString("directorNm");
+							JSONArray actors = movie.optJSONObject("actors").optJSONArray("actor");
+							String actorNm = actors.optJSONObject(0).optString("actorNm");
+							if (actors.length() > 1) {
+								actorNm += ("," + actors.optJSONObject(1).optString("actorNm"));
+							}
+
+							String plot = movie.optJSONObject("plots").optJSONArray("plot").optJSONObject(0)
+									.optString("plotText");
+							String genre = movie.optString("genre");
+							String runtime = movie.optString("runtime");
+
+							String audiAcc = movie.optString("audiAcc");
+							String rating = movie.optJSONObject("ratings").optJSONArray("rating").optJSONObject(0)
+									.optString("ratingGrade");
+							
+							if(rating.equals("")) {
+								rating="15세이상관람가";
+							}
+
+							sql = "insert into tblmovie VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+							pstmt = con.prepareStatement(sql);
+							pstmt.setString(1, movieSeq);
+							pstmt.setString(2, title);
+							pstmt.setString(3, director);
+							pstmt.setString(4, actorNm);
+							pstmt.setString(5, plot);
+							pstmt.setString(6, genre);
+							pstmt.setString(7, releaseDate);
+							pstmt.setString(8, runtime);
+							pstmt.setString(9, poster[0]);
+							pstmt.setString(10, vodUrl);
+							pstmt.setString(11, audiAcc);
+							pstmt.setString(12, rating);
+
+							if (pstmt.executeUpdate() == 1) {
+								flag = true;
+							}
+
+						}
+					} else {
+						System.out.println("No 'Result' field in Data object.");
+					}
+				}
+			} else {
+				System.out.println("No 'Data' field in response.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt); // con은 반납, pstmt는 close
+		}
+		return flag;
+	}
 
 	// http를 통해 api 응답을 저장하는 메소드
 	public void getResponse(String fullApiUrl) {
@@ -55,7 +218,7 @@ public class MovieMgr {
 			if (conn.getResponseCode() != 200) {
 				throw new RuntimeException("HTTP GET Request Failed with Error code : " + conn.getResponseCode());
 			}
-			
+
 			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			response = new StringBuilder();
 			String output;
@@ -63,13 +226,13 @@ public class MovieMgr {
 				response.append(output);
 			}
 			br.close();
-			
+
 			conn.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// 영화 진흥원의 영화 대표 코드 검색
 	public String getMovieCd(String title, String directorNm) {
 		apiUrl = getListURL + "?key=" + apiKEY;
@@ -80,7 +243,7 @@ public class MovieMgr {
 			String encodedDirectorNm = java.net.URLEncoder.encode(directorNm, "UTF-8");
 
 			String fullApiUrl = apiUrl + "&movieNm=" + encodedMovieNm + "&directorNm=" + encodedDirectorNm;
-			
+
 			getResponse(fullApiUrl);
 
 			// json parse
@@ -113,30 +276,17 @@ public class MovieMgr {
 		return movieCd;
 	}
 
-	
-	// 박스오피스 전날 일별 순위 날짜 포맷팅
-    public static String getYesterdayDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, -1);  // -1일 기준으로 계산
-
-        Date yesterday = calendar.getTime();
-
-        return sdf.format(yesterday);
-    }
-	
-    // 일별 박스오피스 순위 api 값 추출
+	// 일별 박스오피스 순위 api 값 추출
 	public void getBoxOfficeData(MovieBean bean) {
 		String movieCd = bean.getMovieCd();
 		apiUrl = getBoxOfficeURL + "?key=" + apiKEY;
-		try { 
-			
+		try {
+
 			// URL Encoding
 			String encodedMovieCd = java.net.URLEncoder.encode(movieCd, "UTF-8");
 
-			String fullApiUrl = apiUrl + "&movieCd=" + encodedMovieCd + "&targetDt=" + getYesterdayDate();
-			
+			String fullApiUrl = apiUrl + "&movieCd=" + encodedMovieCd + "&targetDt=" + getDateFormat(1);
+
 			getResponse(fullApiUrl);
 
 			// json parse
@@ -250,6 +400,11 @@ public class MovieMgr {
 			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
 		}
 		return bean;
+	}
+
+	public static void main(String[] args) {
+		MovieMgr mgr = new MovieMgr();
+		mgr.insertMovie();
 	}
 
 }

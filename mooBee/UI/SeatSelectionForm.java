@@ -56,6 +56,7 @@ public class SeatSelectionForm extends JFrame {
         borders[3].setOpaque(false);
         add(borders[3]);
 
+        
         // 좌석 패널 설정 - 경계선 위에 위치하도록 함
         JPanel seatPanel = new JPanel();
         seatPanel.setLayout(new GridLayout(8, 10, 8, 8)); 

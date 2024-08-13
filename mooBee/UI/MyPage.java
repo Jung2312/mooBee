@@ -15,11 +15,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
-
 import javax.swing.JSeparator;
 import javax.swing.JEditorPane;
 import javax.swing.SwingConstants;
@@ -113,14 +111,14 @@ public class MyPage {
 		Year_Cost.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 		Year_Cost.setBounds(127, 31, 270, 34);
 		MyInfoPanel.add(Year_Cost);
+		
+				JLabel Current_Membership = new JLabel("GOLD");
+				Current_Membership.setBounds(44, 28, 67, 34);
+				MyInfoPanel.add(Current_Membership);
+				Current_Membership.setHorizontalAlignment(SwingConstants.CENTER);
+				Current_Membership.setFont(new Font("나눔고딕", Font.BOLD, 15));
 
-		JLabel Current_Membership = new JLabel("GOLD");
-		Current_Membership.setBounds(44, 28, 67, 34);
-		MyInfoPanel.add(Current_Membership);
-		Current_Membership.setHorizontalAlignment(SwingConstants.CENTER);
-		Current_Membership.setFont(new Font("나눔고딕", Font.BOLD, 15));
-
-		JEditorPane Membership_Background = new JEditorPane();
+		JPanel Membership_Background = new JPanel();
 		Membership_Background.setBounds(44, 28, 67, 34);
 		MyInfoPanel.add(Membership_Background);
 		Membership_Background.setBackground(new Color(204, 204, 0));

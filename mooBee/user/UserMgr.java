@@ -110,9 +110,9 @@ public class UserMgr {
 				bean.setUserId(rs.getString(1)); //1은 첫번째 컬럼
 				bean.setName(rs.getString(2));
 				bean.setPassword(rs.getString(3));
-				bean.setPhone(rs.getString(4));
+				bean.setPaymentAmount(rs.getInt(4));
 				bean.setBirthDate(rs.getString(5));
-				bean.setPaymentAmount(rs.getInt(6));
+				bean.setPhone(rs.getString(6));
 				bean.setGrade(rs.getString(7));
 				bean.setTemp(rs.getFloat(8));
 				bean.setManager(rs.getBoolean(9));

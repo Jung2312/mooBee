@@ -74,7 +74,7 @@ public class LoginForm extends JFrame {
                 JOptionPane.showMessageDialog(loginFrame, "로그인 성공!");
                 loginFrame.dispose(); // 로그인 성공 시 창 닫기
                 loginFrame.dispose();  // 로그인 창 닫기
-                openMainForm();  // 메인 폼 열기
+                openMainForm(userId);  // 메인 폼 열기
             } else {
                 JOptionPane.showMessageDialog(loginFrame, "로그인 실패. 이메일 또는 비밀번호가 잘못되었습니다.");
             }
@@ -98,8 +98,8 @@ public class LoginForm extends JFrame {
         loginFrame.setVisible(true);
     }
 
-    private void openMainForm() {
-        new MainForm();  // MainForm 호출
+    private void openMainForm(String userId) {
+        new MainForm(userId);  // MainForm 호출
     }
     
     private void openSignupForm() {

@@ -62,6 +62,24 @@ public class MainForm extends JFrame {
             }
         });
 
+        // 영화 예매 버튼 액션 리스너
+        btnMovieBooking.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ReservationForm(); 
+                dispose();
+            }
+        });
+
+        // 팝업 메뉴의 영화 예매 메뉴 아이템 액션 리스너
+        GoTicket.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ReservationForm(); 
+                dispose(); 
+            }
+        });
+
         setVisible(true);
     }
 

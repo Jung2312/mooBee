@@ -157,7 +157,7 @@ public class UserMgr {
 			con = pool.getConnection();
 			sql = "delete from tblUser where userId = ?";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, userId);;
+			pstmt.setString(1, userId);
 			if(pstmt.executeUpdate()==1) flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -165,7 +165,7 @@ public class UserMgr {
 			pool.freeConnection(con, pstmt);
 		}
 		return flag;
-}
+	}
 	public static void main(String[] args) {
 		UserMgr mgr = new UserMgr();
 		UserBean bean = new UserBean();

@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainForm extends JFrame {
-
+	
+	private JFrame frame;
+	
 	public MainForm() {
 		initialize();
 	}
@@ -78,6 +80,20 @@ public class MainForm extends JFrame {
 
 		JMenuItem Logout = new JMenuItem("로그아웃");
 		popupMenu.add(Logout);
+
+		Logout.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int response = JOptionPane.showConfirmDialog(frame, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+
+				if (response == JOptionPane.YES_OPTION) {
+					// 로그아웃 처리
+					dispose(); // 현재 창을 닫고 로그아웃 처리 (예를 들어 로그인 화면으로 돌아가기)
+				}
+				// 아니오를 누르면 아무 일도 하지 않음 (팝업 창만 닫힘)
+			}
+		});
 
 		btnMovieBooking.addActionListener(new ActionListener() {
 			@Override

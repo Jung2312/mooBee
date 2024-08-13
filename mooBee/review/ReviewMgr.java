@@ -103,7 +103,7 @@ public class ReviewMgr {
 		return bean;
 	}
 	
-	//리뷰뷰 수정
+	//리뷰 수정
 	public boolean updateReview(ReviewBean bean) {
 		Connection con = null;
 		PreparedStatement pstmt = null;

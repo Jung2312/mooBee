@@ -19,13 +19,13 @@ import java.awt.event.ActionListener;
 public class MainForm extends JFrame {
 	
 	private JFrame frame;
-  private JFXPanel fxPanel; 
-  private JPanel Trailer;
-  private MediaPlayer mediaPlayer;
-  MovieMgr mMgr;
+	private JFXPanel fxPanel; 
+	private JPanel Trailer;
+	private MediaPlayer mediaPlayer;
+	MovieMgr mMgr;
     
 	public MainForm(String userId) {
-	  this.userId = userId;
+		this.userId = userId;
 		initialize();
 		mMgr = new MovieMgr();
 	}
@@ -61,15 +61,15 @@ public class MainForm extends JFrame {
 		btnNotices.setBounds(601, 151, 100, 50);
 		MainForm_Panel.add(btnNotices);
 
-        Trailer = new JPanel();
-        Trailer.setBounds(151, 251, 700, 300);
-        MainForm_Panel.add(Trailer);
-        Trailer.setBackground(Color.GRAY);
-        Trailer.setLayout(new BorderLayout());
-
-        fxPanel = new JFXPanel();
-        Trailer.add(fxPanel, BorderLayout.CENTER);
-        Platform.runLater(this::createVideoPlayer);
+	        Trailer = new JPanel();
+	        Trailer.setBounds(151, 251, 700, 300);
+	        MainForm_Panel.add(Trailer);
+	        Trailer.setBackground(Color.GRAY);
+	        Trailer.setLayout(new BorderLayout());
+	
+	        fxPanel = new JFXPanel();
+	        Trailer.add(fxPanel, BorderLayout.CENTER);
+	        Platform.runLater(this::createVideoPlayer);
 
 		JButton MenuTab = new JButton("메뉴");
 		MenuTab.setBounds(826, 36, 97, 34);

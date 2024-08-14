@@ -264,8 +264,6 @@ public class MovieMgr {
 					if (movieList.length() > 0) {
 						JSONObject movie = movieList.getJSONObject(0);
 						movieCd = movie.getString("movieCd");
-					} else {
-						System.out.println("결과가 없습니다.");
 					}
 				} else {
 					System.out.println("No 'movieList' field in response.");
@@ -333,6 +331,7 @@ public class MovieMgr {
 	public Vector<MovieBean> rankListMovie() {
 		Vector<MovieBean> vlist = listMovie();
 		Vector<MovieBean> vlist2 = new Vector<MovieBean>();
+		Vector<MovieBean> vlist3 = new Vector<MovieBean>();
 
 		for (int i = 0; i < vlist.size(); i++) {
 			MovieBean bean = vlist.get(i);
@@ -361,6 +360,30 @@ public class MovieMgr {
 				bean2.setAudiAcc(bean.getAudiAcc());
 
 				vlist2.addElement(bean2); // 리턴 안하는 경우 사용
+			}else {
+				bean2.setDocid(bean.getDocid());
+				bean2.setMovieSeq(bean.getMovieSeq());
+				bean2.setTitle(bean.getTitle());
+				bean2.setDirectorNm(bean.getDirectorNm());
+				bean2.setActorNm(bean.getActorNm());
+				bean2.setPlot(bean.getPlot());
+				bean2.setGenre(bean.getGenre());
+				bean2.setReleaseDate(bean.getReleaseDate());
+				bean2.setRubtime(bean.getRubtime());
+				bean2.setPosterUrl(bean.getPosterUrl());
+				bean2.setVodUrl(bean.getVodUrl());
+				bean2.setAudiAcc(bean.getAudiAcc());
+				bean2.setRating(bean.getRating());
+
+				bean2.setBoxofficeType(bean.getBoxofficeType());
+				bean2.setRuum(bean.getRuum());
+				bean2.setRank(bean.getRank());
+				bean2.setMovieCd(bean.getMovieCd());
+				bean2.setMovieNm(bean.getMovieNm());
+				bean2.setOpenDt(bean.getOpenDt());
+				bean2.setAudiAcc(bean.getAudiAcc());
+
+				vlist3.addElement(bean2); // 리턴 안하는 경우 사용
 			}
 
 		}
@@ -375,7 +398,7 @@ public class MovieMgr {
 				return Integer.compare(rank1, rank2); // rank를 기준으로 정렬
 			}
 		});
-
+		vlist2.addAll(vlist3);
 		return vlist2;
 	}
 

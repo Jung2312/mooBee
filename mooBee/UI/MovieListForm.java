@@ -76,7 +76,7 @@ public class MovieListForm extends JFrame {
                 posterLabel.addMouseListener(new MouseAdapter() {
                 	@Override
 					public void mouseClicked(MouseEvent e) {
-						MovieInfoForm movieInfoForm = new MovieInfoForm();
+						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid());
 						movieInfoForm.setVisible(true);
 						dispose();
 					}
@@ -88,8 +88,6 @@ public class MovieListForm extends JFrame {
             moviePanel.add(posterPanel);
         }
         
-        moviePanel.revalidate();
-        moviePanel.repaint();
 
         // 스크롤 패널 설정
         JScrollPane scrollPane = new JScrollPane(mainPanel);

@@ -345,7 +345,7 @@ public class MovieMgr {
 				bean2.setPlot(bean.getPlot());
 				bean2.setGenre(bean.getGenre());
 				bean2.setReleaseDate(bean.getReleaseDate());
-				bean2.setRubtime(bean.getRubtime());
+				bean2.setRuntime(bean.getRuntime());
 				bean2.setPosterUrl(bean.getPosterUrl());
 				bean2.setVodUrl(bean.getVodUrl());
 				bean2.setAudiAcc(bean.getAudiAcc());
@@ -369,7 +369,7 @@ public class MovieMgr {
 				bean2.setPlot(bean.getPlot());
 				bean2.setGenre(bean.getGenre());
 				bean2.setReleaseDate(bean.getReleaseDate());
-				bean2.setRubtime(bean.getRubtime());
+				bean2.setRuntime(bean.getRuntime());
 				bean2.setPosterUrl(bean.getPosterUrl());
 				bean2.setVodUrl(bean.getVodUrl());
 				bean2.setAudiAcc(bean.getAudiAcc());
@@ -424,7 +424,7 @@ public class MovieMgr {
 				bean.setPlot(rs.getString(6));
 				bean.setGenre(rs.getString(7));
 				bean.setReleaseDate(rs.getString(8));
-				bean.setRubtime(rs.getString(9));
+				bean.setRuntime(rs.getString(9));
 				bean.setPosterUrl(rs.getString(10));
 				bean.setVodUrl(rs.getString(11));
 				bean.setAudiAcc(rs.getString(12));
@@ -471,7 +471,7 @@ public class MovieMgr {
 				bean.setPosterUrl(rs.getString("posterUrl"));
 				bean.setVodUrl(rs.getString("vodUrl"));
 				bean.setReleaseDate(rs.getString("releaseDate"));
-				bean.setRubtime(rs.getString("rubTime"));
+				bean.setRuntime(rs.getString("runTime"));
 				bean.setDirectorNm(rs.getString("directorNm"));
 				bean.setActorNm(rs.getString("actorNm"));
 				bean.setPlot(rs.getString("plot"));
@@ -487,14 +487,40 @@ public class MovieMgr {
 		return bean;
 	}
 
-	// 랜덤으로 비디오 url 출력
-	public String getVideoUrl() {
+	// 선택 영화 비디오 url 출력
+	public String getVideoUrl(int docid) {
 		// ex. https://www.kmdb.or.kr/trailer/play/MK061240_P02.mp4
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql = null;
 
+		try {
+			con = pool.getConnection();
+			sql = "SELECT vodUrl FROM tblmovie WHERE docid = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, docid);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				videoUrl = rs.getString(1);
+			}
+			videoUrl = videoUrl.replaceAll("trailerPlayPop\\?pFileNm=", "play/");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return videoUrl;
+	}
+	
+	// 랜덤으로 비디오 url 출력
+	public String randomVideoUrl() {
+		// ex. https://www.kmdb.or.kr/trailer/play/MK061240_P02.mp4
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		
 		try {
 			con = pool.getConnection();
 			sql = "SELECT vodUrl FROM tblmovie WHERE vodUrl IS NOT NULL AND vodUrl != '' ORDER BY RAND() LIMIT 1;";
@@ -509,13 +535,8 @@ public class MovieMgr {
 		} finally {
 			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
 		}
-		System.out.println(videoUrl);
 		return videoUrl;
 	}
 
-	public static void main(String[] args) {
-		MovieMgr mgr = new MovieMgr();
-		mgr.getVideoUrl();
-	}
 
 }

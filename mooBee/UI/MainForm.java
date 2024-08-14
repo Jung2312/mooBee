@@ -22,7 +22,6 @@ public class MainForm extends JFrame {
 	private JFXPanel fxPanel; 
 	private JPanel Trailer;
 	private MediaPlayer mediaPlayer;
-	private String userId;
 	MovieMgr mMgr;
     
 	public MainForm(String userId) {
@@ -162,7 +161,7 @@ public class MainForm extends JFrame {
 	public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
-                MainForm window = new MainForm("홍길동");
+                MainForm window = new MainForm(userId);
                 window.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();

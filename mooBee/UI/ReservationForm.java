@@ -1,21 +1,23 @@
 package UI;
 
 import javax.swing.*;
-
 import screen.ScreenBean;
 import screen.ScreenMgr;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ReservationForm extends JFrame {
-	private static String userId;
-	private ScreenBean screenbean;
-	private ScreenMgr screenmgr;
+    private static String userId;
+    private ScreenBean screenbean;
+    private ScreenMgr screenmgr;
+
+    private JToggleButton selectedYouthButton = null; // 청소년 그룹에서 선택된 버튼
+    private JToggleButton selectedAdultButton = null; // 어른 그룹에서 선택된 버튼
+
     public ReservationForm() {
-    	screenbean = new ScreenBean();
-    	screenmgr = new ScreenMgr();
+        screenbean = new ScreenBean();
+        screenmgr = new ScreenMgr();
         setTitle("영화 예매 창");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -89,7 +91,7 @@ public class ReservationForm extends JFrame {
 
         // 날짜 선택 패널
         gbc.gridx = 2;
-        gbc.weightx = 0;  
+        gbc.weightx = 0;
         JPanel dateSelectionPanel = new JPanel();
         dateSelectionPanel.setBackground(Color.LIGHT_GRAY);
         dateSelectionPanel.setLayout(new BorderLayout());
@@ -142,22 +144,38 @@ public class ReservationForm extends JFrame {
         peopleSelectionPanel.add(youthLabel);
 
         // 청소년 인원 선택 버튼들
-        ButtonGroup youthGroup = new ButtonGroup(); 
         for (int i = 1; i <= 9; i++) {
             JToggleButton youthButton = new JToggleButton(i + "명");
-            youthGroup.add(youthButton); 
             peopleSelectionPanel.add(youthButton);
+
+            youthButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (selectedYouthButton != null && selectedYouthButton != youthButton) {
+                        selectedYouthButton.setSelected(false);
+                    }
+                    selectedYouthButton = youthButton.isSelected() ? youthButton : null;
+                }
+            });
         }
 
         JLabel adultLabel = new JLabel("성인", JLabel.CENTER);
         peopleSelectionPanel.add(adultLabel);
 
         // 성인 인원 선택 버튼들
-        ButtonGroup adultGroup = new ButtonGroup(); 
         for (int i = 1; i <= 9; i++) {
             JToggleButton adultButton = new JToggleButton(i + "명");
-            adultGroup.add(adultButton); 
             peopleSelectionPanel.add(adultButton);
+
+            adultButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (selectedAdultButton != null && selectedAdultButton != adultButton) {
+                        selectedAdultButton.setSelected(false);
+                    }
+                    selectedAdultButton = adultButton.isSelected() ? adultButton : null;
+                }
+            });
         }
 
         bottomPanel.add(peopleSelectionPanel, BorderLayout.CENTER);
@@ -169,24 +187,24 @@ public class ReservationForm extends JFrame {
         seatSelectionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SeatSelectionForm(); 
-                dispose(); 
+                new SeatSelectionForm();
+                dispose();
             }
         });
 
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(userId); 
-                dispose(); 
+                new MainForm(userId);
+                dispose();
             }
         });
 
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(userId); 
-                dispose(); 
+                new MainForm(userId);
+                dispose();
             }
         });
 

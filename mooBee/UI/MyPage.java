@@ -23,7 +23,6 @@ import java.awt.Toolkit;
 import javax.swing.JSeparator;
 import javax.swing.JEditorPane;
 import javax.swing.SwingConstants;
-
 import user.UserBean;
 import user.UserMgr;
 
@@ -39,7 +38,6 @@ public class MyPage {
 		initialize();
 	}
 
-	// Initialize the contents of the frame.
 	private void initialize() {
 		usermgr = new UserMgr();
 		userbean = new UserBean();
@@ -319,6 +317,7 @@ public class MyPage {
 		HomeButton.setBounds(61, 36, 97, 34);
 		MyPagePanel.add(HomeButton);
 
+
 		HomeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MainForm mf = new MainForm(userId);
@@ -353,11 +352,6 @@ public class MyPage {
 			}
 		});
 
-		HomeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-
 		Logout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -372,6 +366,7 @@ public class MyPage {
 			}
 		});
 
+		frame.validate();
 		frame.setVisible(true);
 	}
 

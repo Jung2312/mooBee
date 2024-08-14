@@ -10,24 +10,24 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import movie.MovieMgr;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 
 public class MainForm extends JFrame {
 	
 	private JFrame frame;
-	private static String userId;
+	private JFXPanel fxPanel; 
+	private JPanel Trailer;
+	private MediaPlayer mediaPlayer;
+	MovieMgr mMgr;
+    
 	public MainForm(String userId) {
 		this.userId = userId;
 		initialize();
+		mMgr = new MovieMgr();
 	}
 
 	private void initialize() {
@@ -38,6 +38,7 @@ public class MainForm extends JFrame {
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 
+		
 		JPanel MainForm_Panel = new JPanel();
 		MainForm_Panel.setBounds(0, 0, 984, 661);
 		getContentPane().add(MainForm_Panel);
@@ -60,18 +61,16 @@ public class MainForm extends JFrame {
 		btnNotices.setBounds(601, 151, 100, 50);
 		MainForm_Panel.add(btnNotices);
 
-		JPanel Trailer = new JPanel();
-		Trailer.setBounds(151, 251, 700, 300);
-		MainForm_Panel.add(Trailer);
-		Trailer.setBackground(Color.GRAY);
+	        Trailer = new JPanel();
+	        Trailer.setBounds(151, 251, 700, 300);
+	        MainForm_Panel.add(Trailer);
+	        Trailer.setBackground(Color.GRAY);
+	        Trailer.setLayout(new BorderLayout());
+	
+	        fxPanel = new JFXPanel();
+	        Trailer.add(fxPanel, BorderLayout.CENTER);
+	        Platform.runLater(this::createVideoPlayer);
 
-		// video(+박스오피스 랭킹 1위 찾아서 해당 영화 트레일러 출력)
-        JFXPanel fxPanel = new JFXPanel();
-        Trailer.setLayout(new BorderLayout());
-        Trailer.add(fxPanel, BorderLayout.CENTER);
-
-        Platform.runLater(() -> createVideoPlayer(fxPanel));
-        
 		JButton MenuTab = new JButton("메뉴");
 		MenuTab.setBounds(826, 36, 97, 34);
 		MainForm_Panel.add(MenuTab);
@@ -134,36 +133,31 @@ public class MainForm extends JFrame {
 				dispose();
 			}
 		});
-
+		
+		validate();
 		setVisible(true);
 	}
 
-	private void createVideoPlayer(JFXPanel fxPanel) {
+	public void createVideoPlayer() {
 	    Platform.runLater(() -> {
 	        try {
-	            
 	            StackPane root = new StackPane();
 	            Scene scene = new Scene(root, 700, 300);
 
-	            // ++ 랭킹 1위 영상 링크 가져오기
-	            String videoUrl = "https://www.kmdb.or.kr/trailer/play/MK061240_P02.mp4";
+	            String videoUrl = mMgr.getVideoUrl();
 	            Media media = new Media(videoUrl);
-	            media.setOnError(() -> {
-	                System.out.println("Media error: " + media.getError());
-	            });
-
-	            MediaPlayer mediaPlayer = new MediaPlayer(media);
+	            mediaPlayer = new MediaPlayer(media);
 	            MediaView mediaView = new MediaView(mediaPlayer);
 	            root.getChildren().add(mediaView);
-	            mediaPlayer.setAutoPlay(true); // Start playing the video immediately
-
+	            mediaPlayer.setAutoPlay(true);
+	            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(mediaPlayer.getStartTime())); // 비디오 끝나면 처음으로 되돌리기
 	            fxPanel.setScene(scene);
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
 	    });
 	}
-
+	
 	public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {

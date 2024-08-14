@@ -251,6 +251,6 @@ public class MovieBean {
 		this.openDt = openDt;
 	}
 	
-	
+
 
 }

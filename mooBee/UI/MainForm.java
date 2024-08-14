@@ -23,6 +23,7 @@ public class MainForm extends JFrame {
 	private JPanel Trailer;
 	private MediaPlayer mediaPlayer;
 	MovieMgr mMgr;
+	private static String userId;
     
 	public MainForm(String userId) {
 		this.userId = userId;

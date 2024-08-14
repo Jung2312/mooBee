@@ -32,13 +32,20 @@ public class ReservationForm extends JFrame {
         JButton backButton = new JButton("이전 페이지");
         topPanel.add(backButton, BorderLayout.EAST);
 
-        // 중앙 패널: 영화 선택, 날짜 선택, 시간 선택 패널을 포함
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new GridLayout(1, 3, 20, 0));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+        // 중앙 패널: 영화 선택, 극장 선택, 날짜 선택, 시간 선택 패널을 포함
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 40));
         add(centerPanel, BorderLayout.CENTER);
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
         // 영화 선택 패널
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.4;
+        gbc.weighty = 1.0;
         JPanel movieSelectionPanel = new JPanel();
         movieSelectionPanel.setBackground(Color.LIGHT_GRAY);
         movieSelectionPanel.setLayout(new BorderLayout());
@@ -56,9 +63,33 @@ public class ReservationForm extends JFrame {
         movieSelectionTitle.setBackground(Color.GRAY);
         movieSelectionTitle.setForeground(Color.WHITE);
         movieSelectionPanel.add(movieSelectionTitle, BorderLayout.NORTH);
-        centerPanel.add(movieSelectionPanel);
+        centerPanel.add(movieSelectionPanel, gbc);
+
+        // 극장 선택 패널
+        gbc.gridx = 1;
+        gbc.weightx = 0.4;
+        JPanel theaterSelectionPanel = new JPanel();
+        theaterSelectionPanel.setBackground(Color.LIGHT_GRAY);
+        theaterSelectionPanel.setLayout(new BorderLayout());
+
+        JLabel theaterListLabel = new JLabel("극장 리스트", JLabel.CENTER);
+        theaterListLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
+        theaterListLabel.setOpaque(true);
+        theaterListLabel.setBackground(Color.WHITE);
+        theaterListLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        theaterSelectionPanel.add(theaterListLabel, BorderLayout.CENTER);
+
+        JLabel theaterSelectionTitle = new JLabel("극장 선택", JLabel.CENTER);
+        theaterSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+        theaterSelectionTitle.setOpaque(true);
+        theaterSelectionTitle.setBackground(Color.GRAY);
+        theaterSelectionTitle.setForeground(Color.WHITE);
+        theaterSelectionPanel.add(theaterSelectionTitle, BorderLayout.NORTH);
+        centerPanel.add(theaterSelectionPanel, gbc);
 
         // 날짜 선택 패널
+        gbc.gridx = 2;
+        gbc.weightx = 0;  
         JPanel dateSelectionPanel = new JPanel();
         dateSelectionPanel.setBackground(Color.LIGHT_GRAY);
         dateSelectionPanel.setLayout(new BorderLayout());
@@ -76,9 +107,11 @@ public class ReservationForm extends JFrame {
         dateSelectionTitle.setBackground(Color.GRAY);
         dateSelectionTitle.setForeground(Color.WHITE);
         dateSelectionPanel.add(dateSelectionTitle, BorderLayout.NORTH);
-        centerPanel.add(dateSelectionPanel);
+        centerPanel.add(dateSelectionPanel, gbc);
 
         // 시간 선택 패널
+        gbc.gridx = 3;
+        gbc.weightx = 0.4;
         JPanel timeSelectionPanel = new JPanel();
         timeSelectionPanel.setBackground(Color.LIGHT_GRAY);
         timeSelectionPanel.setLayout(new BorderLayout());
@@ -96,7 +129,7 @@ public class ReservationForm extends JFrame {
         timeSelectionTitle.setBackground(Color.GRAY);
         timeSelectionTitle.setForeground(Color.WHITE);
         timeSelectionPanel.add(timeSelectionTitle, BorderLayout.NORTH);
-        centerPanel.add(timeSelectionPanel);
+        centerPanel.add(timeSelectionPanel, gbc);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));

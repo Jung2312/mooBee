@@ -187,7 +187,7 @@ public class MovieInfoForm extends JFrame {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(); // MainForm으로 이동
+                new MainForm(""); // MainForm으로 이동
                 dispose(); // 현재 창 닫기
             }
         });

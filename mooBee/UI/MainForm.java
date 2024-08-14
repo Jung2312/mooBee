@@ -22,6 +22,7 @@ public class MainForm extends JFrame {
 	private JFXPanel fxPanel; 
 	private JPanel Trailer;
 	private MediaPlayer mediaPlayer;
+	private String userId;
 	MovieMgr mMgr;
     
 	public MainForm(String userId) {

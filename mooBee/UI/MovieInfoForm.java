@@ -40,9 +40,9 @@ public class MovieInfoForm extends JFrame {
         homeButton.setBounds(30, 30, 80, 30);
         movieInfoPanel.add(homeButton);
 
-        JButton previousPageButton = new JButton("이전 페이지");
-        previousPageButton.setBounds(830, 30, 100, 30);
-        movieInfoPanel.add(previousPageButton);
+        JButton backButton = new JButton("이전 페이지");
+        backButton.setBounds(830, 30, 100, 30);
+        movieInfoPanel.add(backButton);
 
         JLabel titleLabel = new JLabel("영화제목", JLabel.CENTER);
         titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 28));
@@ -67,6 +67,21 @@ public class MovieInfoForm extends JFrame {
         JButton bookTicketButton = new JButton("예매하러 가기");
         bookTicketButton.setBounds(620, 360, 150, 40);
         movieInfoPanel.add(bookTicketButton);
+
+        // 영화 줄거리 패널 추가 - JLabel 사용
+        JPanel storyPanel = new JPanel();
+        storyPanel.setLayout(new BorderLayout());
+        storyPanel.setPreferredSize(new Dimension(1000, 150)); // 적절한 크기 설정
+        storyPanel.setBackground(Color.WHITE);
+        storyPanel.setBorder(BorderFactory.createTitledBorder("영화 줄거리"));
+
+        JLabel storyLabel = new JLabel("<html>이 영화는 미래의 지구를 배경으로 한 흥미진진한 액션 블록버스터입니다. "
+                + "주인공은 인류의 운명을 걸고 위험한 모험에 나서며, "
+                + "그 과정에서 발견한 비밀이 모든 것을 뒤바꿀 수 있다는 사실을 알게 됩니다. "
+                + "빠른 전개와 놀라운 반전이 가득한 이 영화는 관객들에게 잊을 수 없는 경험을 선사할 것입니다.</html>");
+        storyLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+        storyLabel.setVerticalAlignment(JLabel.TOP);
+        storyPanel.add(storyLabel, BorderLayout.CENTER);
 
         JPanel reviewPanel = new JPanel();
         reviewPanel.setLayout(new BorderLayout());
@@ -160,12 +175,38 @@ public class MovieInfoForm extends JFrame {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(movieInfoPanel);
+        mainPanel.add(storyPanel); // 영화 줄거리 패널 추가
         mainPanel.add(reviewPanel);
 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         setContentPane(scrollPane);
+
+        // 각 버튼의 동작 추가
+        homeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new MainForm(); // MainForm으로 이동
+                dispose(); // 현재 창 닫기
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new MovieListForm(); // MovieListForm으로 이동
+                dispose(); // 현재 창 닫기
+            }
+        });
+
+        bookTicketButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ReservationForm(); // ReservationForm으로 이동
+                dispose(); // 현재 창 닫기
+            }
+        });
 
         updateReviews(); // 초기 리뷰 표시
         updatePagination(paginationPanel); // 초기 페이지네이션 설정

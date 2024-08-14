@@ -145,7 +145,7 @@ public class MainForm extends JFrame {
 	            StackPane root = new StackPane();
 	            Scene scene = new Scene(root, 700, 300);
 
-	            String videoUrl = mMgr.getVideoUrl();
+	            String videoUrl = mMgr.randomVideoUrl();
 	            Media media = new Media(videoUrl);
 	            mediaPlayer = new MediaPlayer(media);
 	            MediaView mediaView = new MediaView(mediaPlayer);

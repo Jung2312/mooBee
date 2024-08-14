@@ -127,7 +127,7 @@ public class MyPage {
 		Current_Membership.setHorizontalAlignment(SwingConstants.CENTER);
 		Current_Membership.setFont(new Font("나눔고딕", Font.BOLD, 15));
 
-		JEditorPane Membership_Background = new JEditorPane();
+		JPanel Membership_Background = new JPanel();
 		Membership_Background.setBounds(44, 28, 67, 34);
 		MyInfoPanel.add(Membership_Background);
 		Membership_Background.setBackground(new Color(204, 204, 0));

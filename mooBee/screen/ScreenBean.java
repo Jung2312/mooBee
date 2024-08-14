@@ -6,7 +6,7 @@ public class ScreenBean {
 	private int docid;
 	private String screenDate;
 	private String screenTime;
-	
+	private String title;
 	public int getScreenNum() {
 		return screenNum;
 	}
@@ -37,4 +37,16 @@ public class ScreenBean {
 	public void setScreenTime(String screenTime) {
 		this.screenTime = screenTime;
 	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	@Override
+    public String toString() {
+        // 제목과 상영 날짜 및 시간을 포함한 문자열을 반환
+        return title;
+    }
 }

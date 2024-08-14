@@ -1,11 +1,21 @@
 package UI;
 
 import javax.swing.*;
+
+import movie.MovieBean;
+import movie.MovieMgr;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class MovieInfoForm extends JFrame {
 
@@ -14,18 +24,20 @@ public class MovieInfoForm extends JFrame {
     private int reviewsPerPage;
     private JPanel reviewsContainer;
     private int currentPageGroup; // 현재 페이지 그룹 (예: 1~5)
+	MovieMgr mMgr;
+	MovieBean bean;
 
-    public MovieInfoForm() {
+    public MovieInfoForm(int docid) {
         reviews = new ArrayList<>();
         // 예시로 몇 개의 리뷰 추가
         for (int i = 1; i <= 23; i++) {
             reviews.add("nickname" + i + ": 리뷰 내용 " + i);
         }
-
+        
         currentPage = 1;
         reviewsPerPage = 5;
         currentPageGroup = 1;
-
+        
         setTitle("영화 정보 및 리뷰");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,7 +56,10 @@ public class MovieInfoForm extends JFrame {
         backButton.setBounds(830, 30, 100, 30);
         movieInfoPanel.add(backButton);
 
-        JLabel titleLabel = new JLabel("영화제목", JLabel.CENTER);
+        mMgr = new MovieMgr();
+        bean = mMgr.getMovie(docid);
+        
+        JLabel titleLabel = new JLabel(bean.getTitle(), JLabel.CENTER);
         titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 28));
         titleLabel.setBounds(250, 30, 500, 40);
         movieInfoPanel.add(titleLabel);
@@ -52,10 +67,19 @@ public class MovieInfoForm extends JFrame {
         JLabel moviePoster = new JLabel();
         moviePoster.setBounds(150, 100, 250, 350);
         moviePoster.setOpaque(true);
-        moviePoster.setBackground(Color.GRAY);
+    	ImageIcon imgIcon;
+		try {
+			imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
+	        Image img = imgIcon.getImage();  
+	        Image scaledImg = img.getScaledInstance(250, 350, Image.SCALE_SMOOTH); 
+	        moviePoster.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH)); 
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
         movieInfoPanel.add(moviePoster);
 
-        JLabel movieDetails = new JLabel("<html>개봉일: 2024.08.14<br><br>관람시간: 120분<br><br>감독: 홍길동<br><br>주연 배우: 김철수, 이영희<br></html>");
+        System.out.println(bean.getRuntime());
+        JLabel movieDetails = new JLabel("<html>개봉일: "+bean.getReleaseDate()+"<br><br>관람시간: "+bean.getRuntime()+"분<br><br>감독: "+bean.getDirectorNm()+"<br><br>주연 배우: "+bean.getActorNm()+"<br></html>");
         movieDetails.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         movieDetails.setBounds(450, 100, 400, 250);
         movieInfoPanel.add(movieDetails);
@@ -75,10 +99,7 @@ public class MovieInfoForm extends JFrame {
         storyPanel.setBackground(Color.WHITE);
         storyPanel.setBorder(BorderFactory.createTitledBorder("영화 줄거리"));
 
-        JLabel storyLabel = new JLabel("<html>이 영화는 미래의 지구를 배경으로 한 흥미진진한 액션 블록버스터입니다. "
-                + "주인공은 인류의 운명을 걸고 위험한 모험에 나서며, "
-                + "그 과정에서 발견한 비밀이 모든 것을 뒤바꿀 수 있다는 사실을 알게 됩니다. "
-                + "빠른 전개와 놀라운 반전이 가득한 이 영화는 관객들에게 잊을 수 없는 경험을 선사할 것입니다.</html>");
+        JLabel storyLabel = new JLabel(bean.getPlot());
         storyLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
         storyLabel.setVerticalAlignment(JLabel.TOP);
         storyPanel.add(storyLabel, BorderLayout.CENTER);
@@ -208,6 +229,29 @@ public class MovieInfoForm extends JFrame {
             }
         });
 
+        goToTrailerButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String url = mMgr.getVideoUrl(docid);
+				if(url.equals("")) {
+					goToTrailerButton.setBackground(Color.GRAY);
+				}else {
+					if (Desktop.isDesktopSupported()) {
+						Desktop desktop = Desktop.getDesktop();
+						try {
+							URI uri = new URI(url);
+							desktop.browse(uri);
+						} catch (IOException ex) {
+							ex.printStackTrace();
+						} catch (URISyntaxException ex) {
+							ex.printStackTrace();
+						}
+					}
+				}
+	
+			}
+		});
+        
         updateReviews(); // 초기 리뷰 표시
         updatePagination(paginationPanel); // 초기 페이지네이션 설정
         setVisible(true);
@@ -253,8 +297,8 @@ public class MovieInfoForm extends JFrame {
         container.add(reviewPanel);
         container.add(separator);
     }
-
     public static void main(String[] args) {
-        new MovieInfoForm();
-    }
+		new MovieInfoForm(1);
+	}
+
 }

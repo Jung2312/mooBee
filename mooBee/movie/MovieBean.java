@@ -10,7 +10,7 @@ public class MovieBean {
 	private String plot;
 	private String genre;
 	private String releaseDate;
-	private String rubtime;
+	private String runtime;
 	private String posterUrl;
 	private String vodUrl;
 	private String audiAcc;
@@ -121,14 +121,14 @@ public class MovieBean {
 
 
 
-	public String getRubtime() {
-		return rubtime;
+	public String getRuntime() {
+		return runtime;
 	}
 
 
 
-	public void setRubtime(String rubtime) {
-		this.rubtime = rubtime;
+	public void setRuntime(String runtime) {
+		this.runtime = runtime;
 	}
 
 

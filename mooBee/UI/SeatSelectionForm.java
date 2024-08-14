@@ -6,7 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SeatSelectionForm extends JFrame {
-
+	private static String userId;
+	
     public SeatSelectionForm() {
         setTitle("좌석 선택 화면");
         setSize(1000, 700);
@@ -111,7 +112,7 @@ public class SeatSelectionForm extends JFrame {
         add(payButton);
 
         homeButton.addActionListener(e -> {
-            new MainForm(); 
+            new MainForm(userId); 
             dispose(); 
         });
 

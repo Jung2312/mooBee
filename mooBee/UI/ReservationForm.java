@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ReservationForm extends JFrame {
-
+	private static String userId;
     public ReservationForm() {
     
         setTitle("영화 예매 창");
@@ -137,7 +137,7 @@ public class ReservationForm extends JFrame {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(); 
+                new MainForm(userId); 
                 dispose(); 
             }
         });
@@ -145,7 +145,7 @@ public class ReservationForm extends JFrame {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(); 
+                new MainForm(userId); 
                 dispose(); 
             }
         });

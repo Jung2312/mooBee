@@ -187,8 +187,10 @@ public class ReservationForm extends JFrame {
         seatSelectionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SeatSelectionForm();
-                dispose();
+
+               new SeatSelectionForm(); 
+                dispose(); 
+
             }
         });
 

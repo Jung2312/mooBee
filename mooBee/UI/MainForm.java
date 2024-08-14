@@ -1,6 +1,5 @@
 package UI;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 
 import javafx.application.Platform;
@@ -76,56 +75,67 @@ public class MainForm extends JFrame {
 		MenuTab.setBounds(826, 36, 97, 34);
 		MainForm_Panel.add(MenuTab);
 
-		JPopupMenu popupMenu = new JPopupMenu();
+        JPopupMenu popupMenu = new JPopupMenu();
 
-		MenuTab.addActionListener(new ActionListener() {
+        MenuTab.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                popupMenu.show(MenuTab, MenuTab.getWidth(), MenuTab.getHeight());
+            }
+        });
+
+        JMenuItem GoTicket = new JMenuItem("영화 예매");
+        popupMenu.add(GoTicket);
+
+        JMenuItem GoMyPage = new JMenuItem("마이페이지");
+        popupMenu.add(GoMyPage);
+
+        GoMyPage.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MyPage mp = new MyPage();
+                setVisible(true);
+                dispose();
+            }
+        });
+
+        JMenuItem GoNotice = new JMenuItem("공지사항");
+        popupMenu.add(GoNotice);
+        
+        GoNotice.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				popupMenu.show(MenuTab, MenuTab.getWidth(), MenuTab.getHeight());
-			}
-		});
 
-		JMenuItem GoTicket = new JMenuItem("영화 예매");
-		popupMenu.add(GoTicket);
-
-		JMenuItem GoMyPage = new JMenuItem("마이페이지");
-		popupMenu.add(GoMyPage);
-
-		GoMyPage.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				MyPage mp = new MyPage(userId);
+				NoticeList NL = new NoticeList();
 				setVisible(true);
 				dispose();
 			}
 		});
 
-		JMenuItem GoNotice = new JMenuItem("공지사항");
-		popupMenu.add(GoNotice);
+        JMenuItem Logout = new JMenuItem("로그아웃");
+        popupMenu.add(Logout);
 
-		JMenuItem Logout = new JMenuItem("로그아웃");
-		popupMenu.add(Logout);
+        Logout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int response = JOptionPane.showConfirmDialog(frame, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
 
-		Logout.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int response = JOptionPane.showConfirmDialog(frame, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    // 로그아웃 처리
+                    dispose(); // 현재 창을 닫고 로그아웃 처리 (예를 들어 로그인 화면으로 돌아가기)
+                }
+                // 아니오를 누르면 아무 일도 하지 않음 (팝업 창만 닫힘)
+            }
+        });
 
-				if (response == JOptionPane.YES_OPTION) {
-					// 로그아웃 처리
-					dispose(); // 현재 창을 닫고 로그아웃 처리 (예를 들어 로그인 화면으로 돌아가기)
-				}
-				// 아니오를 누르면 아무 일도 하지 않음 (팝업 창만 닫힘)
-			}
-		});
-
-		btnMovieBooking.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new ReservationForm();
-				dispose();
-			}
-		});
+        // 영화 예매 버튼 클릭 시
+        btnMovieBooking.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ReservationForm();
+                dispose();
+            }
+        });
 
 		GoTicket.addActionListener(new ActionListener() {
 			@Override
@@ -168,5 +178,5 @@ public class MainForm extends JFrame {
                 e.printStackTrace();
             }
         });
-	}
+    }
 }

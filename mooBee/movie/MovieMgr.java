@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
@@ -38,6 +40,8 @@ public class MovieMgr {
 
 	private StringBuilder response;
 	private String apiUrl;
+	
+	private String videoUrl;
 
 	public MovieMgr() {
 		pool = DBConnectionMgr.getInstance();
@@ -325,6 +329,56 @@ public class MovieMgr {
 
 	}
 
+	// 박스오피스 랭킹 순위 오름차순 영화 리스트 출력
+	public Vector<MovieBean> rankListMovie() {
+		Vector<MovieBean> vlist = listMovie();
+		Vector<MovieBean> vlist2 = new Vector<MovieBean>();
+
+		for (int i = 0; i < vlist.size(); i++) {
+			MovieBean bean = vlist.get(i);
+			MovieBean bean2 = new MovieBean();
+			if (bean.getRank() != null) {
+				bean2.setDocid(bean.getDocid());
+				bean2.setMovieSeq(bean.getMovieSeq());
+				bean2.setTitle(bean.getTitle());
+				bean2.setDirectorNm(bean.getDirectorNm());
+				bean2.setActorNm(bean.getActorNm());
+				bean2.setPlot(bean.getPlot());
+				bean2.setGenre(bean.getGenre());
+				bean2.setReleaseDate(bean.getReleaseDate());
+				bean2.setRubtime(bean.getRubtime());
+				bean2.setPosterUrl(bean.getPosterUrl());
+				bean2.setVodUrl(bean.getVodUrl());
+				bean2.setAudiAcc(bean.getAudiAcc());
+				bean2.setRating(bean.getRating());
+
+				bean2.setBoxofficeType(bean.getBoxofficeType());
+				bean2.setRuum(bean.getRuum());
+				bean2.setRank(bean.getRank());
+				bean2.setMovieCd(bean.getMovieCd());
+				bean2.setMovieNm(bean.getMovieNm());
+				bean2.setOpenDt(bean.getOpenDt());
+				bean2.setAudiAcc(bean.getAudiAcc());
+
+				vlist2.addElement(bean2); // 리턴 안하는 경우 사용
+			}
+
+		}
+
+		// 오름차순으로 정렬
+		Collections.sort(vlist2, new Comparator<MovieBean>() {
+			@Override
+			public int compare(MovieBean m1, MovieBean m2) {
+				// String rank를 Integer로 변환하여 비교
+				Integer rank1 = Integer.parseInt(m1.getRank());
+				Integer rank2 = Integer.parseInt(m2.getRank());
+				return Integer.compare(rank1, rank2); // rank를 기준으로 정렬
+			}
+		});
+
+		return vlist2;
+	}
+
 	// 상영 중인 영화 리스트 출력
 	public Vector<MovieBean> listMovie() {
 		Connection con = null;
@@ -364,7 +418,7 @@ public class MovieMgr {
 					bean.setMovieCd(movieCd);
 					getBoxOfficeData(bean);
 				}
-				
+
 				vlist.addElement(bean); // 리턴 안하는 경우 사용
 			}
 		} catch (Exception e) {
@@ -410,14 +464,35 @@ public class MovieMgr {
 		return bean;
 	}
 
-	/*
-	 * public static void main(String[] args) { MovieMgr mgr = new MovieMgr();
-	 * Vector<MovieBean> vc; vc = mgr.listMovie();
-	 * 
-	 * for (int i = 0; i < vc.size(); i++) { MovieBean bean = vc.get(i);
-	 * System.out.println(bean.getAudiAcc()); System.out.println(bean.getRank()); }
-	 * 
-	 * }
-	 */
+	// 랜덤으로 비디오 url 출력
+	public String getVideoUrl() {
+		// ex. https://www.kmdb.or.kr/trailer/play/MK061240_P02.mp4
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+
+		try {
+			con = pool.getConnection();
+			sql = "SELECT vodUrl FROM tblmovie WHERE vodUrl IS NOT NULL AND vodUrl != '' ORDER BY RAND() LIMIT 1;";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				videoUrl = rs.getString(1);
+			}
+			videoUrl = videoUrl.replaceAll("trailerPlayPop\\?pFileNm=", "play/");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		System.out.println(videoUrl);
+		return videoUrl;
+	}
+
+	public static void main(String[] args) {
+		MovieMgr mgr = new MovieMgr();
+		mgr.getVideoUrl();
+	}
 
 }

@@ -24,6 +24,8 @@ import javax.swing.JSeparator;
 import javax.swing.JEditorPane;
 import javax.swing.SwingConstants;
 
+import javafx.application.Platform;
+
 public class MyPage {
 
 	private JFrame frame;
@@ -33,7 +35,6 @@ public class MyPage {
 		initialize();
 	}
 
-	// Initialize the contents of the frame.
 	private void initialize() {
 		frame = new JFrame();
 		frame.setResizable(false);
@@ -310,12 +311,10 @@ public class MyPage {
 		HomeButton.setBounds(61, 36, 97, 34);
 		MyPagePanel.add(HomeButton);
 
-		HomeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				MainForm mf = new MainForm();
-				mf.setVisible(true);
-				frame.dispose();
-			}
+		HomeButton.addActionListener(e -> {
+		    MainForm mf = new MainForm();
+		    mf.setVisible(true);
+		    frame.dispose();
 		});
 
 		JButton ModifyUserInfo_Btn = new JButton("회원정보 수정");
@@ -344,11 +343,6 @@ public class MyPage {
 			}
 		});
 
-		HomeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-
 		Logout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -363,6 +357,7 @@ public class MyPage {
 			}
 		});
 
+		frame.validate();
 		frame.setVisible(true);
 	}
 

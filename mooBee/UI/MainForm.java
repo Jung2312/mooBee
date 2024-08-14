@@ -19,12 +19,13 @@ import java.awt.event.ActionListener;
 public class MainForm extends JFrame {
 	
 	private JFrame frame;
-    private JFXPanel fxPanel; 
-    private JPanel Trailer;
-    private MediaPlayer mediaPlayer;
-    MovieMgr mMgr;
+  private JFXPanel fxPanel; 
+  private JPanel Trailer;
+  private MediaPlayer mediaPlayer;
+  MovieMgr mMgr;
     
-	public MainForm() {
+	public MainForm(String userId) {
+	  this.userId = userId;
 		initialize();
 		mMgr = new MovieMgr();
 	}
@@ -89,11 +90,13 @@ public class MainForm extends JFrame {
 		JMenuItem GoMyPage = new JMenuItem("마이페이지");
 		popupMenu.add(GoMyPage);
 
-        GoMyPage.addActionListener(e -> {
-            new MyPage();
-            setVisible(false);
-            dispose();
-        });
+		GoMyPage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MyPage mp = new MyPage(userId);
+				setVisible(true);
+				dispose();
+			}
+		});
 
 		JMenuItem GoNotice = new JMenuItem("공지사항");
 		popupMenu.add(GoNotice);
@@ -158,7 +161,7 @@ public class MainForm extends JFrame {
 	public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
-                MainForm window = new MainForm();
+                MainForm window = new MainForm(userId);
                 window.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();

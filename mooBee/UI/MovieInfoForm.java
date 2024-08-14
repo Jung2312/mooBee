@@ -15,7 +15,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class MovieInfoForm extends JFrame {
 
@@ -24,18 +23,18 @@ public class MovieInfoForm extends JFrame {
     private int reviewsPerPage;
     private JPanel reviewsContainer;
     private int currentPageGroup; // 현재 페이지 그룹 (예: 1~5)
-	MovieMgr mMgr;
-	MovieBean bean;
+    MovieMgr mMgr;
+    MovieBean bean;
 
     public MovieInfoForm(int docid) {
         reviews = new ArrayList<>();
-        // 예시로 몇 개의 리뷰 추가
-        for (int i = 1; i <= 23; i++) {
+        // 예시로 i개의 리뷰 추가 (각 페이지에 4개씩 배치)
+        for (int i = 1; i <= 26; i++) {
             reviews.add("nickname" + i + ": 리뷰 내용 " + i);
         }
         
         currentPage = 1;
-        reviewsPerPage = 5;
+        reviewsPerPage = 4; // 페이지당 4개의 리뷰 표시
         currentPageGroup = 1;
         
         setTitle("영화 정보 및 리뷰");
@@ -67,19 +66,18 @@ public class MovieInfoForm extends JFrame {
         JLabel moviePoster = new JLabel();
         moviePoster.setBounds(150, 100, 250, 350);
         moviePoster.setOpaque(true);
-    	ImageIcon imgIcon;
-		try {
-			imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
-	        Image img = imgIcon.getImage();  
-	        Image scaledImg = img.getScaledInstance(250, 350, Image.SCALE_SMOOTH); 
-	        moviePoster.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH)); 
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
+        ImageIcon imgIcon;
+        try {
+            imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
+            Image img = imgIcon.getImage();  
+            Image scaledImg = img.getScaledInstance(250, 350, Image.SCALE_SMOOTH); 
+            moviePoster.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH)); 
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         movieInfoPanel.add(moviePoster);
 
-        System.out.println(bean.getRuntime());
-        JLabel movieDetails = new JLabel("<html>개봉일: "+bean.getReleaseDate()+"<br><br>관람시간: "+bean.getRuntime()+"분<br><br>감독: "+bean.getDirectorNm()+"<br><br>주연 배우: "+bean.getActorNm()+"<br></html>");
+        JLabel movieDetails = new JLabel("<html>개봉일: " + bean.getReleaseDate() + "<br><br>관람시간: " + bean.getRuntime() + "분<br><br>감독: " + bean.getDirectorNm() + "<br><br>주연 배우: " + bean.getActorNm() + "<br></html>");
         movieDetails.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         movieDetails.setBounds(450, 100, 400, 250);
         movieInfoPanel.add(movieDetails);
@@ -153,46 +151,6 @@ public class MovieInfoForm extends JFrame {
         paginationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
         reviewPanel.add(paginationPanel, BorderLayout.SOUTH);
 
-        JButton prevGroupButton = new JButton("<");
-        prevGroupButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currentPageGroup > 1) {
-                    currentPageGroup--;
-                    updatePagination(paginationPanel);
-                    currentPage = (currentPageGroup - 1) * 5 + 1;
-                    updateReviews();
-                }
-            }
-        });
-        paginationPanel.add(prevGroupButton);
-
-        for (int i = 1; i <= 5; i++) {
-            JButton pageButton = new JButton(String.valueOf(i));
-            pageButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    currentPage = Integer.parseInt(pageButton.getText()) + (currentPageGroup - 1) * 5;
-                    updateReviews();
-                }
-            });
-            paginationPanel.add(pageButton);
-        }
-
-        JButton nextGroupButton = new JButton(">");
-        nextGroupButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ((currentPageGroup * 5 * reviewsPerPage) < reviews.size()) {
-                    currentPageGroup++;
-                    updatePagination(paginationPanel);
-                    currentPage = (currentPageGroup - 1) * 5 + 1;
-                    updateReviews();
-                }
-            }
-        });
-        paginationPanel.add(nextGroupButton);
-
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(movieInfoPanel);
@@ -230,28 +188,25 @@ public class MovieInfoForm extends JFrame {
         });
 
         goToTrailerButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String url = mMgr.getVideoUrl(docid);
-				if(url.equals("")) {
-					goToTrailerButton.setBackground(Color.GRAY);
-				}else {
-					if (Desktop.isDesktopSupported()) {
-						Desktop desktop = Desktop.getDesktop();
-						try {
-							URI uri = new URI(url);
-							desktop.browse(uri);
-						} catch (IOException ex) {
-							ex.printStackTrace();
-						} catch (URISyntaxException ex) {
-							ex.printStackTrace();
-						}
-					}
-				}
-	
-			}
-		});
-        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String url = mMgr.getVideoUrl(docid);
+                if (url.equals("")) {
+                    goToTrailerButton.setBackground(Color.GRAY);
+                } else {
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop desktop = Desktop.getDesktop();
+                        try {
+                            URI uri = new URI(url);
+                            desktop.browse(uri);
+                        } catch (IOException | URISyntaxException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+
         updateReviews(); // 초기 리뷰 표시
         updatePagination(paginationPanel); // 초기 페이지네이션 설정
         setVisible(true);
@@ -266,19 +221,59 @@ public class MovieInfoForm extends JFrame {
             addReview(reviewsContainer, reviews.get(i));
         }
 
+        // 빈 공간을 남겨두기 위한 로직 추가
+        int emptySlots = reviewsPerPage - (end - start);
+        for (int i = 0; i < emptySlots; i++) {
+            JPanel emptyPanel = new JPanel();
+            emptyPanel.setPreferredSize(new Dimension(900, 80));
+            reviewsContainer.add(emptyPanel);
+        }
+
         reviewsContainer.revalidate();
         reviewsContainer.repaint();
     }
 
     private void updatePagination(JPanel paginationPanel) {
-        // 현재 페이지 그룹(1~5, 6~10 등)의 버튼 텍스트 업데이트
-        Component[] components = paginationPanel.getComponents();
-        for (int i = 1; i <= 5; i++) {
-            JButton pageButton = (JButton) components[i];
-            int pageNumber = (currentPageGroup - 1) * 5 + i;
-            pageButton.setText(String.valueOf(pageNumber));
-            pageButton.setEnabled(pageNumber <= Math.ceil((double) reviews.size() / reviewsPerPage));
+        paginationPanel.removeAll();
+
+        int totalPages = (int) Math.ceil((double) reviews.size() / reviewsPerPage);
+        int maxPageInGroup = 5;
+        int startPage = (currentPageGroup - 1) * maxPageInGroup + 1;
+        int endPage = Math.min(currentPageGroup * maxPageInGroup, totalPages);
+
+        if (currentPageGroup > 1) {
+            JButton prevGroupButton = new JButton("<");
+            prevGroupButton.addActionListener(e -> {
+                currentPageGroup--;
+                updatePagination(paginationPanel);
+                currentPage = (currentPageGroup - 1) * maxPageInGroup + 1;
+                updateReviews();
+            });
+            paginationPanel.add(prevGroupButton);
         }
+
+        for (int i = startPage; i <= endPage; i++) {
+            JButton pageButton = new JButton(String.valueOf(i));
+            pageButton.addActionListener(e -> {
+                currentPage = Integer.parseInt(pageButton.getText());
+                updateReviews();
+            });
+            paginationPanel.add(pageButton);
+        }
+
+        if (endPage < totalPages) {
+            JButton nextGroupButton = new JButton(">");
+            nextGroupButton.addActionListener(e -> {
+                currentPageGroup++;
+                updatePagination(paginationPanel);
+                currentPage = (currentPageGroup - 1) * maxPageInGroup + 1;
+                updateReviews();
+            });
+            paginationPanel.add(nextGroupButton);
+        }
+
+        paginationPanel.revalidate();
+        paginationPanel.repaint();
     }
 
     private void addReview(JPanel container, String reviewText) {
@@ -297,8 +292,8 @@ public class MovieInfoForm extends JFrame {
         container.add(reviewPanel);
         container.add(separator);
     }
-    public static void main(String[] args) {
-		new MovieInfoForm(1);
-	}
 
+    public static void main(String[] args) {
+        new MovieInfoForm(1);
+    }
 }

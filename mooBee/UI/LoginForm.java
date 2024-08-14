@@ -73,7 +73,7 @@ public class LoginForm extends JFrame {
             if (isValidUser) {
                 JOptionPane.showMessageDialog(loginFrame, "로그인 성공!");
                 loginFrame.dispose(); // 로그인 성공 시 창 닫기
-                loginFrame.dispose();  // 로그인 창 닫기
+                dispose();
                 openMainForm(userId);  // 메인 폼 열기
             } else {
                 JOptionPane.showMessageDialog(loginFrame, "로그인 실패. 이메일 또는 비밀번호가 잘못되었습니다.");

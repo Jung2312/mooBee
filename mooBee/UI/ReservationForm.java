@@ -1,14 +1,21 @@
 package UI;
 
 import javax.swing.*;
+
+import screen.ScreenBean;
+import screen.ScreenMgr;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ReservationForm extends JFrame {
 	private static String userId;
+	private ScreenBean screenbean;
+	private ScreenMgr screenmgr;
     public ReservationForm() {
-    
+    	screenbean = new ScreenBean();
+    	screenmgr = new ScreenMgr();
         setTitle("영화 예매 창");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

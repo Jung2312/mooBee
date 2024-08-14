@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ReservationCompleteForm extends JFrame {
+	private static String userId;
 
     public ReservationCompleteForm() {
       
@@ -47,7 +48,7 @@ public class ReservationCompleteForm extends JFrame {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm();  
+                new MainForm(userId);  
                 dispose();      
             }
         });

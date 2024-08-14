@@ -23,18 +23,25 @@ import java.awt.Toolkit;
 import javax.swing.JSeparator;
 import javax.swing.JEditorPane;
 import javax.swing.SwingConstants;
+import user.UserBean;
+import user.UserMgr;
 
 public class MyPage {
 
 	private JFrame frame;
-
+	private UserBean userbean;
+	private UserMgr usermgr;
+	private static String userId;
 	// Create the application.
-	public MyPage() {
+	public MyPage(String userId) {
+		this.userId = userId;
 		initialize();
 	}
 
-	// Initialize the contents of the frame.
 	private void initialize() {
+		usermgr = new UserMgr();
+		userbean = new UserBean();
+		userbean = usermgr.getUser(userId);
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 1000, 700);
@@ -72,7 +79,7 @@ public class MyPage {
 		lblNewLabel_2.setBounds(156, 72, 28, 34);
 		MyInfoPanel.add(lblNewLabel_2);
 
-		JLabel name = new JLabel("홍길동");
+		JLabel name = new JLabel(userbean.getName());
 		name.setFont(new Font("나눔고딕 ExtraBold", Font.BOLD, 30));
 		name.setBounds(58, 75, 97, 34);
 		MyInfoPanel.add(name);
@@ -109,12 +116,12 @@ public class MyPage {
 			}
 		});
 
-		JLabel Year_Cost = new JLabel("연간 누적 금액 200,000원");
+		JLabel Year_Cost = new JLabel("연간 누적 금액 :"+userbean.getPaymentAmount()+"원");
 		Year_Cost.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 		Year_Cost.setBounds(127, 31, 270, 34);
 		MyInfoPanel.add(Year_Cost);
 
-		JLabel Current_Membership = new JLabel("GOLD");
+		JLabel Current_Membership = new JLabel(userbean.getGrade());
 		Current_Membership.setBounds(44, 28, 67, 34);
 		MyInfoPanel.add(Current_Membership);
 		Current_Membership.setHorizontalAlignment(SwingConstants.CENTER);
@@ -131,7 +138,7 @@ public class MyPage {
 		MyInfoPanel.add(mannerCircle);
 		mannerCircle.setLayout(null);
 		
-		JLabel MyMannerTemp = new JLabel("36.5º");
+		JLabel MyMannerTemp = new JLabel(userbean.getTemp()+"˚");
 		MyMannerTemp.setBounds(10, 10, 55, 55);
 		MyMannerTemp.setFont(new Font("나눔고딕", Font.PLAIN, 18));
 		MyMannerTemp.setHorizontalAlignment(SwingConstants.CENTER);
@@ -294,7 +301,7 @@ public class MyPage {
 
 		GoMyPage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MyPage mp = new MyPage();
+				MyPage mp = new MyPage(userId);
 				frame.setVisible(true);
 				frame.dispose();
 			}
@@ -310,9 +317,10 @@ public class MyPage {
 		HomeButton.setBounds(61, 36, 97, 34);
 		MyPagePanel.add(HomeButton);
 
+
 		HomeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MainForm mf = new MainForm();
+				MainForm mf = new MainForm(userId);
 				mf.setVisible(true);
 				frame.dispose();
 			}
@@ -344,11 +352,6 @@ public class MyPage {
 			}
 		});
 
-		HomeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-
 		Logout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -363,6 +366,7 @@ public class MyPage {
 			}
 		});
 
+		frame.validate();
 		frame.setVisible(true);
 	}
 
@@ -385,7 +389,7 @@ public class MyPage {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MyPage window = new MyPage();
+					MyPage window = new MyPage(userId);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

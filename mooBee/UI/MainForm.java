@@ -9,71 +9,71 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import movie.MovieMgr;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainForm extends JFrame {
+	
+	private JFrame frame;
+	private JFXPanel fxPanel; 
+	private JPanel Trailer;
+	private MediaPlayer mediaPlayer;
+	private String userId;
+	MovieMgr mMgr;
     
-    private JFrame frame;
-    
-    public MainForm() {
-        initialize();
-    }
+	public MainForm(String userId) {
+		this.userId = userId;
+		initialize();
+		mMgr = new MovieMgr();
+	}
 
-    private void initialize() {
+	private void initialize() {
 
-        setTitle("MooBee");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        getContentPane().setLayout(null);
+		setTitle("MooBee");
+		setSize(1000, 700);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		getContentPane().setLayout(null);
 
-        JPanel MainForm_Panel = new JPanel();
-        MainForm_Panel.setBounds(0, 0, 984, 661);
-        getContentPane().add(MainForm_Panel);
-        MainForm_Panel.setLayout(null);
+		
+		JPanel MainForm_Panel = new JPanel();
+		MainForm_Panel.setBounds(0, 0, 984, 661);
+		getContentPane().add(MainForm_Panel);
+		MainForm_Panel.setLayout(null);
 
-        JLabel titleLabel = new JLabel("MooBee", JLabel.CENTER);
-        titleLabel.setBounds(401, 51, 200, 50);
-        MainForm_Panel.add(titleLabel);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
+		JLabel titleLabel = new JLabel("MooBee", JLabel.CENTER);
+		titleLabel.setBounds(401, 51, 200, 50);
+		MainForm_Panel.add(titleLabel);
+		titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
 
-        JButton btnMovieBooking = new JButton("영화 예매");
-        btnMovieBooking.setBounds(301, 151, 100, 50);
-        MainForm_Panel.add(btnMovieBooking);
+		JButton btnMovieBooking = new JButton("영화 예매");
+		btnMovieBooking.setBounds(301, 151, 100, 50);
+		MainForm_Panel.add(btnMovieBooking);
 
-        JButton btnNowShowing = new JButton("현재 상영작");
-        btnNowShowing.setBounds(451, 151, 100, 50);
-        MainForm_Panel.add(btnNowShowing);
+		JButton btnNowShowing = new JButton("현재 상영작");
+		btnNowShowing.setBounds(451, 151, 100, 50);
+		MainForm_Panel.add(btnNowShowing);
 
-        JButton btnNotices = new JButton("공지사항");
-        btnNotices.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				NoticeList nl = new NoticeList(); // MyReservation 창 생성
-				nl.getFrame().setVisible(true); // MyReservation 창을 표시
-				dispose(); // 현재 창을 닫음
-			}
-		});
-        btnNotices.setBounds(601, 151, 100, 50);
-        MainForm_Panel.add(btnNotices);
+		JButton btnNotices = new JButton("공지사항");
+		btnNotices.setBounds(601, 151, 100, 50);
+		MainForm_Panel.add(btnNotices);
 
-        JPanel Trailer = new JPanel();
-        Trailer.setBounds(151, 251, 700, 300);
-        MainForm_Panel.add(Trailer);
-        Trailer.setBackground(Color.GRAY);
+	        Trailer = new JPanel();
+	        Trailer.setBounds(151, 251, 700, 300);
+	        MainForm_Panel.add(Trailer);
+	        Trailer.setBackground(Color.GRAY);
+	        Trailer.setLayout(new BorderLayout());
+	
+	        fxPanel = new JFXPanel();
+	        Trailer.add(fxPanel, BorderLayout.CENTER);
+	        Platform.runLater(this::createVideoPlayer);
 
-        // video(+박스오피스 랭킹 1위 찾아서 해당 영화 트레일러 출력)
-        JFXPanel fxPanel = new JFXPanel();
-        Trailer.setLayout(new BorderLayout());
-        Trailer.add(fxPanel, BorderLayout.CENTER);
-
-        Platform.runLater(() -> createVideoPlayer(fxPanel));
-        
-        JButton MenuTab = new JButton("메뉴");
-        MenuTab.setBounds(826, 36, 97, 34);
-        MainForm_Panel.add(MenuTab);
+		JButton MenuTab = new JButton("메뉴");
+		MenuTab.setBounds(826, 36, 97, 34);
+		MainForm_Panel.add(MenuTab);
 
         JPopupMenu popupMenu = new JPopupMenu();
 
@@ -104,6 +104,7 @@ public class MainForm extends JFrame {
         GoNotice.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				NoticeList NL = new NoticeList();
 				setVisible(true);
 				dispose();
@@ -136,48 +137,42 @@ public class MainForm extends JFrame {
             }
         });
 
-        // 영화 예매 메뉴 클릭 시
-        GoTicket.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new ReservationForm();
-                dispose();
-            }
-        });
+		GoTicket.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ReservationForm();
+				dispose();
+			}
+		});
+		
+		validate();
+		setVisible(true);
+	}
 
-        setVisible(true);
-    }
+	public void createVideoPlayer() {
+	    Platform.runLater(() -> {
+	        try {
+	            StackPane root = new StackPane();
+	            Scene scene = new Scene(root, 700, 300);
 
-    private void createVideoPlayer(JFXPanel fxPanel) {
-        Platform.runLater(() -> {
-            try {
-                
-                StackPane root = new StackPane();
-                Scene scene = new Scene(root, 700, 300);
-
-                // ++ 랭킹 1위 영상 링크 가져오기
-                String videoUrl = "https://www.kmdb.or.kr/trailer/play/MK061240_P02.mp4";
-                Media media = new Media(videoUrl);
-                media.setOnError(() -> {
-                    System.out.println("Media error: " + media.getError());
-                });
-
-                MediaPlayer mediaPlayer = new MediaPlayer(media);
-                MediaView mediaView = new MediaView(mediaPlayer);
-                root.getChildren().add(mediaView);
-                mediaPlayer.setAutoPlay(true); // Start playing the video immediately
-
-                fxPanel.setScene(scene);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public static void main(String[] args) {
+	            String videoUrl = mMgr.randomVideoUrl();
+	            Media media = new Media(videoUrl);
+	            mediaPlayer = new MediaPlayer(media);
+	            MediaView mediaView = new MediaView(mediaPlayer);
+	            root.getChildren().add(mediaView);
+	            mediaPlayer.setAutoPlay(true);
+	            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(mediaPlayer.getStartTime())); // 비디오 끝나면 처음으로 되돌리기
+	            fxPanel.setScene(scene);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    });
+	}
+	
+	public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
-                MainForm window = new MainForm();
+                MainForm window = new MainForm(userId);
                 window.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();

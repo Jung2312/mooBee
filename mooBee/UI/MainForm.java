@@ -24,8 +24,9 @@ import java.net.URLConnection;
 public class MainForm extends JFrame {
 	
 	private JFrame frame;
-	
-	public MainForm() {
+	private static String userId;
+	public MainForm(String userId) {
+		this.userId = userId;
 		initialize();
 	}
 
@@ -92,7 +93,7 @@ public class MainForm extends JFrame {
 
 		GoMyPage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MyPage mp = new MyPage();
+				MyPage mp = new MyPage(userId);
 				setVisible(true);
 				dispose();
 			}
@@ -166,7 +167,7 @@ public class MainForm extends JFrame {
 	public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
-                MainForm window = new MainForm();
+                MainForm window = new MainForm(userId);
                 window.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();

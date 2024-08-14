@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MovieListForm extends JFrame {
-
+	private static String userId;
     public MovieListForm() {
  
         setTitle("현재 상영작");
@@ -60,7 +60,7 @@ public class MovieListForm extends JFrame {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(); 
+                new MainForm(userId); 
                 dispose(); 
             }
         });

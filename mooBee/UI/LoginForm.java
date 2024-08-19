@@ -22,30 +22,84 @@ public class LoginForm extends JFrame {
         setLayout(null);
 
         // 배경 이미지 설정 
-        ImageIcon backgroundImageIcon = new ImageIcon("C:/MooBee/mooBee/mooBee/UI/images/loginimage.png");
+        ImageIcon backgroundImageIcon = new ImageIcon("C:/moobee/mooBee/mooBee/UI/images/loginimage.png");
         Image backgroundImage = backgroundImageIcon.getImage(); 
         Image resizedImage = backgroundImage.getScaledInstance(1000, 700, Image.SCALE_SMOOTH); // 이미지 크기 조절
         ImageIcon resizedBackgroundImageIcon = new ImageIcon(resizedImage); // 조절된 이미지로 새로운 ImageIcon 생성
         JLabel backgroundLabel = new JLabel(resizedBackgroundImageIcon);
         backgroundLabel.setSize(1000, 700);
         setContentPane(backgroundLabel);
-        backgroundLabel.setLayout(null);  // 레이아웃을 null로 설정하여 컴포넌트의 위치를 자유롭게 지정할 수 있게 함
+        backgroundLabel.setLayout(null); 
 
-        JButton loginButton = new JButton("로그인");
-        loginButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
-        loginButton.setBounds(390, 440, 90, 40);
-        backgroundLabel.add(loginButton); // 배경에 버튼 추가
+        JButton loginButton = honeyButton("로그인");
+        loginButton.setBounds(312, 480, 176, 50);  // 위치와 크기를 약간 조정
+        backgroundLabel.add(loginButton); 
 
-        JButton signupButton = new JButton("회원가입");
-        signupButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
-        signupButton.setBounds(490, 440, 110, 40);
-        backgroundLabel.add(signupButton); // 배경에 버튼 추가
+        JButton signupButton = honeyButton("회원가입");
+        signupButton.setBounds(512, 480, 176, 50);  // 위치와 크기를 약간 조정
+        backgroundLabel.add(signupButton); 
 
         loginButton.addActionListener(e -> openLoginForm());
 
         signupButton.addActionListener(e -> openSignupForm());
 
         setVisible(true);
+    }
+
+    private JButton honeyButton(String text) {
+        JButton button = new JButton(text);
+
+        //버튼 디자인
+        button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            protected void paintButtonPressed(Graphics g, AbstractButton b) {
+                g.setColor(new Color(255, 180, 0)); // 버튼 눌렸을 때 색상
+                g.fillRoundRect(1, 1, b.getWidth() - 2, b.getHeight() - 2, 30, 30);
+            }
+
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                AbstractButton b = (AbstractButton) c;
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // 그라데이션 색상 설정
+                GradientPaint gp;
+                if (b.getModel().isPressed()) {
+                    gp = new GradientPaint(0, 0, new Color(255, 180, 0), 0, b.getHeight(), new Color(255, 140, 0));
+                } else if (b.getModel().isRollover()) {
+                    gp = new GradientPaint(0, 0, new Color(255, 220, 0), 0, b.getHeight(), new Color(255, 165, 0));
+                } else {
+                    gp = new GradientPaint(0, 0, new Color(255, 200, 0), 0, b.getHeight(), new Color(255, 150, 0));
+                }
+
+                // 그라데이션 적용 및 버튼 배경 그리기
+                g2.setPaint(gp);
+                g2.fillRoundRect(1, 1, b.getWidth() - 2, b.getHeight() - 2, 30, 30);
+
+                // 버튼 테두리
+                g2.setColor(Color.BLACK);  
+                g2.setStroke(new BasicStroke(2));
+                g2.drawRoundRect(1, 1, b.getWidth() - 2, b.getHeight() - 2, 30, 30);
+
+                // 텍스트 중앙 정렬
+                g2.setColor(b.getForeground());
+                g2.setFont(b.getFont());
+                FontMetrics fm = g2.getFontMetrics();
+                int x = (b.getWidth() - fm.stringWidth(b.getText())) / 2;
+                int y = (b.getHeight() + fm.getAscent()) / 2 - fm.getDescent();
+                g2.drawString(b.getText(), x, y);
+            }
+        });
+
+        button.setForeground(Color.BLACK);  // 텍스트 색상
+        button.setFont(new Font("맑은 고딕", Font.BOLD, 18)); 
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+
+        return button;
     }
 
     private void openLoginForm() {
@@ -55,6 +109,7 @@ public class LoginForm extends JFrame {
         loginFrame.setLayout(null);
 
         JLabel emailLabel = new JLabel("이메일");
+        emailLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         emailLabel.setBounds(50, 20, 300, 30);
         loginFrame.add(emailLabel);
 
@@ -63,6 +118,7 @@ public class LoginForm extends JFrame {
         loginFrame.add(loginEmailField);
 
         JLabel passwordLabel = new JLabel("비밀번호");
+        passwordLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         passwordLabel.setBounds(50, 90, 300, 30);
         loginFrame.add(passwordLabel);
 
@@ -70,9 +126,10 @@ public class LoginForm extends JFrame {
         loginPasswordField.setBounds(50, 120, 300, 40);
         loginFrame.add(loginPasswordField);
 
-        JButton loginSubmitButton = new JButton("로그인");
-        loginSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
+        JButton loginSubmitButton = honeyButton("로그인");
         loginSubmitButton.setBounds(50, 170, 300, 40);
+        loginFrame.add(loginSubmitButton);
+
         loginSubmitButton.addActionListener(e -> {
             String userId = loginEmailField.getText();
             String password = new String(loginPasswordField.getPassword());
@@ -86,9 +143,9 @@ public class LoginForm extends JFrame {
                 JOptionPane.showMessageDialog(loginFrame, "로그인 실패. 이메일 또는 비밀번호가 잘못되었습니다.");
             }
         });
-        loginFrame.add(loginSubmitButton);
 
         JLabel forgotPasswordLabel = new JLabel("<HTML><U>비밀번호 찾기</U></HTML>"); // 밑줄 추가
+        forgotPasswordLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         forgotPasswordLabel.setBounds(50, 220, 300, 30);
         forgotPasswordLabel.setForeground(Color.BLACK);
         forgotPasswordLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -118,6 +175,7 @@ public class LoginForm extends JFrame {
         signupFrame.setLayout(null);
 
         JLabel nameLabel = new JLabel("이름");
+        nameLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         nameLabel.setBounds(50, 20, 300, 30);
         signupFrame.add(nameLabel);
 
@@ -126,6 +184,7 @@ public class LoginForm extends JFrame {
         signupFrame.add(signupNameField);
 
         JLabel emailLabel = new JLabel("이메일");
+        emailLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         emailLabel.setBounds(50, 90, 300, 30);
         signupFrame.add(emailLabel);
 
@@ -134,6 +193,7 @@ public class LoginForm extends JFrame {
         signupFrame.add(signupEmailField);
 
         JLabel passwordLabel = new JLabel("비밀번호");
+        passwordLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         passwordLabel.setBounds(50, 160, 300, 30);
         signupFrame.add(passwordLabel);
 
@@ -142,6 +202,7 @@ public class LoginForm extends JFrame {
         signupFrame.add(signupPasswordField);
 
         JLabel confirmPasswordLabel = new JLabel("비밀번호 확인");
+        confirmPasswordLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         confirmPasswordLabel.setBounds(50, 230, 300, 30);
         signupFrame.add(confirmPasswordLabel);
 
@@ -150,6 +211,7 @@ public class LoginForm extends JFrame {
         signupFrame.add(signupConfirmPasswordField);
 
         JLabel phoneLabel = new JLabel("전화번호");
+        phoneLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         phoneLabel.setBounds(50, 300, 300, 30);
         signupFrame.add(phoneLabel);
 
@@ -158,12 +220,14 @@ public class LoginForm extends JFrame {
         signupFrame.add(signupPhoneField);
 
         JLabel dobLabel = new JLabel("생년월일");
+        dobLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         dobLabel.setBounds(50, 370, 300, 30);
         signupFrame.add(dobLabel);
 
         JTextField signupDobField = new JTextField("ex) 2000-01-01");
         signupDobField.setBounds(50, 400, 300, 40);
         signupDobField.setForeground(Color.GRAY); // Placeholder 색상 설정
+        signupDobField.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         signupDobField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
@@ -183,7 +247,10 @@ public class LoginForm extends JFrame {
         });
         signupFrame.add(signupDobField);
 
-        JButton signupSubmitButton = new JButton("회원가입");
+        JButton signupSubmitButton = honeyButton("회원가입");
+        signupSubmitButton.setBounds(50, 450, 300, 40);
+        signupFrame.add(signupSubmitButton);
+
         signupSubmitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -205,10 +272,6 @@ public class LoginForm extends JFrame {
                 }
             }
         });
-        signupSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
-        signupSubmitButton.setBounds(50, 450, 300, 40);
-        signupSubmitButton.addActionListener(e -> signupFrame.dispose()); // 버튼 클릭 시 창 닫기
-        signupFrame.add(signupSubmitButton);
 
         signupFrame.setVisible(true);
     }
@@ -220,6 +283,7 @@ public class LoginForm extends JFrame {
         forgotPasswordFrame.setLayout(null);
 
         JLabel nameLabel = new JLabel("이름");
+        nameLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         nameLabel.setBounds(50, 20, 300, 30);
         forgotPasswordFrame.add(nameLabel);
 
@@ -228,6 +292,7 @@ public class LoginForm extends JFrame {
         forgotPasswordFrame.add(forgotPasswordNameField);
 
         JLabel emailLabel = new JLabel("이메일");
+        emailLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         emailLabel.setBounds(50, 100, 300, 30);
         forgotPasswordFrame.add(emailLabel);
 
@@ -236,6 +301,7 @@ public class LoginForm extends JFrame {
         forgotPasswordFrame.add(forgotPasswordEmailField);
 
         JLabel phoneLabel = new JLabel("전화번호");
+        phoneLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         phoneLabel.setBounds(50, 180, 300, 30);
         forgotPasswordFrame.add(phoneLabel);
 
@@ -243,14 +309,14 @@ public class LoginForm extends JFrame {
         forgotPasswordPhoneField.setBounds(50, 210, 300, 40);
         forgotPasswordFrame.add(forgotPasswordPhoneField);
 
-        JButton forgotPasswordSubmitButton = new JButton("비밀번호 찾기");
-        forgotPasswordSubmitButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
+        JButton forgotPasswordSubmitButton = honeyButton("비밀번호 찾기");
         forgotPasswordSubmitButton.setBounds(50, 270, 300, 40);
+        forgotPasswordFrame.add(forgotPasswordSubmitButton);
+
         forgotPasswordSubmitButton.addActionListener(e -> {
             forgotPasswordFrame.dispose(); // 창 닫기
             openVerificationWindow(); // 인증번호 창 열기
         });
-        forgotPasswordFrame.add(forgotPasswordSubmitButton);
 
         forgotPasswordFrame.setVisible(true);
     }
@@ -262,6 +328,7 @@ public class LoginForm extends JFrame {
         verificationFrame.setLayout(null);
 
         JLabel verificationLabel = new JLabel("인증번호");
+        verificationLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         verificationLabel.setBounds(50, 20, 300, 30);
         verificationFrame.add(verificationLabel);
 
@@ -269,11 +336,11 @@ public class LoginForm extends JFrame {
         verificationField.setBounds(50, 50, 300, 40);
         verificationFrame.add(verificationField);
 
-        JButton verifyButton = new JButton("확인");
-        verifyButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
+        JButton verifyButton = honeyButton("확인");
         verifyButton.setBounds(50, 100, 300, 40);
-        verifyButton.addActionListener(e -> verificationFrame.dispose()); // 창 닫기
         verificationFrame.add(verifyButton);
+
+        verifyButton.addActionListener(e -> verificationFrame.dispose()); // 창 닫기
 
         verificationFrame.setVisible(true);
     }

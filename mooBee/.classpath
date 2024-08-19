@@ -1,11 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-22">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path=""/>
+	<classpathentry kind="lib" path="C:/moobee/javafx-sdk-22.0.2/lib/javafx.base.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/moobee/javafx-sdk-22.0.2/lib/javafx.controls.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/moobee/javafx-sdk-22.0.2/lib/javafx.fxml.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/moobee/javafx-sdk-22.0.2/lib/javafx.graphics.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/moobee/javafx-sdk-22.0.2/lib/javafx.media.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/moobee/javafx-sdk-22.0.2/lib/javafx.swing.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/moobee/javafx-sdk-22.0.2/lib/javafx.web.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/moobee/javafx-sdk-22.0.2/lib/javafx-swt.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="C:/Java/jxbrowser-7.40.0.jar"/>
 	<classpathentry kind="lib" path="C:/Java/jxbrowser-javafx-7.40.0.jar"/>
 	<classpathentry kind="lib" path="C:/Java/jxbrowser-swing-7.40.0.jar"/>
@@ -13,46 +53,6 @@
 	<classpathentry kind="lib" path="C:/Java/jxbrowser-win32-7.40.0.jar"/>
 	<classpathentry kind="lib" path="C:/Java/jxbrowser-win64-7.40.0.jar"/>
 	<classpathentry kind="lib" path="C:/Java/mysql-connector-j-8.0.32.jar"/>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/json-20210307.jar"/>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/javafx-sdk-22.0.2/lib/javafx.base.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/javafx-sdk-22.0.2/lib/javafx.controls.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/javafx-sdk-22.0.2/lib/javafx.fxml.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/javafx-sdk-22.0.2/lib/javafx.graphics.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/javafx-sdk-22.0.2/lib/javafx.media.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/javafx-sdk-22.0.2/lib/javafx.swing.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/javafx-sdk-22.0.2/lib/javafx.web.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/MooBee/mooBee/javafx-sdk-22.0.2/lib/javafx-swt.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="C:/moobee/json-20210307.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

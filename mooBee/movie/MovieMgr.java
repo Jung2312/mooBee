@@ -36,6 +36,7 @@ public class MovieMgr {
 
 	// api key
 	String apiKEY = Config.apiKEY;
+	String apiKEY2 = Config.apiKEY2;
 	String kmdbKEY = Config.kmdbKEY;
 
 	private StringBuilder response;
@@ -282,7 +283,7 @@ public class MovieMgr {
 	public void getBoxOfficeData(MovieBean bean) {
 		String movieCd = bean.getMovieCd();
 
-		apiUrl = getBoxOfficeURL + "?key=" + apiKEY;
+		apiUrl = getBoxOfficeURL + "?key=" + apiKEY2;
 		try {
 
 			String fullApiUrl = apiUrl + "&movieCd=" + movieCd + "&targetDt=" + getDateFormat(1);

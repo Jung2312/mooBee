@@ -22,7 +22,7 @@ public class ReviewMgr {
 		boolean flag =false;
 		try {
 			con = pool.getConnection();
-			sql = "insert tblreview values (null,?,?,?,?,null,?,?)";
+			sql = "INSERT INTO tblreview (userId, title, content, docid, scope, recommend) VALUES (?, ?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1,bean.getUserId());
 			pstmt.setString(2,bean.getTitle());
@@ -50,7 +50,7 @@ public class ReviewMgr {
 		Vector<ReviewBean>vlist = new Vector<ReviewBean>();
 		try {
 			con = pool.getConnection();
-			sql = "select * from tblreview";
+			sql = "select * from tblreview ORDER BY reviewNum DESC;";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			while (rs.next()) { 
@@ -72,8 +72,41 @@ public class ReviewMgr {
 		}
 		return vlist;
 	}
+	
+	// 한명의 리뷰 리스트
+	public Vector<ReviewBean> findMemberReview(String userId){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		Vector<ReviewBean>vlist = new Vector<ReviewBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from tblreview where userId = ? ORDER BY reviewNum DESC;";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery();
+			while (rs.next()) { 
+				ReviewBean bean = new ReviewBean();
+				bean.setReviewNum(rs.getInt(1)); //1은 첫번째 컬럼
+				bean.setUserId(rs.getString(2));
+				bean.setTitle(rs.getString(3));
+				bean.setContent(rs.getString(4));
+				bean.setDocid(rs.getInt(5));
+				bean.setReviewDate(rs.getString(6));
+				bean.setScope(rs.getInt(7));
+				bean.setRecommend(rs.getInt(8));
+				vlist.addElement(bean);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+	}
 	//리뷰 한개
-	public ReviewBean getMember(int reviewNum) {
+	public ReviewBean getReview(int reviewNum) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;

@@ -76,7 +76,7 @@ public class MovieListForm extends JFrame {
                 posterLabel.addMouseListener(new MouseAdapter() {
                 	@Override
 					public void mouseClicked(MouseEvent e) {
-						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid());
+						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid(), "11");
 						movieInfoForm.setVisible(true);
 						dispose();
 					}

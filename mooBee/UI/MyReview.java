@@ -11,7 +11,13 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
+
 import javax.swing.JSeparator;
+
+import review.ReviewBean;
+import review.ReviewMgr;
+
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -19,6 +25,9 @@ public class MyReview {
 
 	private JFrame frame;
 	private JFrame previousPage;
+	private static String userId;
+	private ReviewMgr rMgr;
+	private Vector<ReviewBean> reviewList;
 
 	/**
 	 * Launch the application.
@@ -27,7 +36,7 @@ public class MyReview {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MyReview window = new MyReview();
+					MyReview window = new MyReview(userId);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -39,7 +48,8 @@ public class MyReview {
 	/**
 	 * Create the application.
 	 */
-	public MyReview() {
+	public MyReview(String userId) {
+		this.userId = userId;
 		initialize();
 	}
 
@@ -59,16 +69,22 @@ public class MyReview {
 		frame.setBounds(100, 100, 1000, 700);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
+
 		// 화면 중앙에 창을 위치시키기
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int x = (screenSize.width - frame.getWidth()) / 2;
 		int y = (screenSize.height - frame.getHeight()) / 2;
 		frame.setLocation(x, y);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 984, 661);
 		frame.getContentPane().add(scrollPane);
+
+		rMgr = new ReviewMgr();
+		reviewList = rMgr.findMemberReview(userId);
+		for (int i = 0; i < reviewList.size(); i++) {
+			ReviewBean rBean = reviewList.get(i);
+		}
 
 		JPanel panel = new JPanel();
 		scrollPane.setViewportView(panel);
@@ -98,56 +114,53 @@ public class MyReview {
 		separator.setBounds(40, 111, 895, 2);
 		panel.add(separator);
 
-		JSeparator separator1 = new JSeparator();
-		separator1.setForeground(new Color(192, 192, 192));
-		separator1.setBackground(new Color(192, 192, 192));
-		separator1.setBounds(56, 253, 866, 2);
-		panel.add(separator1);
+		reviewList = rMgr.findMemberReview("11");
 
-		JLabel MovieTitle_Label1 = new JLabel("명탐정코난 - 100만달러의 펜타그램(더빙)");
-		MovieTitle_Label1.setFont(new Font("나눔고딕", Font.BOLD, 20));
-		MovieTitle_Label1.setBounds(56, 123, 866, 41);
-		panel.add(MovieTitle_Label1);
+		int size1 = 123;
+		int size2 = 171;
+		int size3 = 209;
+		int size4 = 214;
+		int size5 = 253;
 
-		JLabel ReviewDate_Label1 = new JLabel("2024.07.25");
-		ReviewDate_Label1.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-		ReviewDate_Label1.setBounds(699, 209, 117, 34);
-		panel.add(ReviewDate_Label1);
+		for (int i = 0; i < reviewList.size(); i++) {
+			
+			if(i == 3) {
+				break;
+			}
+			
+			ReviewBean rBean = reviewList.get(i);
+			JLabel MovieTitle_Label1 = new JLabel(rBean.getTitle());
+			MovieTitle_Label1.setFont(new Font("나눔고딕", Font.BOLD, 20));
+			MovieTitle_Label1.setBounds(56, size1, 866, 41);
+			panel.add(MovieTitle_Label1);
 
-		JLabel Recommend_Label1 = new JLabel("추천 15개");
-		Recommend_Label1.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-		Recommend_Label1.setBounds(832, 214, 90, 24);
-		panel.add(Recommend_Label1);
+			JLabel MyReview_Label1 = new JLabel(rBean.getContent());
+			MyReview_Label1.setFont(new Font("나눔고딕", Font.BOLD, 15));
+			MyReview_Label1.setBounds(56, size2, 866, 28);
+			panel.add(MyReview_Label1);
 
-		JLabel MyReview_Label1 = new JLabel("역시 이번에도 기대를 저버리지 않는 판타지 영화. 개인적으로 작년에 했던 흑철의 어영이 더 재밌음 ");
-		MyReview_Label1.setFont(new Font("나눔고딕", Font.BOLD, 15));
-		MyReview_Label1.setBounds(56, 171, 866, 28);
-		panel.add(MyReview_Label1);
+			JLabel ReviewDate_Label1 = new JLabel(rBean.getReviewDate());
+			ReviewDate_Label1.setFont(new Font("나눔고딕", Font.PLAIN, 20));
+			ReviewDate_Label1.setBounds(699, size3, 117, 34);
+			panel.add(ReviewDate_Label1);
 
-		JSeparator separator2 = new JSeparator();
-		separator2.setForeground(Color.LIGHT_GRAY);
-		separator2.setBackground(Color.LIGHT_GRAY);
-		separator2.setBounds(56, 395, 866, 2);
-		panel.add(separator2);
+			JLabel Recommend_Label1 = new JLabel("추천 "+rBean.getRecommend()+"개");
+			Recommend_Label1.setFont(new Font("나눔고딕", Font.PLAIN, 20));
+			Recommend_Label1.setBounds(832, size4, 90, 24);
+			panel.add(Recommend_Label1);
 
-		JLabel MovieTitle_Label1_1 = new JLabel("데드풀과 울버린");
-		MovieTitle_Label1_1.setFont(new Font("나눔고딕", Font.BOLD, 20));
-		MovieTitle_Label1_1.setBounds(56, 265, 866, 41);
-		panel.add(MovieTitle_Label1_1);
+			JSeparator separator1 = new JSeparator();
+			separator1.setForeground(new Color(192, 192, 192));
+			separator1.setBackground(new Color(192, 192, 192));
+			separator1.setBounds(56, size5, 866, 2);
+			panel.add(separator1);
+			size1 += 142;
+			size2 += 142;
+			size3 += 142;
+			size4 += 142;
+			size5 += 142;
+		}
 
-		JLabel MyReview_Label1_1 = new JLabel("마블이 돌아왔다!");
-		MyReview_Label1_1.setFont(new Font("나눔고딕", Font.BOLD, 15));
-		MyReview_Label1_1.setBounds(56, 313, 866, 28);
-		panel.add(MyReview_Label1_1);
 
-		JLabel ReviewDate_Label1_1 = new JLabel("2024.08.13");
-		ReviewDate_Label1_1.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-		ReviewDate_Label1_1.setBounds(699, 351, 117, 34);
-		panel.add(ReviewDate_Label1_1);
-
-		JLabel Recommend_Label1_1 = new JLabel("추천 8개");
-		Recommend_Label1_1.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-		Recommend_Label1_1.setBounds(832, 356, 90, 24);
-		panel.add(Recommend_Label1_1);
 	}
 }

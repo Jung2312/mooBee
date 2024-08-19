@@ -4,6 +4,8 @@ import javax.swing.*;
 
 import movie.MovieBean;
 import movie.MovieMgr;
+import review.ReviewBean;
+import review.ReviewMgr;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,6 +17,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class MovieInfoForm extends JFrame {
 
@@ -23,15 +26,19 @@ public class MovieInfoForm extends JFrame {
     private int reviewsPerPage;
     private JPanel reviewsContainer;
     private int currentPageGroup; // 현재 페이지 그룹 (예: 1~5)
+    private JPanel reviewPanel;
     MovieMgr mMgr;
-    MovieBean bean;
+    MovieBean mBean;
+    ReviewMgr rMgr;
+    ReviewBean rBean;
+    Vector<ReviewBean> vlist;
+    
+    public MovieInfoForm(int docid, String userId) {
+		rMgr = new ReviewMgr();
+        mMgr = new MovieMgr();
+        mBean = mMgr.getMovie(docid);
+        
 
-    public MovieInfoForm(int docid) {
-        reviews = new ArrayList<>();
-        // 예시로 i개의 리뷰 추가 (각 페이지에 4개씩 배치)
-        for (int i = 1; i <= 26; i++) {
-            reviews.add("nickname" + i + ": 리뷰 내용 " + i);
-        }
         
         currentPage = 1;
         reviewsPerPage = 4; // 페이지당 4개의 리뷰 표시
@@ -55,10 +62,8 @@ public class MovieInfoForm extends JFrame {
         backButton.setBounds(830, 30, 100, 30);
         movieInfoPanel.add(backButton);
 
-        mMgr = new MovieMgr();
-        bean = mMgr.getMovie(docid);
         
-        JLabel titleLabel = new JLabel(bean.getTitle(), JLabel.CENTER);
+        JLabel titleLabel = new JLabel(mBean.getTitle(), JLabel.CENTER);
         titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 28));
         titleLabel.setBounds(250, 30, 500, 40);
         movieInfoPanel.add(titleLabel);
@@ -68,7 +73,7 @@ public class MovieInfoForm extends JFrame {
         moviePoster.setOpaque(true);
         ImageIcon imgIcon;
         try {
-            imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
+            imgIcon = new ImageIcon(new URL(mBean.getPosterUrl()));
             Image img = imgIcon.getImage();  
             Image scaledImg = img.getScaledInstance(250, 350, Image.SCALE_SMOOTH); 
             moviePoster.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH)); 
@@ -77,7 +82,7 @@ public class MovieInfoForm extends JFrame {
         }
         movieInfoPanel.add(moviePoster);
 
-        JLabel movieDetails = new JLabel("<html>개봉일: " + bean.getReleaseDate() + "<br><br>관람시간: " + bean.getRuntime() + "분<br><br>감독: " + bean.getDirectorNm() + "<br><br>주연 배우: " + bean.getActorNm() + "<br></html>");
+        JLabel movieDetails = new JLabel("<html>개봉일: " + mBean.getReleaseDate() + "<br><br>관람시간: " + mBean.getRuntime() + "분<br><br>감독: " + mBean.getDirectorNm() + "<br><br>주연 배우: " + mBean.getActorNm() + "<br></html>");
         movieDetails.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         movieDetails.setBounds(450, 100, 400, 250);
         movieInfoPanel.add(movieDetails);
@@ -97,12 +102,12 @@ public class MovieInfoForm extends JFrame {
         storyPanel.setBackground(Color.WHITE);
         storyPanel.setBorder(BorderFactory.createTitledBorder("영화 줄거리"));
 
-        JLabel storyLabel = new JLabel(bean.getPlot());
+        JLabel storyLabel = new JLabel(mBean.getPlot());
         storyLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
         storyLabel.setVerticalAlignment(JLabel.TOP);
         storyPanel.add(storyLabel, BorderLayout.CENTER);
 
-        JPanel reviewPanel = new JPanel();
+        reviewPanel = new JPanel();
         reviewPanel.setLayout(new BorderLayout());
         reviewPanel.setPreferredSize(new Dimension(1000, 550));
         reviewPanel.setBackground(Color.WHITE);
@@ -124,6 +129,8 @@ public class MovieInfoForm extends JFrame {
         JButton submitReviewButton = new JButton("리뷰 작성");
         submitReviewButton.setBounds(850, 80, 100, 40);
         reviewTitlePanel.add(submitReviewButton);
+        
+        reviews = new ArrayList<>();
 
         JRadioButton latestOrderButton = new JRadioButton("최신순");
         latestOrderButton.setSelected(true);
@@ -206,6 +213,24 @@ public class MovieInfoForm extends JFrame {
                 }
             }
         });
+        
+        submitReviewButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				rBean = new ReviewBean();
+				rBean.setUserId(userId);
+				rBean.setTitle(titleLabel.getText());
+				rBean.setScope(5);
+				rBean.setRecommend(5);
+				rBean.setDocid(docid);
+				rBean.setContent(reviewInputField.getText());
+				rMgr.insertReview(rBean);
+
+				updateReviews();
+		        updatePagination(paginationPanel); // 초기 페이지네이션 설정
+			}
+		});
 
         updateReviews(); // 초기 리뷰 표시
         updatePagination(paginationPanel); // 초기 페이지네이션 설정
@@ -214,9 +239,18 @@ public class MovieInfoForm extends JFrame {
 
     private void updateReviews() {
         reviewsContainer.removeAll();
+        reviews.removeAll(reviews);
+        
+        vlist = rMgr.listReview();
+
+        // 리뷰 추가 (각 페이지에 4개씩 배치)
+        for (int i = 0; i < vlist.size(); i++) {
+            ReviewBean rBean = vlist.get(i);
+            reviews.add("   "+rBean.getUserId() + " : " + rBean.getContent());
+        }
         int start = (currentPage - 1) * reviewsPerPage;
         int end = Math.min(start + reviewsPerPage, reviews.size());
-
+        
         for (int i = start; i < end; i++) {
             addReview(reviewsContainer, reviews.get(i));
         }
@@ -277,7 +311,7 @@ public class MovieInfoForm extends JFrame {
     }
 
     private void addReview(JPanel container, String reviewText) {
-        JPanel reviewPanel = new JPanel();
+    	reviewPanel = new JPanel();
         reviewPanel.setLayout(new BorderLayout());
         reviewPanel.setPreferredSize(new Dimension(900, 80));
 
@@ -294,6 +328,6 @@ public class MovieInfoForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new MovieInfoForm(1);
+        new MovieInfoForm(1,"11");
     }
 }

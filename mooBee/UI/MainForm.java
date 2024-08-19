@@ -55,16 +55,16 @@ public class MainForm extends JFrame {
         logoPanel.add(logoLabel);
 
        
-        JButton btnMovieBooking = new JButton("영화 예매");
-        btnMovieBooking.setBounds(301, 180, 100, 50);
+        JButton btnMovieBooking = new HoneyButton("영화 예매");
+        btnMovieBooking.setBounds(250, 180, 150, 50);
         MainForm_Panel.add(btnMovieBooking);
 
-        JButton btnNowShowing = new JButton("현재 상영작");
-        btnNowShowing.setBounds(451, 180, 100, 50);
+        JButton btnNowShowing = new HoneyButton("현재 상영작");
+        btnNowShowing.setBounds(417, 180, 150, 50);
         MainForm_Panel.add(btnNowShowing);
 
-        JButton btnNotices = new JButton("공지사항");
-        btnNotices.setBounds(601, 180, 100, 50);
+        JButton btnNotices = new HoneyButton("공지사항");
+        btnNotices.setBounds(584, 180, 150, 50);
         MainForm_Panel.add(btnNotices);
 
         Trailer = new JPanel();
@@ -77,7 +77,7 @@ public class MainForm extends JFrame {
         Trailer.add(fxPanel, BorderLayout.CENTER);
         Platform.runLater(this::createVideoPlayer);
 
-        JButton MenuTab = new JButton("메뉴");
+        JButton MenuTab = new ControlButton("메뉴");
         MenuTab.setBounds(826, 36, 97, 34);
         MainForm_Panel.add(MenuTab);
 

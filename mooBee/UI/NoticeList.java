@@ -134,7 +134,7 @@ public class NoticeList {
 
 		HomeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MainForm mf = new MainForm();
+				MainForm mf = new MainForm(userid);
 				mf.setVisible(true);
 				frame.dispose();
 			}

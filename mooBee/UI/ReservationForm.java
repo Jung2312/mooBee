@@ -19,7 +19,8 @@ public class ReservationForm extends JFrame {
     private static String userId;
     private ScreenBean screenbean;
     private ScreenMgr screenmgr;
-    static String RSVmovieName,RSVcinemaName, RSVDate,RSVTime;
+    private static int RSVdocid,RSVcinemaNum;
+    private static String RSVDate;
     public ReservationForm() {
         screenbean = new ScreenBean();
         screenmgr = new ScreenMgr();
@@ -166,7 +167,6 @@ public class ReservationForm extends JFrame {
                         dateJList.setVisibleRowCount(10);
                         JScrollPane dateScroller = new JScrollPane(dateJList);
                         dateJList.setCellRenderer(new ScreenBeanCellRenderer());
-
                         // 날짜 선택 패널을 업데이트합니다.
                         dateSelectionPanel.removeAll();
                         JLabel dateSelectionTitle = new JLabel("날짜 선택", JLabel.CENTER);
@@ -189,12 +189,8 @@ public class ReservationForm extends JFrame {
                                 int dateDocid = selectedDate.getDocid();
                                 String cinemaName = selectedDate.getCinemaName();
                                 String screenDate = selectedDate.getScreenDate();
-                                System.out.println(dateDocid);
-                                System.out.println(cinemaName);
-                                System.out.println(screenDate);
                                 Vector<ScreenBean> timeList = screenmgr.listScreenTime(dateDocid, cinemaName, screenDate);
                                 JList<ScreenBean> timeJList = new JList<>(timeList);
-                                System.out.println("timeList size: " + timeList.size());
                                 timeJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                                 timeJList.setVisibleRowCount(10);
                                 JScrollPane timeScroller = new JScrollPane(timeJList);
@@ -211,6 +207,17 @@ public class ReservationForm extends JFrame {
                                 timeSelectionPanel.add(timeScroller, BorderLayout.CENTER);
                                 timeSelectionPanel.revalidate();
                                 timeSelectionPanel.repaint();
+                                
+                                timeJList.addListSelectionListener(new ListSelectionListener() {
+									@Override
+									public void valueChanged(ListSelectionEvent e) {
+										if (e.getValueIsAdjusting()) return; // 중복 이벤트 방지
+										ScreenBean selectedTime = timeJList.getSelectedValue();
+										RSVdocid = selectedTime.getDocid();
+										RSVcinemaNum = selectedTime.getCinemaNum();
+										RSVDate = selectedTime.getScreenDate()+selectedTime.getScreenTime();
+									}
+								});
                             }
                         });
                     }
@@ -256,7 +263,7 @@ public class ReservationForm extends JFrame {
         seatSelectionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SeatSelectionForm(); 
+                new SeatSelectionForm(RSVdocid,RSVcinemaNum,RSVDate); 
                 dispose(); 
             }
         });

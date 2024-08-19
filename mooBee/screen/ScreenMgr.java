@@ -118,7 +118,8 @@ public class ScreenMgr {
 			sql = "SELECT * " +
 					"FROM tblScreen s " +
 					"JOIN tblCinema c ON s.cinemaNum = c.cinemaNum " +
-					"WHERE s.docid = ? AND c.cinemaName = ? AND s.screenDate LIKE ?";
+					"WHERE s.docid = ? AND c.cinemaName = ? AND s.screenDate LIKE ? "+
+					"ORDER BY s.screenTime ASC ";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, docid);
 			pstmt.setString(2, cinemaName);

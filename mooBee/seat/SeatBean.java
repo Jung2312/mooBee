@@ -44,4 +44,9 @@ public class SeatBean {
 	public void setSeatView(boolean seatView) {
 		this.seatView = seatView;
 	}
+	@Override
+	public String toString() {
+		return seatNum;
+	}
+	
 }

@@ -46,12 +46,14 @@ public class NoticeList {
 	private JLabel noticeInfoLabel; // 클래스 멤버로 이동
 	private String userid = "root"; // 로그인한 사용자 ID (테스트용)
 	private Object[] originalNotice; // 수정 취소 시 복구할 공지사항 정보
+	private static String userId;
 
 	/**
 	 * Create the application.
 	 */
 	// 생성자
-	public NoticeList() {
+	public NoticeList(String userId) {
+		this.userid = userId;
 		initialize();
 	}
 
@@ -134,7 +136,7 @@ public class NoticeList {
 
 		HomeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MainForm mf = new MainForm();
+				MainForm mf = new MainForm(userId);
 				mf.setVisible(true);
 				frame.dispose();
 			}
@@ -404,7 +406,7 @@ public class NoticeList {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					NoticeList window = new NoticeList();
+					NoticeList window = new NoticeList(userId);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

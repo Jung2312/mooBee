@@ -20,7 +20,7 @@ public class MainForm extends JFrame {
     private JFXPanel fxPanel; 
     private JPanel Trailer;
     private MediaPlayer mediaPlayer;
-    private String userId;
+    private static String userId;
     MovieMgr mMgr;
 
     public MainForm(String userId) {
@@ -98,7 +98,7 @@ public class MainForm extends JFrame {
 
         GoMyPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MyPage mp = new MyPage();
+                MyPage mp = new MyPage(userId);
                 setVisible(true);
                 dispose();
             }
@@ -110,7 +110,7 @@ public class MainForm extends JFrame {
         GoNotice.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NoticeList NL = new NoticeList();
+                NoticeList NL = new NoticeList(userId);
                 setVisible(true);
                 dispose();
             }

@@ -10,14 +10,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.Vector;
 
 public class MovieListForm extends JFrame {
-    private JFrame frame;  
-    private static String userId;
-    MovieMgr mMgr;
-    Vector<MovieBean> vlist;
+	private static String userId;
+	MovieMgr mMgr;
+	Vector<MovieBean> vlist;
 
     public MovieListForm() {
 
@@ -26,8 +26,8 @@ public class MovieListForm extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        mMgr = new MovieMgr();
-
+		mMgr = new MovieMgr();
+		
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(null);
         mainPanel.setPreferredSize(new Dimension(1000, 1600)); // 스크롤을 위해 패널 크기 설정
@@ -61,20 +61,19 @@ public class MovieListForm extends JFrame {
 
         vlist = mMgr.rankListMovie();
         moviePanel.removeAll();
-
+        
         for (int i = 0; i < 16; i++) {
             MovieBean bean = vlist.get(i);
-
+       
             JPanel posterPanel = new JPanel();
             posterPanel.setPreferredSize(new Dimension(220, 330));
             JLabel posterLabel = new JLabel();
             try {
-                ImageIcon imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
-                Image img = imgIcon.getImage();
-                Image scaledImg = img.getScaledInstance(220, 330, Image.SCALE_SMOOTH);
-                posterLabel.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH));
+            	ImageIcon imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
+                Image img = imgIcon.getImage();  
+                Image scaledImg = img.getScaledInstance(220, 330, Image.SCALE_SMOOTH); 
+                posterLabel.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH)); 
                 posterLabel.addMouseListener(new MouseAdapter() {
-
                 	@Override
 					public void mouseClicked(MouseEvent e) {
 						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid());
@@ -88,9 +87,7 @@ public class MovieListForm extends JFrame {
             posterPanel.add(posterLabel);
             moviePanel.add(posterPanel);
         }
-        moviePanel.revalidate();
-        moviePanel.repaint();
-
+        
 
         // 스크롤 패널 설정
         JScrollPane scrollPane = new JScrollPane(mainPanel);
@@ -98,66 +95,18 @@ public class MovieListForm extends JFrame {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         setContentPane(scrollPane);
 
-        // 메뉴 기능 추가
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        menuButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                popupMenu.show(menuButton, menuButton.getWidth(), menuButton.getHeight());
-            }
-        });
-
-        JMenuItem GoTicket = new JMenuItem("영화 예매");
-        popupMenu.add(GoTicket);
-
-        JMenuItem GoMyPage = new JMenuItem("마이페이지");
-        popupMenu.add(GoMyPage);
-
-        GoMyPage.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MyPage mp = new MyPage(userId);
-                setVisible(true);
-                dispose();
-            }
-        });
-
-        JMenuItem GoNotice = new JMenuItem("공지사항");
-        popupMenu.add(GoNotice);
-
-        JMenuItem Logout = new JMenuItem("로그아웃");
-        popupMenu.add(Logout);
-
-        Logout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(frame, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
-
-                if (response == JOptionPane.YES_OPTION) {
-                    dispose(); // 현재 창을 닫고 로그아웃 처리
-                }
-            }
-        });
-
-        GoTicket.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new ReservationForm();
-                dispose();
-            }
-        });
-
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(userId);
-                dispose();
+                new MainForm(userId); 
+                dispose(); 
             }
         });
 
         setVisible(true);
     }
+    
+
 
     public static void main(String[] args) {
         new MovieListForm();

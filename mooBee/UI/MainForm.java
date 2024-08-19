@@ -16,73 +16,64 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainForm extends JFrame {
+	
+	private JFrame frame;
+	private JFXPanel fxPanel; 
+	private JPanel Trailer;
+	private MediaPlayer mediaPlayer;
+	private String userId;
+	MovieMgr mMgr;
     
-
-    private JFrame frame;
-    private JFXPanel fxPanel; 
-    private JPanel Trailer;
-    private MediaPlayer mediaPlayer;
-    private static String userId;
-    MovieMgr mMgr;
-    
-    public MainForm(String userId) {
-        this.userId = userId;
-        initialize();
-        mMgr = new MovieMgr();
-    }
-
-    private void initialize() {
-
-        setTitle("MooBee");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        getContentPane().setLayout(null);
-
-        
-        JPanel MainForm_Panel = new JPanel();
-        MainForm_Panel.setBounds(0, 0, 984, 661);
-        getContentPane().add(MainForm_Panel);
-        MainForm_Panel.setLayout(null);
-
-        JLabel titleLabel = new JLabel("MooBee", JLabel.CENTER);
-        titleLabel.setBounds(401, 51, 200, 50);
-        MainForm_Panel.add(titleLabel);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
-
-        JButton btnMovieBooking = new JButton("영화 예매");
-        btnMovieBooking.setBounds(301, 151, 100, 50);
-        MainForm_Panel.add(btnMovieBooking);
-
-        JButton btnNowShowing = new JButton("현재 상영작");
-        btnNowShowing.setBounds(451, 151, 100, 50);
-        MainForm_Panel.add(btnNowShowing);
-
-        JButton btnNotices = new JButton("공지사항");
-        btnNotices.setBounds(601, 151, 100, 50);
-        MainForm_Panel.add(btnNotices);
-
-        Trailer = new JPanel();
-        Trailer.setBounds(151, 251, 700, 300);
-        MainForm_Panel.add(Trailer);
-        Trailer.setBackground(Color.GRAY);
-        Trailer.setLayout(new BorderLayout());
-    
-        fxPanel = new JFXPanel();
-        Trailer.add(fxPanel, BorderLayout.CENTER);
-        Platform.runLater(this::createVideoPlayer);
-
-        JButton MenuTab = new JButton("메뉴");
-        MenuTab.setBounds(826, 36, 97, 34);
-        MainForm_Panel.add(MenuTab);
-
 	public MainForm(String userId) {
 		this.userId = userId;
 		initialize();
 		mMgr = new MovieMgr();
 	}
 
+	private void initialize() {
 
+		setTitle("MooBee");
+		setSize(1000, 700);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		getContentPane().setLayout(null);
+
+		
+		JPanel MainForm_Panel = new JPanel();
+		MainForm_Panel.setBounds(0, 0, 984, 661);
+		getContentPane().add(MainForm_Panel);
+		MainForm_Panel.setLayout(null);
+
+		JLabel titleLabel = new JLabel("MooBee", JLabel.CENTER);
+		titleLabel.setBounds(401, 51, 200, 50);
+		MainForm_Panel.add(titleLabel);
+		titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
+
+		JButton btnMovieBooking = new JButton("영화 예매");
+		btnMovieBooking.setBounds(301, 151, 100, 50);
+		MainForm_Panel.add(btnMovieBooking);
+
+		JButton btnNowShowing = new JButton("현재 상영작");
+		btnNowShowing.setBounds(451, 151, 100, 50);
+		MainForm_Panel.add(btnNowShowing);
+
+		JButton btnNotices = new JButton("공지사항");
+		btnNotices.setBounds(601, 151, 100, 50);
+		MainForm_Panel.add(btnNotices);
+
+	        Trailer = new JPanel();
+	        Trailer.setBounds(151, 251, 700, 300);
+	        MainForm_Panel.add(Trailer);
+	        Trailer.setBackground(Color.GRAY);
+	        Trailer.setLayout(new BorderLayout());
+	
+	        fxPanel = new JFXPanel();
+	        Trailer.add(fxPanel, BorderLayout.CENTER);
+	        Platform.runLater(this::createVideoPlayer);
+
+		JButton MenuTab = new JButton("메뉴");
+		MenuTab.setBounds(826, 36, 97, 34);
+		MainForm_Panel.add(MenuTab);
 
         JPopupMenu popupMenu = new JPopupMenu();
 
@@ -101,8 +92,7 @@ public class MainForm extends JFrame {
 
         GoMyPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MyPage mp = new MyPage(userId);
-
+                MyPage mp = new MyPage();
                 setVisible(true);
                 dispose();
             }
@@ -110,17 +100,16 @@ public class MainForm extends JFrame {
 
         JMenuItem GoNotice = new JMenuItem("공지사항");
         popupMenu.add(GoNotice);
-   
+        
         GoNotice.addActionListener(new ActionListener() {
-			  @Override
-		  	public void actionPerformed(ActionEvent e) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 
 				NoticeList NL = new NoticeList();
 				setVisible(true);
 				dispose();
 			}
 		});
-
 
         JMenuItem Logout = new JMenuItem("로그아웃");
         popupMenu.add(Logout);
@@ -139,7 +128,7 @@ public class MainForm extends JFrame {
             }
         });
 
-
+        // 영화 예매 버튼 클릭 시
         btnMovieBooking.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,27 +136,6 @@ public class MainForm extends JFrame {
                 dispose();
             }
         });
-
-
-        GoTicket.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new ReservationForm();
-                dispose();
-            }
-        });
-
-        btnNowShowing.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new MovieListForm();
-                dispose(); 
-            }
-        });
-
-        validate();
-        setVisible(true);
-    }
 
 		GoTicket.addActionListener(new ActionListener() {
 			@Override
@@ -202,7 +170,6 @@ public class MainForm extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-
         EventQueue.invokeLater(() -> {
             try {
                 MainForm window = new MainForm(userId);

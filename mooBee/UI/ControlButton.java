@@ -2,8 +2,14 @@ package UI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ControlButton extends JButton {
+
+    private Color defaultBackground;
+    private Color hoverBackground;
+    private Color pressedBackground;
 
     public ControlButton(String text) {
         super(text);
@@ -11,10 +17,17 @@ public class ControlButton extends JButton {
     }
 
     private void initializeButton() {
+        // 기본 배경색
+        defaultBackground = new Color(30, 30, 30, 150);
+        // 마우스를 올렸을 때 배경색
+        hoverBackground = new Color(100, 100, 100, 180);
+        // 눌렀을 때 배경색
+        pressedBackground = new Color(50, 50, 50, 200);
+
         setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             protected void paintButtonPressed(Graphics g, AbstractButton b) {
-                g.setColor(new Color(50, 50, 50, 180)); // 눌렸을 때 배경색
+                g.setColor(pressedBackground); // 눌렸을 때 배경색
                 g.fillRoundRect(1, 1, b.getWidth() - 2, b.getHeight() - 2, 20, 20);
             }
 
@@ -24,8 +37,15 @@ public class ControlButton extends JButton {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // 반투명 배경색
-                g2.setColor(new Color(30, 30, 30, 150));
+                // 현재 배경색 설정
+                if (b.getModel().isPressed()) {
+                    g2.setColor(pressedBackground);
+                } else if (b.getModel().isRollover()) {
+                    g2.setColor(hoverBackground);
+                } else {
+                    g2.setColor(defaultBackground);
+                }
+
                 g2.fillRoundRect(1, 1, b.getWidth() - 2, b.getHeight() - 2, 20, 20);
 
                 // 글로시 효과
@@ -54,5 +74,28 @@ public class ControlButton extends JButton {
         setBorderPainted(false);
         setContentAreaFilled(false);
         setOpaque(false);
+
+        // 마우스 이벤트 추가
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setBackground(hoverBackground);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setBackground(defaultBackground);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                setBackground(pressedBackground);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                setBackground(defaultBackground);
+            }
+        });
     }
 }

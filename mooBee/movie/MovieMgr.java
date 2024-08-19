@@ -43,6 +43,7 @@ public class MovieMgr {
 	private String apiUrl;
 	
 	private String videoUrl;
+	private String posterUrl;
 
 	public MovieMgr() {
 		pool = DBConnectionMgr.getInstance();
@@ -537,6 +538,29 @@ public class MovieMgr {
 			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
 		}
 		return videoUrl;
+	}
+	
+	// 랜덤으로 포스터 url 출력
+	public String randomPosterUrl() {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		
+		try {
+			con = pool.getConnection();
+			sql = "SELECT posterUrl FROM tblmovie ORDER BY RAND() LIMIT 1;";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				posterUrl = rs.getString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return posterUrl;
 	}
 
 

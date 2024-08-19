@@ -119,17 +119,17 @@ public class MembershipInfo {
 		GOLD_Label.setBounds(520, 126, 189, 70);
 		Membership_Panel.add(GOLD_Label);
 
-		JEditorPane BRONZE_Background = new JEditorPane();
+		JPanel BRONZE_Background = new JPanel();
 		BRONZE_Background.setBackground(new Color(153, 102, 0));
 		BRONZE_Background.setBounds(56, 126, 206, 70);
 		Membership_Panel.add(BRONZE_Background);
 
-		JEditorPane SILVER_Background = new JEditorPane();
+		JPanel SILVER_Background = new JPanel();
 		SILVER_Background.setBackground(new Color(204, 204, 204));
 		SILVER_Background.setBounds(296, 126, 189, 70);
 		Membership_Panel.add(SILVER_Background);
 
-		JEditorPane GOLD_Background = new JEditorPane();
+		JPanel GOLD_Background = new JPanel();
 		GOLD_Background.setBackground(new Color(204, 204, 0));
 		GOLD_Background.setBounds(520, 126, 189, 70);
 		Membership_Panel.add(GOLD_Background);

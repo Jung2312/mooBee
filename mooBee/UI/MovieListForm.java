@@ -74,22 +74,23 @@ public class MovieListForm extends JFrame {
                 Image scaledImg = img.getScaledInstance(220, 330, Image.SCALE_SMOOTH);
                 posterLabel.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH));
                 posterLabel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        MovieInfoForm movieInfoForm = new MovieInfoForm();
-                        movieInfoForm.setVisible(true);
-                        dispose();
-                    }
-                });
+
+                	@Override
+					public void mouseClicked(MouseEvent e) {
+						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid());
+						movieInfoForm.setVisible(true);
+						dispose();
+					}
+				});
             } catch (Exception e) {
                 posterLabel.setText("Image not available");
             }
             posterPanel.add(posterLabel);
             moviePanel.add(posterPanel);
         }
-
         moviePanel.revalidate();
         moviePanel.repaint();
+
 
         // 스크롤 패널 설정
         JScrollPane scrollPane = new JScrollPane(mainPanel);

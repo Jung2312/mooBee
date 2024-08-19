@@ -1,6 +1,5 @@
 package UI;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 
 import javafx.application.Platform;
@@ -18,6 +17,7 @@ import java.awt.event.ActionListener;
 
 public class MainForm extends JFrame {
     
+
     private JFrame frame;
     private JFXPanel fxPanel; 
     private JPanel Trailer;
@@ -76,6 +76,14 @@ public class MainForm extends JFrame {
         MenuTab.setBounds(826, 36, 97, 34);
         MainForm_Panel.add(MenuTab);
 
+	public MainForm(String userId) {
+		this.userId = userId;
+		initialize();
+		mMgr = new MovieMgr();
+	}
+
+
+
         JPopupMenu popupMenu = new JPopupMenu();
 
         MenuTab.addActionListener(new ActionListener() {
@@ -94,6 +102,7 @@ public class MainForm extends JFrame {
         GoMyPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 MyPage mp = new MyPage(userId);
+
                 setVisible(true);
                 dispose();
             }
@@ -101,6 +110,17 @@ public class MainForm extends JFrame {
 
         JMenuItem GoNotice = new JMenuItem("공지사항");
         popupMenu.add(GoNotice);
+   
+        GoNotice.addActionListener(new ActionListener() {
+			  @Override
+		  	public void actionPerformed(ActionEvent e) {
+
+				NoticeList NL = new NoticeList();
+				setVisible(true);
+				dispose();
+			}
+		});
+
 
         JMenuItem Logout = new JMenuItem("로그아웃");
         popupMenu.add(Logout);
@@ -119,6 +139,7 @@ public class MainForm extends JFrame {
             }
         });
 
+
         btnMovieBooking.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -126,6 +147,7 @@ public class MainForm extends JFrame {
                 dispose();
             }
         });
+
 
         GoTicket.addActionListener(new ActionListener() {
             @Override
@@ -147,27 +169,40 @@ public class MainForm extends JFrame {
         setVisible(true);
     }
 
-    public void createVideoPlayer() {
-        Platform.runLater(() -> {
-            try {
-                StackPane root = new StackPane();
-                Scene scene = new Scene(root, 700, 300);
+		GoTicket.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ReservationForm();
+				dispose();
+			}
+		});
+		
+		validate();
+		setVisible(true);
+	}
 
-                String videoUrl = mMgr.getVideoUrl();
-                Media media = new Media(videoUrl);
-                mediaPlayer = new MediaPlayer(media);
-                MediaView mediaView = new MediaView(mediaPlayer);
-                root.getChildren().add(mediaView);
-                mediaPlayer.setAutoPlay(true);
-                mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(mediaPlayer.getStartTime())); // 비디오 끝나면 처음으로 되돌리기
-                fxPanel.setScene(scene);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-    
-    public static void main(String[] args) {
+	public void createVideoPlayer() {
+	    Platform.runLater(() -> {
+	        try {
+	            StackPane root = new StackPane();
+	            Scene scene = new Scene(root, 700, 300);
+
+	            String videoUrl = mMgr.randomVideoUrl();
+	            Media media = new Media(videoUrl);
+	            mediaPlayer = new MediaPlayer(media);
+	            MediaView mediaView = new MediaView(mediaPlayer);
+	            root.getChildren().add(mediaView);
+	            mediaPlayer.setAutoPlay(true);
+	            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(mediaPlayer.getStartTime())); // 비디오 끝나면 처음으로 되돌리기
+	            fxPanel.setScene(scene);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    });
+	}
+	
+	public static void main(String[] args) {
+
         EventQueue.invokeLater(() -> {
             try {
                 MainForm window = new MainForm(userId);

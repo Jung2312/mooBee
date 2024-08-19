@@ -25,12 +25,12 @@ public class MainForm extends JFrame {
 
     public MainForm(String userId) {
         this.userId = userId;
-        initialize();
+        initialize(userId);
         mMgr = new MovieMgr();
     }
 
-    private void initialize() {
-
+    private void initialize(String userId) {
+    	this.userId = userId;
         setTitle("MooBee");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -135,7 +135,7 @@ public class MainForm extends JFrame {
         btnMovieBooking.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ReservationForm();
+                new ReservationForm(userId);
                 dispose();
             }
         });
@@ -143,7 +143,7 @@ public class MainForm extends JFrame {
         GoTicket.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ReservationForm();
+                new ReservationForm(userId);
                 dispose();
             }
         });

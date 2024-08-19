@@ -23,13 +23,14 @@ public class SeatMgr {
 		Vector<SeatBean>vlist = new Vector<SeatBean>();
 		try {
 			con = pool.getConnection();
-			sql = "select seatNum from tblseat where cinemaNum = ?";
+			sql = "select seatNum,seatId from tblseat where cinemaNum = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, cinemaNum);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				SeatBean bean = new SeatBean();
 				bean.setSeatNum(rs.getString(1));
+				bean.setSeatId(rs.getInt(2));
 				vlist.addElement(bean);
 			}
 		} catch (Exception e) {

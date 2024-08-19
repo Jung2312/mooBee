@@ -6,10 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ReservationCompleteForm extends JFrame {
-	private static String userId;
+	private static String userId ;
 
+    
     public ReservationCompleteForm() {
-      
+    	this.userId = userId;
+
         setTitle("예매 상세 정보");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,7 +36,7 @@ public class ReservationCompleteForm extends JFrame {
         infoPanel.setBounds(500, 150, 400, 400);
         add(infoPanel);
 
-        String[] infoLabels = {"예매번호", "영화 제목", "극장", "일시", "인원", "좌석", "결제 금액"};
+        String[] infoLabels = {"예매번호 :" , "영화 제목", "극장", "일시", "인원", "좌석", "결제 금액"};
         for (String label : infoLabels) {
             JLabel infoLabel = new JLabel(label + " : ");
             infoLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));

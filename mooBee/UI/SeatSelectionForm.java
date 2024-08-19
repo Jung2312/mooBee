@@ -1,9 +1,16 @@
 package UI;
 
 import javax.swing.*;
+
+import reservation.ReservationBean;
+import reservation.ReservationMgr;
 import seat.SeatBean;
 import seat.SeatMgr;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 public class SeatSelectionForm extends JFrame {
@@ -11,13 +18,20 @@ public class SeatSelectionForm extends JFrame {
     private static int RSVdocid, RSVcinemaNum;
     private SeatBean seatbean;
     private SeatMgr seatmrg;
+    private ReservationBean RSVbean;
+    private ReservationMgr RSVmgr;
+    private Set<Integer> selectedSeatIds; // 선택된 좌석 ID를 저장할 Set
 
-    public SeatSelectionForm(int RSVdocid, int RSVcinemaNum, String RSVDate) {
+    public SeatSelectionForm(String userId,int RSVdocid, int RSVcinemaNum, String RSVDate) {
+    	this.userId = userId;
         this.RSVDate = RSVDate;
         this.RSVcinemaNum = RSVcinemaNum;
         this.RSVdocid = RSVdocid;
         seatbean = new SeatBean();
         seatmrg = new SeatMgr();
+        RSVbean = new ReservationBean();
+        RSVmgr = new ReservationMgr();
+        selectedSeatIds = new HashSet<>(); // 선택된 좌석 ID 초기화
 
         setTitle("좌석 선택 화면");
         setSize(1400, 1000); // 창 크기
@@ -41,36 +55,18 @@ public class SeatSelectionForm extends JFrame {
 
         // 좌석 패널 설정
         JPanel seatPanel = new JPanel();
-        seatPanel.setLayout(null); // 좌석 패널은 null 레이아웃을 사용하여 직접 위치를 설정합니다.
+        seatPanel.setBackground(Color.WHITE);
         seatPanel.setBounds(150, 100, 1100, 750);
         add(seatPanel);
-
-        // 각 사각형 패널 설정
-        JPanel[] borders = new JPanel[4];
-        Color[] borderColors = {Color.RED, Color.BLUE, new Color(128, 0, 128), Color.GREEN};
-
-        // 좌석 패널을 4등분
-        for (int i = 0; i < borders.length; i++) {
-            borders[i] = new JPanel();
-            borders[i].setBorder(BorderFactory.createLineBorder(borderColors[i], 3));
-            borders[i].setOpaque(false);
-            seatPanel.add(borders[i]);
-        }
-
-        // 좌석 패널의 각 사각형 크기 설정
-        int panelWidth = 1100 / 2; // 좌석 패널의 너비를 2로 나눈 크기
-        int panelHeight = 750 / 2; // 좌석 패널의 높이를 2로 나눈 크기
-
-        borders[0].setBounds(0, 0, panelWidth, panelHeight); // 좌측 상단
-        borders[1].setBounds(panelWidth, 0, panelWidth, panelHeight); // 우측 상단
-        borders[2].setBounds(0, panelHeight, panelWidth, panelHeight); // 좌측 하단
-        borders[3].setBounds(panelWidth, panelHeight, panelWidth, panelHeight); // 우측 하단
 
         // 좌석 데이터 가져오기
         Vector<SeatBean> seatlist = seatmrg.listSeat(RSVcinemaNum);
 
         // 총 좌석 수 계산
         int totalSeats = seatlist.size();
+
+        // 최대 열 수 설정
+        int maxCols = 18;
 
         // 좌석 목록에서 최대 행과 열 계산
         int maxRowIndex = -1;
@@ -91,7 +87,14 @@ public class SeatSelectionForm extends JFrame {
 
         // 행과 열 계산
         int rows = maxRowIndex + 1;
-        int cols = maxColIndex + 1;
+        int cols = Math.min(maxCols, maxColIndex + 1);
+
+        // 행과 열이 0이 되는 것을 방지
+        if (rows <= 0) rows = 1;
+        if (cols <= 0) cols = 1;
+
+        // GridLayout을 사용하여 좌석 배치
+        seatPanel.setLayout(new GridLayout(rows, cols, 5, 5)); // 5px 간격
 
         // 좌석 그리드 배열 초기화
         String[][] seatGrid = new String[rows][cols];
@@ -116,50 +119,52 @@ public class SeatSelectionForm extends JFrame {
 
         // 좌석 버튼 생성 및 추가
         Dimension buttonSize = new Dimension(60, 50);
-        Font buttonFont = new Font("Arial", Font.BOLD, 10);
-
-        // 황금색 배경 적용할 좌석 구역
-        for (int quadrant = 0; quadrant < 4; quadrant++) {
-            JPanel quadrantPanel = borders[quadrant];
-            int rowOffset = (quadrant / 2) * (rows / 2);
-            int colOffset = (quadrant % 2) * (cols / 2);
-            int numRowsPerQuadrant = (rows + 1) / 2; // 각 사각형의 행 수
-            int numColsPerQuadrant = (cols + 1) / 2; // 각 사각형의 열 수
-
-            quadrantPanel.setLayout(new GridLayout(numRowsPerQuadrant, numColsPerQuadrant, 5, 5));
-
-            int centerRowStart = (rows / 2) - 1;
-            int centerRowEnd = centerRowStart + 2;
-            int centerColStart = (cols / 2) - 2;
-            int centerColEnd = centerColStart + 4;
-
-            for (int i = 0; i < numRowsPerQuadrant; i++) {
-                for (int j = 0; j < numColsPerQuadrant; j++) {
-                    int rowIndex = rowOffset + i;
-                    int colIndex = colOffset + j;
-                    String seatLabel = "";
-                    boolean isCenterSeat = rowIndex >= centerRowStart && rowIndex < centerRowEnd &&
-                                           colIndex >= centerColStart && colIndex < centerColEnd;
-                    if (rowIndex < rows && colIndex < cols) {
-                        seatLabel = seatGrid[rowIndex][colIndex];
-                    }
-
-                    JToggleButton seatButton;
-                    if (!seatLabel.isEmpty()) {
-                        seatButton = new JToggleButton(seatLabel);
-                        seatButton.setFont(buttonFont); // 기본 글꼴 설정
-                        seatButton.setHorizontalAlignment(SwingConstants.CENTER);
-                        seatButton.setVerticalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                String seatLabel = seatGrid[i][j];
+                JToggleButton seatButton;
+                if (!seatLabel.isEmpty()) {
+                    seatButton = new JToggleButton(seatLabel);
+                    if (i >= rows / 2 - 1 && i <= rows / 2 && j >= cols / 2 - 2 && j < cols / 2 + 2) {
+                        seatButton.setBackground(Color.ORANGE); // 가운데 2행 4열을 황금색으로
                     } else {
-                        seatButton = new JToggleButton(); // 빈 버튼 생성
-                        seatButton.setBackground(Color.WHITE); // 빈 좌석은 흰색 배경
-                        seatButton.setEnabled(false); // 빈 자리로 표시
+                        seatButton.setBackground(Color.BLACK);
                     }
+                    
+                    // 좌석 ID 설정
+                    int seatId = getSeatIdByLabel(seatLabel); // 좌석 ID를 찾는 메소드
+                    seatButton.putClientProperty("seatId", seatId);
+                    seatButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // 선택된 좌석 ID를 추적
+                            JToggleButton button = (JToggleButton) e.getSource();
+                            Integer id = (Integer) button.getClientProperty("seatId");
+                            if (button.isSelected()) {
+                                selectedSeatIds.add(id);
+                                System.out.println("선택된 좌석 ID들: " + selectedSeatIds);
+                            } else {
+                                selectedSeatIds.remove(id);
+                            }
+                        }
+                    });
                     seatButton.setPreferredSize(buttonSize);
-                    seatButton.setBackground(isCenterSeat ? Color.ORANGE : Color.BLACK); // 황금색 배경
+                    seatButton.setHorizontalAlignment(SwingConstants.CENTER);
+                    seatButton.setVerticalAlignment(SwingConstants.CENTER);
                     seatButton.setForeground(Color.WHITE);
-                    quadrantPanel.add(seatButton);
+                    seatButton.setFont(new Font("Arial", Font.BOLD, 10));
+                    seatButton.setFocusPainted(false); // 선택시 포커스 효과 제거
+                } else {
+                    seatButton = new JToggleButton(); // 빈 버튼 생성
+                    seatButton.setBackground(Color.WHITE); // 빈 좌석은 흰색 배경
+                    seatButton.setEnabled(false); // 빈 자리로 표시
                 }
+                seatButton.setPreferredSize(buttonSize);
+                seatButton.setHorizontalAlignment(SwingConstants.CENTER);
+                seatButton.setVerticalAlignment(SwingConstants.CENTER);
+                seatButton.setForeground(Color.WHITE);
+                seatButton.setFont(new Font("Arial", Font.BOLD, 10));
+                seatPanel.add(seatButton);
             }
         }
 
@@ -194,13 +199,40 @@ public class SeatSelectionForm extends JFrame {
         });
 
         backButton.addActionListener(e -> {
-            new ReservationForm(); 
+            new ReservationForm(userId); 
+            dispose(); 
+        });
+        
+        payButton.addActionListener(e -> {
+        	for (Integer seatId :selectedSeatIds ) {
+        		RSVbean.setUserId("root");
+            	RSVbean.setDocid(RSVdocid);
+            	RSVbean.setRSVDATE(RSVDate);
+            	RSVbean.setCinemaNum(RSVcinemaNum);
+            	RSVbean.setSeatId(seatId);
+            	RSVbean.setPrice(30000);
+            	RSVbean.setAgeGroup("성인");
+            	RSVmgr.insertRsvn(RSVbean);
+            	
+			}
+            new ReservationCompleteForm(); 
             dispose(); 
         });
 
         setVisible(true);
     }
+
+    private int getSeatIdByLabel(String seatLabel) {
+        Vector<SeatBean> seatlist = seatmrg.listSeat(RSVcinemaNum);
+        for (SeatBean seat : seatlist) {
+            if (seat.getSeatNum().equals(seatLabel)) {
+                return seat.getSeatId();
+            }
+        }
+        return -1; // ID를 찾을 수 없는 경우
+    }
+
     public static void main(String[] args) {
-    	new SeatSelectionForm(RSVcinemaNum, RSVcinemaNum, RSVDate);
+    	new SeatSelectionForm(userId, RSVcinemaNum, RSVcinemaNum, RSVDate);
     }
 }

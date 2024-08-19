@@ -7,6 +7,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Vector;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -23,6 +25,9 @@ import java.awt.Toolkit;
 import javax.swing.JSeparator;
 import javax.swing.JEditorPane;
 import javax.swing.SwingConstants;
+
+import review.ReviewBean;
+import review.ReviewMgr;
 import user.UserBean;
 import user.UserMgr;
 
@@ -31,7 +36,9 @@ public class MyPage {
 	private JFrame frame;
 	private UserBean userbean;
 	private UserMgr usermgr;
+	private ReviewMgr rMgr;;
 	private static String userId;
+	private Vector<ReviewBean> reviewlist;
 	// Create the application.
 	public MyPage(String userId) {
 		this.userId = userId;
@@ -42,6 +49,9 @@ public class MyPage {
 		usermgr = new UserMgr();
 		userbean = new UserBean();
 		userbean = usermgr.getUser(userId);
+		rMgr = new ReviewMgr();
+		reviewlist = rMgr.findMemberReview(userId);
+		
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 1000, 700);
@@ -227,35 +237,24 @@ public class MyPage {
 		MyReview_Label.setBounds(12, 10, 310, 42);
 		MyReview_Panel.add(MyReview_Label);
 
-		JLabel MyReviewMovie_Label1 = new JLabel("남은 인생 10년");
-		MyReviewMovie_Label1.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReviewMovie_Label1.setBounds(12, 62, 341, 23);
-		MyReview_Panel.add(MyReviewMovie_Label1);
+		int locationSize = 29;
 
-		JLabel MyReviewMovie_Label2 = new JLabel("범죄도시4");
-		MyReviewMovie_Label2.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReviewMovie_Label2.setBounds(12, 95, 341, 23);
-		MyReview_Panel.add(MyReviewMovie_Label2);
-
-		JLabel MyReviewMovie_Label3 = new JLabel("");
-		MyReviewMovie_Label3.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReviewMovie_Label3.setBounds(12, 128, 341, 23);
-		MyReview_Panel.add(MyReviewMovie_Label3);
-
-		JLabel MyReviewMovie_Label4 = new JLabel("");
-		MyReviewMovie_Label4.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReviewMovie_Label4.setBounds(12, 161, 341, 23);
-		MyReview_Panel.add(MyReviewMovie_Label4);
-
-		JLabel MyReviewMovie_Label5 = new JLabel("");
-		MyReviewMovie_Label5.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReviewMovie_Label5.setBounds(12, 194, 341, 23);
-		MyReview_Panel.add(MyReviewMovie_Label5);
+		for (int i = 0; i < reviewlist.size(); i++) {
+			if(i == 5) {
+				break;
+			}
+			locationSize += 33;
+			ReviewBean rBean = reviewlist.get(i);
+			JLabel MyReviewMovie_Label = new JLabel(rBean.getTitle());
+			MyReviewMovie_Label.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+			MyReviewMovie_Label.setBounds(12, locationSize, 341, 23);
+			MyReview_Panel.add(MyReviewMovie_Label);
+		}
 
 		JButton GoMyReview_Btn = new JButton("내 리뷰 보러가기");
 		GoMyReview_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MyReview mr = new MyReview(); // MyReservation 창 생성
+				MyReview mr = new MyReview(userId); // MyReservation 창 생성
 				mr.setPreviousPage(frame); // MyPage를 이전 페이지로 설정
 				mr.getFrame().setVisible(true); // MyReservation 창을 표시
 				frame.dispose(); // 현재 MyPage 창을 닫음
@@ -266,7 +265,7 @@ public class MyPage {
 
 		GoMyReview_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MyReview mr = new MyReview();
+				MyReview mr = new MyReview(userId);
 				frame.setVisible(true);
 				frame.dispose();
 			}

@@ -55,16 +55,17 @@ public class MainForm extends JFrame {
         logoLabel.setBounds(0, 0, 400, 200); // 패널 안에서 이미지 위치 및 크기 조정
         logoPanel.add(logoLabel);
 
-        JButton btnMovieBooking = new JButton("영화 예매");
-        btnMovieBooking.setBounds(301, 180, 100, 50);
+        JButton btnMovieBooking = new HoneyButton("영화 예매");
+        btnMovieBooking.setBounds(250, 180, 150, 50);
+
         MainForm_Panel.add(btnMovieBooking);
 
-        JButton btnNowShowing = new JButton("현재 상영작");
-        btnNowShowing.setBounds(451, 180, 100, 50);
+        JButton btnNowShowing = new HoneyButton("현재 상영작");
+        btnNowShowing.setBounds(417, 180, 150, 50);
         MainForm_Panel.add(btnNowShowing);
 
-        JButton btnNotices = new JButton("공지사항");
-        btnNotices.setBounds(601, 180, 100, 50);
+        JButton btnNotices = new HoneyButton("공지사항");
+        btnNotices.setBounds(584, 180, 150, 50);
         MainForm_Panel.add(btnNotices);
 
         Trailer = new BackgroundPanel();
@@ -87,7 +88,7 @@ public class MainForm extends JFrame {
         Trailer.add(fxPanel, BorderLayout.CENTER);
         createVideoPlayer();
 
-        JButton MenuTab = new JButton("메뉴");
+        JButton MenuTab = new ControlButton("메뉴");
         MenuTab.setBounds(826, 36, 97, 34);
         MainForm_Panel.add(MenuTab);
 

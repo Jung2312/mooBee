@@ -13,26 +13,30 @@ import movie.MovieMgr;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainForm extends JFrame {
 
-    private JFrame frame;
-    private JFXPanel fxPanel; 
-    private JPanel Trailer;
+    private JFXPanel fxPanel;
+    private BackgroundPanel Trailer;
     private MediaPlayer mediaPlayer;
     private static String userId;
-    MovieMgr mMgr;
+    private MovieMgr mMgr;
 
     public MainForm(String userId) {
         this.userId = userId;
-        initialize(userId);
-        mMgr = new MovieMgr();
+
+        initialize();
+
     }
 
-    private void initialize(String userId) {
-    	this.userId = userId;
+    private void initialize() {
+        mMgr = new MovieMgr();
+        // mMgr.insertMovie(); 최종에 데이터 다시 입력
         setTitle("MooBee");
         setSize(1000, 700);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         getContentPane().setLayout(null);
@@ -42,42 +46,50 @@ public class MainForm extends JFrame {
         getContentPane().add(MainForm_Panel);
         MainForm_Panel.setLayout(null);
 
-        // 로고가 잘리지 않도록 패널을 추가하고 크기 조정
         JPanel logoPanel = new JPanel();
         logoPanel.setBounds(292, 20, 400, 150);
         MainForm_Panel.add(logoPanel);
         logoPanel.setLayout(null);
 
-        // 로고 이미지 추가
-        ImageIcon logoIcon = new ImageIcon("C:/moobee/mooBee/mooBee/UI/images/mainlogo.png");
+        ImageIcon logoIcon = new ImageIcon("./UI/images/mainlogo.png");
         JLabel logoLabel = new JLabel(logoIcon);
         logoLabel.setBounds(0, 0, 400, 200); // 패널 안에서 이미지 위치 및 크기 조정
         logoPanel.add(logoLabel);
 
-       
-        JButton btnMovieBooking = new JButton("영화 예매");
-        btnMovieBooking.setBounds(301, 180, 100, 50);
+        JButton btnMovieBooking = new HoneyButton("영화 예매");
+        btnMovieBooking.setBounds(250, 180, 150, 50);
+
         MainForm_Panel.add(btnMovieBooking);
 
-        JButton btnNowShowing = new JButton("현재 상영작");
-        btnNowShowing.setBounds(451, 180, 100, 50);
+        JButton btnNowShowing = new HoneyButton("현재 상영작");
+        btnNowShowing.setBounds(417, 180, 150, 50);
         MainForm_Panel.add(btnNowShowing);
 
-        JButton btnNotices = new JButton("공지사항");
-        btnNotices.setBounds(601, 180, 100, 50);
+        JButton btnNotices = new HoneyButton("공지사항");
+        btnNotices.setBounds(584, 180, 150, 50);
         MainForm_Panel.add(btnNotices);
 
-        Trailer = new JPanel();
+        Trailer = new BackgroundPanel();
         Trailer.setBounds(151, 251, 700, 300);
         MainForm_Panel.add(Trailer);
-        Trailer.setBackground(Color.GRAY);
         Trailer.setLayout(new BorderLayout());
+        Trailer.setBackground(Color.WHITE);
+        
+        try {
+            // 이미지 URL에서 이미지 로딩
+            ImageIcon imgIcon = new ImageIcon(new URL(mMgr.randomPosterUrl()), BorderLayout.CENTER);
+            Image img = imgIcon.getImage();
+            // 배경 이미지로 설정
+            Trailer.setBackgroundImage(img);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
         fxPanel = new JFXPanel();
         Trailer.add(fxPanel, BorderLayout.CENTER);
-        Platform.runLater(this::createVideoPlayer);
+        createVideoPlayer();
 
-        JButton MenuTab = new JButton("메뉴");
+        JButton MenuTab = new ControlButton("메뉴");
         MenuTab.setBounds(826, 36, 97, 34);
         MainForm_Panel.add(MenuTab);
 
@@ -122,7 +134,7 @@ public class MainForm extends JFrame {
         Logout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(frame, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION,
+                int response = JOptionPane.showConfirmDialog(MainForm.this, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE);
 
                 if (response == JOptionPane.YES_OPTION) {
@@ -131,7 +143,6 @@ public class MainForm extends JFrame {
             }
         });
 
-        // 영화 예매 버튼 클릭 시
         btnMovieBooking.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,6 +166,7 @@ public class MainForm extends JFrame {
     public void createVideoPlayer() {
         Platform.runLater(() -> {
             try {
+            	Thread.sleep(1000); // 1초 후에 재생
                 StackPane root = new StackPane();
                 Scene scene = new Scene(root, 700, 300);
 
@@ -162,6 +174,16 @@ public class MainForm extends JFrame {
                 Media media = new Media(videoUrl);
                 mediaPlayer = new MediaPlayer(media);
                 MediaView mediaView = new MediaView(mediaPlayer);
+                
+                mediaPlayer.setOnReady(() -> {
+                    // 비디오의 원본 크기를 가져와서 MediaView에 적용
+                    double videoWidth = media.getWidth();
+                    double videoHeight = media.getHeight();
+                    mediaView.setFitWidth(videoWidth);
+                    mediaView.setFitHeight(videoHeight);
+                    mediaView.setPreserveRatio(true); // 비율 유지
+                });
+                
                 root.getChildren().add(mediaView);
                 mediaPlayer.setAutoPlay(true);
                 mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(mediaPlayer.getStartTime())); // 비디오 끝나면 처음으로 되돌리기
@@ -173,6 +195,7 @@ public class MainForm extends JFrame {
     }
 
     public static void main(String[] args) {
+        userId = "11"; // 이 부분에 적절한 userId 값을 설정하세요
         EventQueue.invokeLater(() -> {
             try {
                 MainForm window = new MainForm(userId);

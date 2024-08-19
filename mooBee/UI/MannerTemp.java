@@ -87,7 +87,7 @@ public class MannerTemp {
 		JLabel iconLabel = new JLabel();
 		iconLabel.setBounds(25, 35, 40, 53); // 이미지의 위치와 크기 조정
 		try {
-			Image img = ImageIO.read(new File("C:/MooBee/mooBee/mooBee/UI/images/thermometer.png"));
+			Image img = ImageIO.read(new File("./UI/images/thermometer.png"));
 			img = img.getScaledInstance(40, 40, Image.SCALE_SMOOTH); // 아이콘 크기 조정
 			iconLabel.setIcon(new ImageIcon(img));
 		} catch (IOException ex) {

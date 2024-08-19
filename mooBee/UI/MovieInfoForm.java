@@ -4,6 +4,8 @@ import javax.swing.*;
 
 import movie.MovieBean;
 import movie.MovieMgr;
+import review.ReviewBean;
+import review.ReviewMgr;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -24,9 +26,11 @@ public class MovieInfoForm extends JFrame {
     private JPanel reviewsContainer;
     private int currentPageGroup; // 현재 페이지 그룹 (예: 1~5)
     MovieMgr mMgr;
-    MovieBean bean;
+    MovieBean mBean;
+    ReviewMgr rMgr;
+    ReviewBean rBean;
 
-    public MovieInfoForm(int docid) {
+    public MovieInfoForm(int docid, String userId) {
         reviews = new ArrayList<>();
         // 예시로 i개의 리뷰 추가 (각 페이지에 4개씩 배치)
         for (int i = 1; i <= 26; i++) {
@@ -56,9 +60,9 @@ public class MovieInfoForm extends JFrame {
         movieInfoPanel.add(backButton);
 
         mMgr = new MovieMgr();
-        bean = mMgr.getMovie(docid);
+        mBean = mMgr.getMovie(docid);
         
-        JLabel titleLabel = new JLabel(bean.getTitle(), JLabel.CENTER);
+        JLabel titleLabel = new JLabel(mBean.getTitle(), JLabel.CENTER);
         titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 28));
         titleLabel.setBounds(250, 30, 500, 40);
         movieInfoPanel.add(titleLabel);
@@ -68,7 +72,7 @@ public class MovieInfoForm extends JFrame {
         moviePoster.setOpaque(true);
         ImageIcon imgIcon;
         try {
-            imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
+            imgIcon = new ImageIcon(new URL(mBean.getPosterUrl()));
             Image img = imgIcon.getImage();  
             Image scaledImg = img.getScaledInstance(250, 350, Image.SCALE_SMOOTH); 
             moviePoster.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH)); 
@@ -77,7 +81,7 @@ public class MovieInfoForm extends JFrame {
         }
         movieInfoPanel.add(moviePoster);
 
-        JLabel movieDetails = new JLabel("<html>개봉일: " + bean.getReleaseDate() + "<br><br>관람시간: " + bean.getRuntime() + "분<br><br>감독: " + bean.getDirectorNm() + "<br><br>주연 배우: " + bean.getActorNm() + "<br></html>");
+        JLabel movieDetails = new JLabel("<html>개봉일: " + mBean.getReleaseDate() + "<br><br>관람시간: " + mBean.getRuntime() + "분<br><br>감독: " + mBean.getDirectorNm() + "<br><br>주연 배우: " + mBean.getActorNm() + "<br></html>");
         movieDetails.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         movieDetails.setBounds(450, 100, 400, 250);
         movieInfoPanel.add(movieDetails);
@@ -97,7 +101,7 @@ public class MovieInfoForm extends JFrame {
         storyPanel.setBackground(Color.WHITE);
         storyPanel.setBorder(BorderFactory.createTitledBorder("영화 줄거리"));
 
-        JLabel storyLabel = new JLabel(bean.getPlot());
+        JLabel storyLabel = new JLabel(mBean.getPlot());
         storyLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
         storyLabel.setVerticalAlignment(JLabel.TOP);
         storyPanel.add(storyLabel, BorderLayout.CENTER);
@@ -294,6 +298,6 @@ public class MovieInfoForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new MovieInfoForm(1);
+        new MovieInfoForm(1,"11");
     }
 }

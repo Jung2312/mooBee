@@ -196,7 +196,7 @@ public class MovieInfoForm extends JFrame {
         bookTicketButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ReservationForm(); // ReservationForm으로 이동
+                new ReservationForm(userId); // ReservationForm으로 이동
                 dispose(); // 현재 창 닫기
             }
         });

@@ -22,17 +22,15 @@ public class ReservationMgr {
         boolean flag = false;
         try {
             con = pool.getConnection();
-            sql = "insert into tbluser values (?,?,?,?,?,?,?,?,?)";
+            sql = "INSERT INTO tblreservation (userID, cinemaNum, RSVDATE, docid, seatID, price, ageGroup) VALUES (?, ?, ?, ?, ?, ?, ?)";
             pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, bean.getRSVNNum());
-            pstmt.setString(2, bean.getUserId());
-            pstmt.setInt(3, bean.getCinemaNum());
-            pstmt.setString(4, bean.getViewDate());
-            pstmt.setString(5, bean.getRSVDATE());
-            pstmt.setInt(6, bean.getDocid());
-            pstmt.setInt(7, bean.getSeatId());
-            pstmt.setInt(8, bean.getPrice());
-            pstmt.setString(9, bean.getAgeGroup());
+            pstmt.setString(1, bean.getUserId());
+            pstmt.setInt(2, bean.getCinemaNum());
+            pstmt.setString(3, bean.getRSVDATE());
+            pstmt.setInt(4, bean.getDocid());
+            pstmt.setInt(5, bean.getSeatId());
+            pstmt.setInt(6, bean.getPrice());
+            pstmt.setString(7, bean.getAgeGroup());
             int cnt = pstmt.executeUpdate(); 
             if(cnt == 1) {
                 flag = true;

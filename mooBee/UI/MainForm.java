@@ -26,6 +26,7 @@ public class MainForm extends JFrame {
 
     public MainForm(String userId) {
         this.userId = userId;
+
         initialize();
 
     }
@@ -145,7 +146,7 @@ public class MainForm extends JFrame {
         btnMovieBooking.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ReservationForm();
+                new ReservationForm(userId);
                 dispose();
             }
         });
@@ -153,7 +154,7 @@ public class MainForm extends JFrame {
         GoTicket.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ReservationForm();
+                new ReservationForm(userId);
                 dispose();
             }
         });

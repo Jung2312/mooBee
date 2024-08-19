@@ -21,7 +21,8 @@ public class ReservationForm extends JFrame {
     private ScreenMgr screenmgr;
     private static int RSVdocid,RSVcinemaNum;
     private static String RSVDate;
-    public ReservationForm() {
+    public ReservationForm(String userId) {
+    	this.userId = userId;
         screenbean = new ScreenBean();
         screenmgr = new ScreenMgr();
         setTitle("영화 예매 창");
@@ -263,7 +264,7 @@ public class ReservationForm extends JFrame {
         seatSelectionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SeatSelectionForm(RSVdocid,RSVcinemaNum,RSVDate); 
+                new SeatSelectionForm(userId,RSVdocid,RSVcinemaNum,RSVDate); 
                 dispose(); 
             }
         });
@@ -288,6 +289,6 @@ public class ReservationForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ReservationForm();
+        new ReservationForm(userId);
     }
 }

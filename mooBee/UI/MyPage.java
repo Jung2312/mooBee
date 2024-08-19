@@ -290,7 +290,7 @@ public class MyPage {
 		GoTicket.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new ReservationForm();
+				new ReservationForm(userId);
 				frame.dispose();
 			}
 		});

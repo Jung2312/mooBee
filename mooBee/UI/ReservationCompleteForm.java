@@ -36,14 +36,14 @@ public class ReservationCompleteForm extends JFrame {
         infoPanel.setBounds(500, 150, 400, 400);
         add(infoPanel);
 
-        String[] infoLabels = {"예매번호 :" , "영화 제목", "극장", "일시", "인원", "좌석", "결제 금액"};
+        String[] infoLabels = {"예매번호 " , "영화 제목", "극장", "일시", "인원", "좌석", "결제 금액"};
         for (String label : infoLabels) {
             JLabel infoLabel = new JLabel(label + " : ");
             infoLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
             infoPanel.add(infoLabel);
         }
 
-        JButton confirmButton = new JButton("확인");
+        JButton confirmButton = new ControlButton("확인");
         confirmButton.setBounds(800, 600, 100, 30);
         add(confirmButton);
 

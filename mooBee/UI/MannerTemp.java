@@ -73,7 +73,7 @@ public class MannerTemp {
 		frame.getContentPane().add(MannerInfo_Panel);
 		MannerInfo_Panel.setLayout(null);
 
-		JButton Close_Btn = new JButton("닫기");
+		JButton Close_Btn = new ControlButton("닫기");
 		Close_Btn.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 		Close_Btn.setBounds(134, 148, 90, 33);
 		MannerInfo_Panel.add(Close_Btn);

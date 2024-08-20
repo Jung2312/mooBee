@@ -95,24 +95,18 @@ public class MovieInfoForm extends JFrame {
         movieInfoPanel.add(bookTicketButton);
 
         // 영화 줄거리 패널 추가 - JLabel 사용
+        JLabel storyLabel = new JLabel("<html><body style='width: 720px;'>" + mBean.getPlot() + "</body></html>");
+        storyLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+        storyLabel.setVerticalAlignment(JLabel.TOP);
+
+        // 패널 높이 설정
         JPanel storyPanel = new JPanel();
         storyPanel.setLayout(new BorderLayout());
-        storyPanel.setPreferredSize(new Dimension(900, 150)); // 패널 크기 조정
+        storyPanel.setBounds(30, 450, 826, storyLabel.getPreferredSize().height + 20); // 높이를 텍스트 내용에 따라 조정
         storyPanel.setBackground(Color.WHITE);
         storyPanel.setBorder(BorderFactory.createTitledBorder("영화 줄거리"));
 
-        // 영화 줄거리 내용이 화면에 잘 보이도록 왼쪽과 오른쪽 여백을 추가
-        JPanel storyContentPanel = new JPanel();
-        storyContentPanel.setLayout(new BorderLayout());
-        storyContentPanel.setBackground(Color.WHITE); // 흰색 배경으로 설정
-        storyContentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // 상하좌우 여백 추가
-
-        JLabel storyLabel = new JLabel("<html><body style='width: 850px;'>" + mBean.getPlot() + "</body></html>");
-        storyLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
-        storyLabel.setVerticalAlignment(JLabel.TOP);
-        storyContentPanel.add(storyLabel, BorderLayout.CENTER);
-
-        storyPanel.add(storyContentPanel, BorderLayout.CENTER);
+        storyPanel.add(storyLabel, BorderLayout.CENTER);
 
         reviewPanel = new JPanel();
         reviewPanel.setLayout(new BorderLayout());
@@ -282,6 +276,8 @@ public class MovieInfoForm extends JFrame {
         int startPage = (currentPageGroup - 1) * maxPageInGroup + 1;
         int endPage = Math.min(currentPageGroup * maxPageInGroup, totalPages);
 
+        ButtonGroup pageButtonGroup = new ButtonGroup(); // 버튼 그룹으로 묶기
+
         if (currentPageGroup > 1) {
             JButton prevGroupButton = new ControlButton("<");
             prevGroupButton.addActionListener(e -> {
@@ -294,11 +290,15 @@ public class MovieInfoForm extends JFrame {
         }
 
         for (int i = startPage; i <= endPage; i++) {
-            JButton pageButton = new ControlButton(String.valueOf(i));
+            JToggleButton pageButton = new ControlToggleButton(String.valueOf(i));
+            if (i == currentPage) {
+                pageButton.setSelected(true); // 현재 페이지에 해당하는 버튼을 선택 상태로 설정
+            }
             pageButton.addActionListener(e -> {
                 currentPage = Integer.parseInt(pageButton.getText());
                 updateReviews();
             });
+            pageButtonGroup.add(pageButton); // 버튼 그룹에 추가
             paginationPanel.add(pageButton);
         }
 

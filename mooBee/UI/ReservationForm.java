@@ -46,10 +46,10 @@ public class ReservationForm extends JFrame {
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(topPanel, BorderLayout.NORTH);
 
-        JButton homeButton = new JButton("홈");
+        JButton homeButton = new ControlButton("홈");
         topPanel.add(homeButton, BorderLayout.WEST);
 
-        JButton backButton = new JButton("이전 페이지");
+        JButton backButton = new ControlButton("이전 페이지");
         topPanel.add(backButton, BorderLayout.EAST);
 
         // 중앙 패널: 영화 선택, 극장 선택, 날짜 선택, 시간 선택 패널을 포함
@@ -69,6 +69,7 @@ public class ReservationForm extends JFrame {
         JPanel movieSelectionPanel = new JPanel();
         movieSelectionPanel.setBackground(Color.LIGHT_GRAY);
         movieSelectionPanel.setLayout(new BorderLayout());
+        movieSelectionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); 
         Vector<ScreenBean> movieList = screenmgr.listScreenMovie();
         JList<ScreenBean> movieJList = new JList<>(movieList);
         movieJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -79,8 +80,8 @@ public class ReservationForm extends JFrame {
         JLabel movieSelectionTitle = new JLabel("영화 선택", JLabel.CENTER);
         movieSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         movieSelectionTitle.setOpaque(true);
-        movieSelectionTitle.setBackground(Color.GRAY);
-        movieSelectionTitle.setForeground(Color.WHITE);
+        movieSelectionTitle.setBackground(new Color(255, 200, 0));
+        movieSelectionTitle.setForeground(Color.BLACK);
         movieSelectionPanel.add(movieSelectionTitle, BorderLayout.NORTH);
         centerPanel.add(movieSelectionPanel, gbc);
 
@@ -93,12 +94,13 @@ public class ReservationForm extends JFrame {
         theaterSelectionPanel = new JPanel();
         theaterSelectionPanel.setBackground(Color.LIGHT_GRAY);
         theaterSelectionPanel.setLayout(new BorderLayout());
+        theaterSelectionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); 
 
         JLabel theaterSelectionTitle = new JLabel("극장 선택", JLabel.CENTER);
         theaterSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         theaterSelectionTitle.setOpaque(true);
-        theaterSelectionTitle.setBackground(Color.GRAY);
-        theaterSelectionTitle.setForeground(Color.WHITE);
+        theaterSelectionTitle.setBackground(new Color(255, 200, 0));
+        theaterSelectionTitle.setForeground(Color.BLACK);
         theaterSelectionPanel.add(theaterSelectionTitle, BorderLayout.NORTH);
         centerPanel.add(theaterSelectionPanel, gbc);
 
@@ -108,12 +110,13 @@ public class ReservationForm extends JFrame {
         dateSelectionPanel = new JPanel();
         dateSelectionPanel.setBackground(Color.LIGHT_GRAY);
         dateSelectionPanel.setLayout(new BorderLayout());
+        dateSelectionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
         JLabel dateSelectionTitle = new JLabel("날짜 선택", JLabel.CENTER);
         dateSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         dateSelectionTitle.setOpaque(true);
-        dateSelectionTitle.setBackground(Color.GRAY);
-        dateSelectionTitle.setForeground(Color.WHITE);
+        dateSelectionTitle.setBackground(new Color(255, 200, 0));
+        dateSelectionTitle.setForeground(Color.BLACK);
         dateSelectionPanel.add(dateSelectionTitle, BorderLayout.NORTH);
         centerPanel.add(dateSelectionPanel, gbc);
 
@@ -123,12 +126,13 @@ public class ReservationForm extends JFrame {
         timeSelectionPanel = new JPanel();
         timeSelectionPanel.setBackground(Color.LIGHT_GRAY);
         timeSelectionPanel.setLayout(new BorderLayout());
+        timeSelectionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); 
 
         JLabel timeSelectionTitle = new JLabel("시간 선택", JLabel.CENTER);
         timeSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         timeSelectionTitle.setOpaque(true);
-        timeSelectionTitle.setBackground(Color.GRAY);
-        timeSelectionTitle.setForeground(Color.WHITE);
+        timeSelectionTitle.setBackground(new Color(255, 200, 0));
+        timeSelectionTitle.setForeground(Color.BLACK);
         timeSelectionPanel.add(timeSelectionTitle, BorderLayout.NORTH);
         centerPanel.add(timeSelectionPanel, gbc);
 
@@ -145,8 +149,8 @@ public class ReservationForm extends JFrame {
                 JLabel theaterSelectionTitle = new JLabel("극장 선택", JLabel.CENTER);
                 theaterSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                 theaterSelectionTitle.setOpaque(true);
-                theaterSelectionTitle.setBackground(Color.GRAY);
-                theaterSelectionTitle.setForeground(Color.WHITE);
+                theaterSelectionTitle.setBackground(new Color(255, 200, 0));
+                theaterSelectionTitle.setForeground(Color.BLACK);
                 theaterSelectionPanel.add(theaterSelectionTitle, BorderLayout.NORTH);
                 theaterSelectionPanel.revalidate();
                 theaterSelectionPanel.repaint();
@@ -156,8 +160,8 @@ public class ReservationForm extends JFrame {
                 JLabel dateSelectionTitle = new JLabel("날짜 선택", JLabel.CENTER);
                 dateSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                 dateSelectionTitle.setOpaque(true);
-                dateSelectionTitle.setBackground(Color.GRAY);
-                dateSelectionTitle.setForeground(Color.WHITE);
+                dateSelectionTitle.setBackground(new Color(255, 200, 0));
+                dateSelectionTitle.setForeground(Color.BLACK);
                 dateSelectionPanel.add(dateSelectionTitle, BorderLayout.NORTH);
                 dateSelectionPanel.revalidate();
                 dateSelectionPanel.repaint();
@@ -167,8 +171,8 @@ public class ReservationForm extends JFrame {
                 JLabel timeSelectionTitle = new JLabel("시간 선택", JLabel.CENTER);
                 timeSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                 timeSelectionTitle.setOpaque(true);
-                timeSelectionTitle.setBackground(Color.GRAY);
-                timeSelectionTitle.setForeground(Color.WHITE);
+                timeSelectionTitle.setBackground(new Color(255, 200, 0));
+                timeSelectionTitle.setForeground(Color.BLACK);
                 timeSelectionPanel.add(timeSelectionTitle, BorderLayout.NORTH);
                 timeSelectionPanel.revalidate();
                 timeSelectionPanel.repaint();
@@ -200,8 +204,8 @@ public class ReservationForm extends JFrame {
                         JLabel dateSelectionTitle = new JLabel("날짜 선택", JLabel.CENTER);
                         dateSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                         dateSelectionTitle.setOpaque(true);
-                        dateSelectionTitle.setBackground(Color.GRAY);
-                        dateSelectionTitle.setForeground(Color.WHITE);
+                        dateSelectionTitle.setBackground(new Color(255, 200, 0));
+                        dateSelectionTitle.setForeground(Color.BLACK);
                         dateSelectionPanel.add(dateSelectionTitle, BorderLayout.NORTH);
                         dateSelectionPanel.revalidate();
                         dateSelectionPanel.repaint();
@@ -211,8 +215,8 @@ public class ReservationForm extends JFrame {
                         JLabel timeSelectionTitle = new JLabel("시간 선택", JLabel.CENTER);
                         timeSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                         timeSelectionTitle.setOpaque(true);
-                        timeSelectionTitle.setBackground(Color.GRAY);
-                        timeSelectionTitle.setForeground(Color.WHITE);
+                        timeSelectionTitle.setBackground(new Color(255, 200, 0));
+                        timeSelectionTitle.setForeground(Color.BLACK);
                         timeSelectionPanel.add(timeSelectionTitle, BorderLayout.NORTH);
                         timeSelectionPanel.revalidate();
                         timeSelectionPanel.repaint();
@@ -246,8 +250,8 @@ public class ReservationForm extends JFrame {
                                 JLabel timeSelectionTitle = new JLabel("시간 선택", JLabel.CENTER);
                                 timeSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                                 timeSelectionTitle.setOpaque(true);
-                                timeSelectionTitle.setBackground(Color.GRAY);
-                                timeSelectionTitle.setForeground(Color.WHITE);
+                                timeSelectionTitle.setBackground(new Color(255, 200, 0));
+                                timeSelectionTitle.setForeground(Color.BLACK);
                                 timeSelectionPanel.add(timeSelectionTitle, BorderLayout.NORTH);
                                 timeSelectionPanel.revalidate();
                                 timeSelectionPanel.repaint();
@@ -303,7 +307,7 @@ public class ReservationForm extends JFrame {
         ButtonGroup youthGroup = new ButtonGroup();
         for (int i = 1; i <= 9; i++) {
             final int index = i;
-            JToggleButton youthButton = new JToggleButton(i + "명");
+            JToggleButton youthButton = new HoneyToggleButton(i + "명");
             youthGroup.add(youthButton);
             youthButton.addActionListener(new ActionListener() {
                 @Override
@@ -326,7 +330,7 @@ public class ReservationForm extends JFrame {
         ButtonGroup adultGroup = new ButtonGroup();
         for (int i = 1; i <= 9; i++) {
             final int index = i;
-            JToggleButton adultButton = new JToggleButton(i + "명");
+            JToggleButton adultButton = new HoneyToggleButton(i + "명");
             adultGroup.add(adultButton);
             adultButton.addActionListener(new ActionListener() {
                 @Override
@@ -343,7 +347,7 @@ public class ReservationForm extends JFrame {
 
         bottomPanel.add(peopleSelectionPanel, BorderLayout.CENTER);
 
-        JButton seatSelectionButton = new JButton("좌석 선택");
+        JButton seatSelectionButton = new HoneyButton("좌석 선택");
         seatSelectionButton.setPreferredSize(new Dimension(100, 80));
         bottomPanel.add(seatSelectionButton, BorderLayout.EAST);
 

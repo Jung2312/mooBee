@@ -49,7 +49,7 @@ public class ReservationMgr {
 		return flag;
 	}
 
-	//RSVNNum을 이용해 예매 내역 한개 조회
+	// RSVNNum을 이용해 예매 내역 한개 조회
 	public ReservationBean getRsvn(int RSVNNum) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -166,6 +166,7 @@ public class ReservationMgr {
 		}
 		return vlist;
 	}
+
 	// 아이디별 예매 내역(중복 제거) --> 이 코드는 나중에 지울 것.
 	public Vector<ReservationBean> distinctRSVNUserId(String userId) {
 		String sql = "SELECT RSVNNum, userId, cinemaNum, viewDate, docid, seatId AS seatId, price, ageGroup FROM tblreservation WHERE userId = ?";
@@ -193,40 +194,40 @@ public class ReservationMgr {
 
 	// 유저의 예약 상세 내용을 조회
 	public String getSeatNum(String userId, int RSVNNum) {
-	    Connection con = null;
-	    PreparedStatement pstmt = null;
-	    ResultSet rs = null;
-	    ReservationBean bean = null;
-	    String seat = null;
-	    
-	    try {
-	        con = pool.getConnection();
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ReservationBean bean = null;
+		String seat = null;
 
-	        // 예약 정보와 좌석 번호를 조인하여 가져오는 쿼리
-	        String sql = "SELECT s.seatNum FROM tblreservation r JOIN tblseat s ON r.seatId = s.seatId WHERE r.userId = ? AND r.RSVNNum = ?";
-	        pstmt = con.prepareStatement(sql);
-	        pstmt.setString(1, userId);
-	        pstmt.setInt(2, RSVNNum);
-	        rs = pstmt.executeQuery();
-	        if (rs.next()) {
-	        	seat = rs.getString(1);
-	        }
+		try {
+			con = pool.getConnection();
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        pool.freeConnection(con, pstmt, rs);
-	    }
-	    return seat;
+			// 예약 정보와 좌석 번호를 조인하여 가져오는 쿼리
+			String sql = "SELECT s.seatNum FROM tblreservation r JOIN tblseat s ON r.seatId = s.seatId WHERE r.userId = ? AND r.RSVNNum = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			pstmt.setInt(2, RSVNNum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				seat = rs.getString(1);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return seat;
 	}
 
-	//영화관, 관람 시간 ,영화로 예매내역확인
-	public Vector<ReservationBean> listRSVN(int cinemaNum, String viewDate,int docid){
+	// 영화관, 관람 시간 ,영화로 예매내역확인
+	public Vector<ReservationBean> listRSVN(int cinemaNum, String viewDate, int docid) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql = null;
-		Vector<ReservationBean>vlist = new Vector<ReservationBean>();
+		Vector<ReservationBean> vlist = new Vector<ReservationBean>();
 		try {
 			con = pool.getConnection();
 			sql = "select * from tblreservation where cinemaNum = ?,viewDate =? ,docId = ?";
@@ -235,7 +236,7 @@ public class ReservationMgr {
 			pstmt.setString(2, viewDate);
 			pstmt.setInt(3, docid);
 			rs = pstmt.executeQuery();
-			while (rs.next()) { 
+			while (rs.next()) {
 				ReservationBean bean = new ReservationBean();
 				bean.setRSVNNum(rs.getInt(1));
 				bean.setUserId(rs.getString(2));
@@ -256,35 +257,41 @@ public class ReservationMgr {
 		}
 		return vlist;
 	}
-  
-	public Vector<ReservationBean> listAgeGroup(int cinemaNum){
+
+	public Vector<ReservationBean> listAgeGroup(int cinemaNum) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql = null;
-		Vector<ReservationBean>vlist = new Vector<ReservationBean>();
+		Vector<ReservationBean> vlist = new Vector<ReservationBean>();
 		try {
 			con = pool.getConnection();
 			sql = "select ageGroup from tblreservation where cinemaNum = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, cinemaNum);
 			rs = pstmt.executeQuery();
-			while (rs.next()) { 
+			while (rs.next()) {
 				ReservationBean bean = new ReservationBean();
 				bean.setAgeGroup(rs.getString(1));
 				vlist.addElement(bean);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally 
+		} finally {
 			pool.freeConnection(con, pstmt, rs);
 		}
 		return vlist;
-	}	
-  
+
+	}
+
 // 예매한 영화(docid)를 통해 영화 정보 가져오기
-  public MovieBean getMovieData(int docid) {
+	public MovieBean getMovieData(int docid) {
 		MovieBean bean = new MovieBean();
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		ResultSet rs = null;
+		
 		try {
 			con = pool.getConnection();
 			sql = "select title, posterUrl from tblmovie where docid = ?";
@@ -294,8 +301,10 @@ public class ReservationMgr {
 			if (rs.next()) {
 				bean.setTitle(rs.getString(1));
 				bean.setPosterUrl(rs.getString(2));
-      }}
-		} catch (Exception e) {
+			}
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
@@ -311,16 +320,14 @@ public class ReservationMgr {
 		ReservationBean bean = new ReservationBean();
 		try {
 			con = pool.getConnection();
-			sql = "select u.temp "
-					+ "from tbluser u "
-					+ "JOIN tblreservation r ON r.userId = u.userId "
+			sql = "select u.temp " + "from tbluser u " + "JOIN tblreservation r ON r.userId = u.userId "
 					+ "where r.seatId = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, seatId);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				bean.setTemp(rs.getDouble(1));
-			}	
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -329,7 +336,7 @@ public class ReservationMgr {
 		return bean;
 	}
 
-	//예매 삭제
+	// 예매 삭제
 	public boolean deleteRsvn(int RSVNNum) {
 		Connection con = null;
 		PreparedStatement pstmt = null;

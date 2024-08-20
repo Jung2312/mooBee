@@ -6,7 +6,7 @@ public class SeatBean {
 	private int cinemaNum;
 	private int seatAmount;
 	private String seatImg;
-	private boolean seatView;
+	private boolean SeatChk;
 	
 	public int getSeatId() {
 		return seatId;
@@ -38,11 +38,11 @@ public class SeatBean {
 	public void setSeatImg(String seatImg) {
 		this.seatImg = seatImg;
 	}
-	public boolean isSeatView() {
-		return seatView;
+	public boolean isSeatChk() {
+		return SeatChk;
 	}
-	public void setSeatView(boolean seatView) {
-		this.seatView = seatView;
+	public void setSeatChk(boolean SeatChk) {
+		this.SeatChk = SeatChk;
 	}
 	@Override
 	public String toString() {

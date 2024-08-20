@@ -1,7 +1,6 @@
 package UI;
 
 import javax.swing.*;
-
 import reservation.ReservationBean;
 import reservation.ReservationMgr;
 import seat.SeatBean;
@@ -14,21 +13,26 @@ import java.util.Set;
 import java.util.Vector;
 
 public class SeatSelectionForm extends JFrame {
-    private static String userId, RSVDate;
-    private static int RSVdocid, RSVcinemaNum;
+    private static String userId, ViewDate;
+    private static int RSVdocid, RSVcinemaNum, YouthCount, AdultCount;
     private SeatBean seatbean;
-    private SeatMgr seatmrg;
+    private SeatMgr seatmgr;
     private ReservationBean RSVbean;
     private ReservationMgr RSVmgr;
     private Set<Integer> selectedSeatIds; // 선택된 좌석 ID를 저장할 Set
-
-    public SeatSelectionForm(String userId,int RSVdocid, int RSVcinemaNum, String RSVDate) {
-    	this.userId = userId;
-        this.RSVDate = RSVDate;
+    private int cinemaYouth,cinemaAdult;
+    private JLabel youthLabel;
+    private JLabel adultLabel;
+    private JLabel TempLabel;
+    public SeatSelectionForm(String userId, int RSVdocid, int RSVcinemaNum, String ViewDate, int YouthCount, int AdultCount) {
+        this.userId = userId;
+        this.ViewDate = ViewDate;
         this.RSVcinemaNum = RSVcinemaNum;
         this.RSVdocid = RSVdocid;
+        this.YouthCount = YouthCount;
+        this.AdultCount = AdultCount;
         seatbean = new SeatBean();
-        seatmrg = new SeatMgr();
+        seatmgr = new SeatMgr();
         RSVbean = new ReservationBean();
         RSVmgr = new ReservationMgr();
         selectedSeatIds = new HashSet<>(); // 선택된 좌석 ID 초기화
@@ -60,7 +64,7 @@ public class SeatSelectionForm extends JFrame {
         add(seatPanel);
 
         // 좌석 데이터 가져오기
-        Vector<SeatBean> seatlist = seatmrg.listSeat(RSVcinemaNum);
+        Vector<SeatBean> seatlist = seatmgr.listSeat(RSVcinemaNum);
 
         // 총 좌석 수 계산
         int totalSeats = seatlist.size();
@@ -125,35 +129,76 @@ public class SeatSelectionForm extends JFrame {
                 JToggleButton seatButton;
                 if (!seatLabel.isEmpty()) {
                     seatButton = new JToggleButton(seatLabel);
-                    if (i >= rows / 2 - 1 && i <= rows / 2 && j >= cols / 2 - 2 && j < cols / 2 + 2) {
-                        seatButton.setBackground(Color.ORANGE); // 가운데 2행 4열을 황금색으로
-                    } else {
-                        seatButton.setBackground(Color.BLACK);
-                    }
-                    
+
                     // 좌석 ID 설정
                     int seatId = getSeatIdByLabel(seatLabel); // 좌석 ID를 찾는 메소드
-                    seatButton.putClientProperty("seatId", seatId);
-                    seatButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            // 선택된 좌석 ID를 추적
-                            JToggleButton button = (JToggleButton) e.getSource();
-                            Integer id = (Integer) button.getClientProperty("seatId");
-                            if (button.isSelected()) {
-                                selectedSeatIds.add(id);
-                                System.out.println("선택된 좌석 ID들: " + selectedSeatIds);
-                            } else {
-                                selectedSeatIds.remove(id);
-                            }
+
+                    // 해당 좌석의 SeatBean 가져오기
+                    SeatBean currentSeat = seatlist.stream()
+                                                   .filter(seat -> seat.getSeatNum().equals(seatLabel))
+                                                   .findFirst()
+                                                   .orElse(null);
+
+                    // 기본 좌석 색상 설정
+                    Color defaultColor;
+                    if (i >= rows / 2 - 1 && i <= rows / 2 && j >= cols / 2 - 2 && j < cols / 2 + 2) {
+                        defaultColor = Color.ORANGE; // 가운데 2행 4열을 황금색으로
+                    } else {
+                        defaultColor = Color.BLACK;
+                    }
+
+                    if (currentSeat != null && currentSeat.isSeatChk()) {
+                    	ReservationBean Temp = RSVmgr.getTemp(seatId);
+                    	if (Temp.getTemp() <= 30) {
+                            // 온도가 30 이하인 경우 좌석을 빨간색으로 변경
+                            seatButton.setBackground(Color.RED);
+                        } else {
+                            // 온도가 30 초과 또는 Temp가 null인 경우 기본 회색으로 설정
+                            seatButton.setBackground(Color.GRAY);
                         }
-                    });
+                        seatButton.setEnabled(false);
+                    } else {
+                        // seatChk가 false인 경우: 기본 색상과 활성화 상태
+                        seatButton.setBackground(defaultColor);
+
+                        seatButton.putClientProperty("seatId", seatId);
+                        seatButton.putClientProperty("defaultColor", defaultColor); // 기본 색상 저장
+
+                        // UIManager를 사용해 기본 선택된 배경색을 제거
+                        seatButton.setContentAreaFilled(false);
+                        seatButton.setOpaque(true);
+                        
+                        seatButton.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                // 선택된 좌석 ID를 추적
+                                JToggleButton button = (JToggleButton) e.getSource();
+                                Integer id = (Integer) button.getClientProperty("seatId");
+                                Color originalColor = (Color) button.getClientProperty("defaultColor");
+
+                                if (button.isSelected()) {
+                                    if (selectedSeatIds.size() < YouthCount + AdultCount) {
+                                        button.setBackground(Color.BLUE); // 선택된 경우 파란색으로 변경
+                                        selectedSeatIds.add(id);
+                                    } else {
+                                        button.setSelected(false); // 선택 수 초과 시 선택 해제
+                                        JOptionPane.showMessageDialog(null, "최대 좌석 수를 초과했습니다. 좌석 수를 확인해 주세요.", "경고", JOptionPane.WARNING_MESSAGE);
+                                    }
+                                    System.out.println("선택된 좌석 ID들: " + selectedSeatIds);
+                                } else {
+                                    button.setBackground(originalColor); // 선택 해제 시 원래 색상으로 복원
+                                    selectedSeatIds.remove(id);
+                                }
+                            }
+                        });
+                    }
+
                     seatButton.setPreferredSize(buttonSize);
                     seatButton.setHorizontalAlignment(SwingConstants.CENTER);
                     seatButton.setVerticalAlignment(SwingConstants.CENTER);
                     seatButton.setForeground(Color.WHITE);
                     seatButton.setFont(new Font("Arial", Font.BOLD, 10));
-                    seatButton.setFocusPainted(false); // 선택시 포커스 효과 제거
+                    seatButton.setFocusPainted(false); // 선택 시 포커스 효과 제거
                 } else {
                     seatButton = new JToggleButton(); // 빈 버튼 생성
                     seatButton.setBackground(Color.WHITE); // 빈 좌석은 흰색 배경
@@ -190,9 +235,26 @@ public class SeatSelectionForm extends JFrame {
         add(previewButton4);
 
         JButton payButton = new JButton("결제하기");
-        payButton.setBounds(1250, 750, 120, 60);
+        payButton.setBounds(1250, 870, 120, 60);
         add(payButton);
-
+        
+        TempLabel = new JLabel("매너 온도가 낮은 좌석은 빨간색으로 표시됩니다.", JLabel.CENTER);
+        TempLabel.setForeground(Color.RED);
+        TempLabel.setFont(new Font("고딕", Font.BOLD, 16));
+        TempLabel.setBounds(450, 900, 500, 30);
+        add(TempLabel);
+        // 청소년 및 성인 수를 표시할 JLabel 추가
+        youthLabel = new JLabel("청소년 수: 0", JLabel.CENTER);
+        youthLabel.setForeground(Color.MAGENTA);
+        youthLabel.setBounds(20, 870, 200, 30);
+        add(youthLabel);
+        
+        adultLabel = new JLabel("성인 수: 0", JLabel.CENTER);
+        adultLabel.setBounds(20, 890, 200, 30);
+        add(adultLabel);
+        //좌석 성인 청소년 수 업데이트
+        updateAgeGroupCounts();
+        
         homeButton.addActionListener(e -> {
             new MainForm(userId); 
             dispose(); 
@@ -204,26 +266,62 @@ public class SeatSelectionForm extends JFrame {
         });
         
         payButton.addActionListener(e -> {
-        	for (Integer seatId :selectedSeatIds ) {
-        		RSVbean.setUserId("root");
-            	RSVbean.setDocid(RSVdocid);
-            	RSVbean.setRSVDATE(RSVDate);
-            	RSVbean.setCinemaNum(RSVcinemaNum);
-            	RSVbean.setSeatId(seatId);
-            	RSVbean.setPrice(30000);
-            	RSVbean.setAgeGroup("성인");
-            	RSVmgr.insertRsvn(RSVbean);
-            	
-			}
-            new ReservationCompleteForm(); 
-            dispose(); 
+            boolean hasConflicts = false;
+
+            // 좌석 상태를 확인하고 충돌이 있는지 검사
+            for (Integer seatId : selectedSeatIds) {
+                SeatBean selectedSeat = seatmgr.getSeat(seatId); // 좌석 정보를 가져옴
+
+                if (selectedSeat.isSeatChk()) {
+                    hasConflicts = true;
+                    break; // 이미 선택된 좌석이 발견되면 루프 종료
+                }
+            }
+
+            if (hasConflicts) {
+                JOptionPane.showMessageDialog(null, "이미 선택된 좌석이 있습니다. 다른 좌석을 선택해 주세요.", "경고", JOptionPane.WARNING_MESSAGE);
+                this.dispose(); // 현재 창을 닫음
+                new SeatSelectionForm(userId, RSVdocid, RSVcinemaNum, ViewDate, YouthCount, AdultCount); // 새로고침을 위해 페이지를 다시 엶
+            } else if (selectedSeatIds.size() != YouthCount + AdultCount) {
+                JOptionPane.showMessageDialog(null, "좌석 수가 일치하지 않습니다. 선택된 좌석 수를 확인해 주세요.", "경고", JOptionPane.WARNING_MESSAGE);
+            } else {
+                // 모든 좌석이 선택 가능한 상태인 경우 결제 처리
+                int currentYouthCount = 0;
+                int currentAdultCount = 0;
+                
+                for (Integer seatId : selectedSeatIds) {
+                    RSVbean.setUserId(userId);
+                    RSVbean.setDocid(RSVdocid);
+                    RSVbean.setViewDate(ViewDate);
+                    RSVbean.setCinemaNum(RSVcinemaNum);
+                    RSVbean.setSeatId(seatId);
+                    RSVbean.setPrice(15000); // 가격 설정
+
+                    // 선택된 좌석에 따라 나이 그룹 설정
+                    if (currentYouthCount < YouthCount) {
+                        RSVbean.setAgeGroup("청소년");
+                        currentYouthCount++;
+                    } else {
+                        RSVbean.setAgeGroup("성인");
+                        currentAdultCount++;
+                    }
+
+                    RSVmgr.insertRsvn(RSVbean);
+
+                    seatbean.setSeatId(seatId);
+                    seatbean.setSeatChk(true); // 좌석을 예약 상태로 변경
+                    seatmgr.updateSeatChk(seatbean);
+                }
+                new ReservationCompleteForm(); // 예약 완료 화면으로 이동
+                dispose(); // 현재 창을 닫음
+            }
         });
 
         setVisible(true);
     }
 
     private int getSeatIdByLabel(String seatLabel) {
-        Vector<SeatBean> seatlist = seatmrg.listSeat(RSVcinemaNum);
+        Vector<SeatBean> seatlist = seatmgr.listSeat(RSVcinemaNum);
         for (SeatBean seat : seatlist) {
             if (seat.getSeatNum().equals(seatLabel)) {
                 return seat.getSeatId();
@@ -231,8 +329,29 @@ public class SeatSelectionForm extends JFrame {
         }
         return -1; // ID를 찾을 수 없는 경우
     }
+    private void updateAgeGroupCounts() {
+        // 청소년 및 성인 수 업데이트
+        getAgeGroup(RSVcinemaNum);
+        // JLabel에 청소년 및 성인 수 표시
+        youthLabel.setText("청소년 수: " + cinemaYouth);
+        adultLabel.setText("성인 수: " + cinemaAdult);
+    }
+    private void getAgeGroup(int RSVcinemaNum) {
+        cinemaYouth = 0; // 초기화
+        cinemaAdult = 0; // 초기화
+        Vector<ReservationBean> agelist = RSVmgr.listAgeGroup(RSVcinemaNum);
+
+        for (ReservationBean reservation : agelist) {
+            String ageGroup = reservation.getAgeGroup(); // ageGroup을 가져옵니다.
+            if (ageGroup.contains("청소년")) {
+                cinemaYouth++; // 청소년 카운트 증가
+            } else if (ageGroup.contains("성인")) {
+                cinemaAdult++; // 성인 카운트 증가
+            }
+        }
+    }
 
     public static void main(String[] args) {
-    	new SeatSelectionForm(userId, RSVcinemaNum, RSVcinemaNum, RSVDate);
+    	new SeatSelectionForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, YouthCount, AdultCount);
     }
 }

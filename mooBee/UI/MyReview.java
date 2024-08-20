@@ -90,7 +90,7 @@ public class MyReview {
 		scrollPane.setViewportView(panel);
 		panel.setLayout(null);
 
-		JButton backButton = new JButton("이전 페이지");
+		JButton backButton = new ControlButton2("이전 페이지");
 		backButton.setBounds(856, 25, 97, 23);
 		panel.add(backButton);
 

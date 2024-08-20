@@ -10,12 +10,14 @@ public class ReservationBean {
 	private int seatId;
 	private int price;
 	private String ageGroup;
+	private double Temp;
 	public int getRSVNNum() {
 		return RSVNNum;
 	}
 	public void setRSVNNum(int rSVNNum) {
 		RSVNNum = rSVNNum;
 	}
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -64,5 +66,10 @@ public class ReservationBean {
 	public void setAgeGroup(String ageGroup) {
 		this.ageGroup = ageGroup;
 	}
-	
+	public double getTemp() {
+		return Temp;
+	}
+	public void setTemp(double temp) {
+		Temp = temp;
+	}
 }

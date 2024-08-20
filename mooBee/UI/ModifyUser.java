@@ -103,7 +103,7 @@ public class ModifyUser {
 		PhoneNumber.setBounds(27, 318, 93, 15);
 		panel.add(PhoneNumber);
 
-		JButton Cancel_Btn = new JButton("취소");
+		JButton Cancel_Btn = new ControlButton("취소");
 		Cancel_Btn.setBounds(27, 401, 135, 39);
 		panel.add(Cancel_Btn);
 		
@@ -113,7 +113,7 @@ public class ModifyUser {
 			}
 		});
 
-		JButton Modify_Btn = new JButton("수정");
+		JButton Modify_Btn = new ControlButton("수정");
 		Modify_Btn.setBounds(222, 401, 135, 39);
 		panel.add(Modify_Btn);
 

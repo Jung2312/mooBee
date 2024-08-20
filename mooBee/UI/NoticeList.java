@@ -129,7 +129,7 @@ public class NoticeList {
 		noticeListPanel.add(scrollPane);
 
 		// 홈 버튼
-		JButton HomeButton = new JButton("홈");
+		JButton HomeButton = new ControlButton("홈");
 		HomeButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 		HomeButton.setBounds(45, 36, 92, 33);
 		noticeListPanel.add(HomeButton);

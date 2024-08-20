@@ -244,9 +244,9 @@ public class MyReservation {
 	    // Refresh scrollPane view
 	    scrollPane.revalidate();
 	    scrollPane.repaint();
+
 	}
-
-
+  
 	/**
 	 * Launch the application.
 	 */

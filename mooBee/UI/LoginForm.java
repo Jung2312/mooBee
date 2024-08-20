@@ -1,8 +1,11 @@
 package UI;
 
+
 import javax.swing.*;
+
 import user.UserBean;
 import user.UserMgr;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,25 +24,25 @@ public class LoginForm extends JFrame {
         setLocationRelativeTo(null);
         setLayout(null);
 
-        // 배경 이미지 설정 
+        // 배경 이미지 설정
         ImageIcon backgroundImageIcon = new ImageIcon("./UI/images/loginimage.png");
-        Image backgroundImage = backgroundImageIcon.getImage(); 
+        Image backgroundImage = backgroundImageIcon.getImage();
         Image resizedImage = backgroundImage.getScaledInstance(1000, 700, Image.SCALE_SMOOTH); // 이미지 크기 조절
         ImageIcon resizedBackgroundImageIcon = new ImageIcon(resizedImage); // 조절된 이미지로 새로운 ImageIcon 생성
         JLabel backgroundLabel = new JLabel(resizedBackgroundImageIcon);
         backgroundLabel.setSize(1000, 700);
         setContentPane(backgroundLabel);
-        backgroundLabel.setLayout(null); 
+        backgroundLabel.setLayout(null);
 
         // 로그인 버튼 생성 및 스타일링
         JButton loginButton = new HoneyButton("로그인");
         loginButton.setBounds(312, 480, 176, 50);  // 위치와 크기 설정
-        backgroundLabel.add(loginButton); 
+        backgroundLabel.add(loginButton);
 
         // 회원가입 버튼 생성 및 스타일링
         JButton signupButton = new HoneyButton("회원가입");
         signupButton.setBounds(512, 480, 176, 50);  // 위치와 크기 설정
-        backgroundLabel.add(signupButton); 
+        backgroundLabel.add(signupButton);
 
         loginButton.addActionListener(e -> openLoginForm());
 
@@ -76,19 +79,7 @@ public class LoginForm extends JFrame {
         loginSubmitButton.setBounds(50, 170, 300, 40);
         loginFrame.add(loginSubmitButton);
 
-        loginSubmitButton.addActionListener(e -> {
-            String userId = loginEmailField.getText();
-            String password = new String(loginPasswordField.getPassword());
-            boolean isValidUser = mgr.login(userId, password);
-            if (isValidUser) {
-                JOptionPane.showMessageDialog(loginFrame, "로그인 성공!");
-                loginFrame.dispose(); // 로그인 성공 시 창 닫기
-                dispose();
-                openMainForm(userId);  // 메인 폼 열기
-            } else {
-                JOptionPane.showMessageDialog(loginFrame, "로그인 실패. 이메일 또는 비밀번호가 잘못되었습니다.");
-            }
-        });
+        loginSubmitButton.addActionListener(e -> handleLogin(loginFrame, loginEmailField, loginPasswordField));
 
         JLabel forgotPasswordLabel = new JLabel("<HTML><U>비밀번호 찾기</U></HTML>"); // 밑줄 추가
         forgotPasswordLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
@@ -104,7 +95,25 @@ public class LoginForm extends JFrame {
         });
         loginFrame.add(forgotPasswordLabel);
 
+        // 엔터 키를 눌렀을 때 로그인 처리
+        loginEmailField.addActionListener(e -> handleLogin(loginFrame, loginEmailField, loginPasswordField));
+        loginPasswordField.addActionListener(e -> handleLogin(loginFrame, loginEmailField, loginPasswordField));
+
         loginFrame.setVisible(true);
+    }
+
+    private void handleLogin(JFrame loginFrame, JTextField loginEmailField, JPasswordField loginPasswordField) {
+        String userId = loginEmailField.getText();
+        String password = new String(loginPasswordField.getPassword());
+        boolean isValidUser = mgr.login(userId, password);
+        if (isValidUser) {
+            JOptionPane.showMessageDialog(loginFrame, "로그인 성공!");
+            loginFrame.dispose(); // 로그인 성공 시 창 닫기
+            dispose();
+            openMainForm(userId);  // 메인 폼 열기
+        } else {
+            JOptionPane.showMessageDialog(loginFrame, "로그인 실패. 이메일 또는 비밀번호가 잘못되었습니다.");
+        }
     }
 
     private void openMainForm(String userId) {
@@ -112,7 +121,6 @@ public class LoginForm extends JFrame {
     }
 
     private void openSignupForm() {
-
         mgr = new UserMgr();
 
         JFrame signupFrame = new JFrame("회원가입 창");
@@ -200,21 +208,18 @@ public class LoginForm extends JFrame {
         signupSubmitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Object obj = e.getSource();
-                if (obj == signupSubmitButton) {
-                    UserBean bean = new UserBean();
-                    bean.setUserId(signupEmailField.getText());
-                    bean.setName(signupNameField.getText());
-                    bean.setPassword(new String(signupPasswordField.getPassword()));
-                    bean.setPhone(signupPhoneField.getText());
-                    bean.setBirthDate("2000-01-01");
-                    boolean success = mgr.insertUser(bean);
-                    if (success) {
-                        JOptionPane.showMessageDialog(signupFrame, "회원가입이 완료되었습니다.");
-                        signupFrame.dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(signupFrame, "회원가입에 실패했습니다.");
-                    }
+                UserBean bean = new UserBean();
+                bean.setUserId(signupEmailField.getText());
+                bean.setName(signupNameField.getText());
+                bean.setPassword(new String(signupPasswordField.getPassword()));
+                bean.setPhone(signupPhoneField.getText());
+                bean.setBirthDate("2000-01-01");
+                boolean success = mgr.insertUser(bean);
+                if (success) {
+                    JOptionPane.showMessageDialog(signupFrame, "회원가입이 완료되었습니다.");
+                    signupFrame.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(signupFrame, "회원가입에 실패했습니다.");
                 }
             }
         });

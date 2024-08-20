@@ -28,6 +28,7 @@ import javax.swing.SwingConstants;
 
 import review.ReviewBean;
 import review.ReviewMgr;
+import temp.TempMgr;
 import user.UserBean;
 import user.UserMgr;
 
@@ -37,6 +38,7 @@ public class MyPage {
 	private UserBean userbean;
 	private UserMgr usermgr;
 	private ReviewMgr rMgr;;
+	private TempMgr tMgr;
 	private static String userId;
 	private Vector<ReviewBean> reviewlist;
 	// Create the application.
@@ -51,6 +53,8 @@ public class MyPage {
 		userbean = usermgr.getUser(userId);
 		rMgr = new ReviewMgr();
 		reviewlist = rMgr.findMemberReview(userId);
+		tMgr = new TempMgr();
+		tMgr.deleteWarning(userId);
 		
 		frame = new JFrame();
 		frame.setResizable(false);
@@ -143,17 +147,28 @@ public class MyPage {
 		Membership_Background.setBackground(new Color(204, 204, 0));
 
 		// 매너 온도 동그라미 패널 추가
-		CirclePanel mannerCircle = new CirclePanel(70, new Color(50, 205, 50)); // 동그라미의 크기와 색상을 지정
+		CirclePanel mannerCircle = new CirclePanel(70); // 동그라미의 크기와 색상을 지정
 		mannerCircle.setBounds(711, 31, 74, 70); // 위치와 크기 설정
 		MyInfoPanel.add(mannerCircle);
 		mannerCircle.setLayout(null);
 		
-		JLabel MyMannerTemp = new JLabel(userbean.getTemp()+"˚");
+		float temp = userbean.getTemp();
+
+		if(temp >= 36.5) {
+			mannerCircle.paintColor(new Color(50, 205, 50));
+		}else if(temp < 36.5 && temp >= 30.0) {
+			mannerCircle.paintColor(new Color(102,102,153));
+		}else if(temp < 30.0) {
+			mannerCircle.paintColor(new Color(204,204,204));
+		}
+		
+		JLabel MyMannerTemp = new JLabel(temp +"˚");
 		MyMannerTemp.setBounds(10, 10, 55, 55);
 		MyMannerTemp.setFont(new Font("나눔고딕", Font.PLAIN, 18));
 		MyMannerTemp.setHorizontalAlignment(SwingConstants.CENTER);
 		mannerCircle.add(MyMannerTemp);
 
+		
 		JButton Degree_Btn = new JButton("매너온도란?");
 		Degree_Btn.setBounds(797, 10, 105, 23);
 		MyInfoPanel.add(Degree_Btn);
@@ -388,6 +403,7 @@ public class MyPage {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					userId = "11";
 					MyPage window = new MyPage(userId);
 					window.frame.setVisible(true);
 				} catch (Exception e) {

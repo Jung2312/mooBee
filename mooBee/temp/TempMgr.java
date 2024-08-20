@@ -40,9 +40,77 @@ public class TempMgr {
 		return vlist;
 	}
 	
-	// 마이페이지에서 유저의 신고 내역을 확인하고 기간이 지난 신고 내역 삭제 및 온도 증가
-	// 1. n개월 이후의 신고 내역은 삭제 후 온도 증가(몇점?)
-	// 2. n개월 이내의 신고 내역은 항목별 점수를 찾아서 온도 감소  
+	// 지난 기간의 경고 내역 삭제
+	public void deleteWarning(String userId) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    String sql = null;
+
+	    try {
+	        con = pool.getConnection();
+	        // 현재 날짜로부터 6개월 이전의 경고를 삭제
+	        sql = "DELETE FROM tblWarning WHERE userId = ? AND warningDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH)";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, userId);
+
+	        // executeUpdate()는 삭제된 행의 수를 반환
+	        if (pstmt.executeUpdate() > 0) {
+	            updateTemp(userId); // 삭제 후 추가 작업 수행
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        pool.freeConnection(con, pstmt); // con은 반납, pstmt는 close
+	    }
+	}
+
+	// 해당 유저의 경고 내역 유무 판별
+	public int getWarning(String userId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		int cnt = 0;
+		try {
+			con = pool.getConnection();
+			sql = "select count(*) from tblWarning where userId = ?";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if(rs.next())
+				cnt += rs.getInt(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return cnt;
+	}
+	
+	// 신고 내역이 없는 경우 유저 온도 갱신
+	public boolean updateTemp(String userId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		boolean flag = false;
+
+		if(getWarning(userId) == 0) {
+			try {
+				con = pool.getConnection();
+				sql = "update tbluser set temp = temp ? where userId = ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setInt(1, +1);
+				pstmt.setString(2, userId);
+				if (pstmt.executeUpdate() == 1)
+					flag = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt); // con은 반납, pstmt는 close
+			}
+		}
+		
+		return flag;
+	}
 	
 	// 경고 차감 온도 구하기
 	public int getCriterion(String criterion) {
@@ -67,6 +135,7 @@ public class TempMgr {
 		}
 		return temp;
 	}
+
 	
 	// 해당 좌석을 사용한 유저 찾기
 	public String findMember(int cinemaNum, String date, int docid, int seatId) {
@@ -85,7 +154,7 @@ public class TempMgr {
 			pstmt.setInt(4, seatId);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				userId = rs.getString(1);
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

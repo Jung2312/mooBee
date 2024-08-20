@@ -10,10 +10,13 @@ public class CirclePanel extends JPanel {
     private int diameter;
     private Color circleColor;
 
-    public CirclePanel(int diameter, Color circleColor) {
+    public CirclePanel(int diameter) {
         this.diameter = diameter;
-        this.circleColor = circleColor;
         this.setOpaque(false); // 배경을 투명하게 설정
+    }
+    
+    public void paintColor(Color circleColor) {
+        this.circleColor = circleColor;
     }
 
     @Override

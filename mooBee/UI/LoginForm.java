@@ -22,7 +22,7 @@ public class LoginForm extends JFrame {
         setLayout(null);
 
         // 배경 이미지 설정 
-        ImageIcon backgroundImageIcon = new ImageIcon("C:/moobee/mooBee/mooBee/UI/images/loginimage.png");
+        ImageIcon backgroundImageIcon = new ImageIcon("./UI/images/loginimage.png");
         Image backgroundImage = backgroundImageIcon.getImage(); 
         Image resizedImage = backgroundImage.getScaledInstance(1000, 700, Image.SCALE_SMOOTH); // 이미지 크기 조절
         ImageIcon resizedBackgroundImageIcon = new ImageIcon(resizedImage); // 조절된 이미지로 새로운 ImageIcon 생성

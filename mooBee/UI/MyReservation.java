@@ -63,7 +63,7 @@ public class MyReservation {
 		frame.getContentPane().add(scrollPane);
 
 		// 이전 페이지 버튼
-		JButton backButton = new JButton("이전 페이지");
+		JButton backButton = new ControlButton2("이전 페이지");
 		backButton.setBounds(856, 25, 97, 23);
 		MyReservation_Panel.add(backButton);
 
@@ -164,7 +164,7 @@ public class MyReservation {
 		PayNumber1.setBounds(158, 176, 262, 40);
 		MyReservationMovie_Panel1.add(PayNumber1);
 
-		JButton Report_Btn1 = new JButton("비매너 신고");
+		JButton Report_Btn1 = new ControlButton("비매너 신고");
 		Report_Btn1.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 		Report_Btn1.setBounds(640, 171, 111, 45);
 		MyReservationMovie_Panel1.add(Report_Btn1);
@@ -178,7 +178,7 @@ public class MyReservation {
 			}
 		});
 
-		JButton CancelTicket_Btn1 = new JButton("예매 취소");
+		JButton CancelTicket_Btn1 = new ControlButton("예매 취소");
 		CancelTicket_Btn1.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 		CancelTicket_Btn1.setBounds(530, 171, 97, 45);
 		
@@ -277,7 +277,7 @@ public class MyReservation {
 		PayNumber2.setBounds(158, 176, 262, 40);
 		MyReservationMovie_Panel2.add(PayNumber2);
 
-		JButton Report_Btn2 = new JButton("비매너 신고");
+		JButton Report_Btn2 = new ControlButton("비매너 신고");
 		Report_Btn2.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 		Report_Btn2.setBounds(640, 171, 111, 45);
 		MyReservationMovie_Panel2.add(Report_Btn2);
@@ -291,7 +291,7 @@ public class MyReservation {
 			}
 		});
 
-		JButton CancelTicket_Btn2 = new JButton("예매 취소");
+		JButton CancelTicket_Btn2 = new ControlButton("예매 취소");
 		CancelTicket_Btn2.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 		CancelTicket_Btn2.setBounds(530, 171, 97, 45);
 		

@@ -22,7 +22,7 @@ public class LoginForm extends JFrame {
         setLayout(null);
 
         // 배경 이미지 설정 
-        ImageIcon backgroundImageIcon = new ImageIcon("C:/moobee/mooBee/mooBee/UI/images/loginimage.png");
+        ImageIcon backgroundImageIcon = new ImageIcon("./UI/images/loginimage.png");
         Image backgroundImage = backgroundImageIcon.getImage(); 
         Image resizedImage = backgroundImage.getScaledInstance(1000, 700, Image.SCALE_SMOOTH); // 이미지 크기 조절
         ImageIcon resizedBackgroundImageIcon = new ImageIcon(resizedImage); // 조절된 이미지로 새로운 ImageIcon 생성
@@ -31,12 +31,14 @@ public class LoginForm extends JFrame {
         setContentPane(backgroundLabel);
         backgroundLabel.setLayout(null); 
 
-        JButton loginButton = honeyButton("로그인");
-        loginButton.setBounds(312, 480, 176, 50);  // 위치와 크기를 약간 조정
+        // 로그인 버튼 생성 및 스타일링
+        JButton loginButton = new HoneyButton("로그인");
+        loginButton.setBounds(312, 480, 176, 50);  // 위치와 크기 설정
         backgroundLabel.add(loginButton); 
 
-        JButton signupButton = honeyButton("회원가입");
-        signupButton.setBounds(512, 480, 176, 50);  // 위치와 크기를 약간 조정
+        // 회원가입 버튼 생성 및 스타일링
+        JButton signupButton = new HoneyButton("회원가입");
+        signupButton.setBounds(512, 480, 176, 50);  // 위치와 크기 설정
         backgroundLabel.add(signupButton); 
 
         loginButton.addActionListener(e -> openLoginForm());
@@ -44,62 +46,6 @@ public class LoginForm extends JFrame {
         signupButton.addActionListener(e -> openSignupForm());
 
         setVisible(true);
-    }
-
-    private JButton honeyButton(String text) {
-        JButton button = new JButton(text);
-
-        //버튼 디자인
-        button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
-            @Override
-            protected void paintButtonPressed(Graphics g, AbstractButton b) {
-                g.setColor(new Color(255, 180, 0)); // 버튼 눌렸을 때 색상
-                g.fillRoundRect(1, 1, b.getWidth() - 2, b.getHeight() - 2, 30, 30);
-            }
-
-            @Override
-            public void paint(Graphics g, JComponent c) {
-                AbstractButton b = (AbstractButton) c;
-                Graphics2D g2 = (Graphics2D) g;
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // 그라데이션 색상 설정
-                GradientPaint gp;
-                if (b.getModel().isPressed()) {
-                    gp = new GradientPaint(0, 0, new Color(255, 180, 0), 0, b.getHeight(), new Color(255, 140, 0));
-                } else if (b.getModel().isRollover()) {
-                    gp = new GradientPaint(0, 0, new Color(255, 220, 0), 0, b.getHeight(), new Color(255, 165, 0));
-                } else {
-                    gp = new GradientPaint(0, 0, new Color(255, 200, 0), 0, b.getHeight(), new Color(255, 150, 0));
-                }
-
-                // 그라데이션 적용 및 버튼 배경 그리기
-                g2.setPaint(gp);
-                g2.fillRoundRect(1, 1, b.getWidth() - 2, b.getHeight() - 2, 30, 30);
-
-                // 버튼 테두리
-                g2.setColor(Color.BLACK);  
-                g2.setStroke(new BasicStroke(2));
-                g2.drawRoundRect(1, 1, b.getWidth() - 2, b.getHeight() - 2, 30, 30);
-
-                // 텍스트 중앙 정렬
-                g2.setColor(b.getForeground());
-                g2.setFont(b.getFont());
-                FontMetrics fm = g2.getFontMetrics();
-                int x = (b.getWidth() - fm.stringWidth(b.getText())) / 2;
-                int y = (b.getHeight() + fm.getAscent()) / 2 - fm.getDescent();
-                g2.drawString(b.getText(), x, y);
-            }
-        });
-
-        button.setForeground(Color.BLACK);  // 텍스트 색상
-        button.setFont(new Font("맑은 고딕", Font.BOLD, 18)); 
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
-        button.setOpaque(false);
-
-        return button;
     }
 
     private void openLoginForm() {
@@ -126,7 +72,7 @@ public class LoginForm extends JFrame {
         loginPasswordField.setBounds(50, 120, 300, 40);
         loginFrame.add(loginPasswordField);
 
-        JButton loginSubmitButton = honeyButton("로그인");
+        JButton loginSubmitButton = new HoneyButton("로그인");
         loginSubmitButton.setBounds(50, 170, 300, 40);
         loginFrame.add(loginSubmitButton);
 
@@ -247,7 +193,7 @@ public class LoginForm extends JFrame {
         });
         signupFrame.add(signupDobField);
 
-        JButton signupSubmitButton = honeyButton("회원가입");
+        JButton signupSubmitButton = new HoneyButton("회원가입");
         signupSubmitButton.setBounds(50, 450, 300, 40);
         signupFrame.add(signupSubmitButton);
 
@@ -309,7 +255,7 @@ public class LoginForm extends JFrame {
         forgotPasswordPhoneField.setBounds(50, 210, 300, 40);
         forgotPasswordFrame.add(forgotPasswordPhoneField);
 
-        JButton forgotPasswordSubmitButton = honeyButton("비밀번호 찾기");
+        JButton forgotPasswordSubmitButton = new HoneyButton("비밀번호 찾기");
         forgotPasswordSubmitButton.setBounds(50, 270, 300, 40);
         forgotPasswordFrame.add(forgotPasswordSubmitButton);
 
@@ -336,7 +282,7 @@ public class LoginForm extends JFrame {
         verificationField.setBounds(50, 50, 300, 40);
         verificationFrame.add(verificationField);
 
-        JButton verifyButton = honeyButton("확인");
+        JButton verifyButton = new HoneyButton("확인");
         verifyButton.setBounds(50, 100, 300, 40);
         verificationFrame.add(verifyButton);
 

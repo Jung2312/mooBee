@@ -87,7 +87,7 @@ public class MembershipInfo {
 		Membership_sap2.setBounds(56, 204, 663, 2);
 		Membership_Panel.add(Membership_sap2);
 
-		JButton Close_Btn = new JButton("닫기");
+		JButton Close_Btn = new ControlButton("닫기");
 		Close_Btn.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 		Close_Btn.setBounds(320, 364, 136, 54);
 		Membership_Panel.add(Close_Btn);

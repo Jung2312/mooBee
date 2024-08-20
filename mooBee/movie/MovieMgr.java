@@ -43,6 +43,7 @@ public class MovieMgr {
 	private String apiUrl;
 	
 	private String videoUrl;
+	private String posterUrl;
 
 	public MovieMgr() {
 		pool = DBConnectionMgr.getInstance();
@@ -386,6 +387,9 @@ public class MovieMgr {
 
 				vlist3.addElement(bean2); // 리턴 안하는 경우 사용
 			}
+            if (vlist3.size() == 16) {
+                break;
+            }
 
 		}
 
@@ -453,6 +457,49 @@ public class MovieMgr {
 		return vlist;
 	}
 
+	// 영화 검색
+	public Vector<MovieBean> searchMovie(String title) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		Vector<MovieBean> vlist = new Vector<MovieBean>();
+
+		try {
+			con = pool.getConnection();
+			sql = "SELECT * FROM tblmovie WHERE title LIKE ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, "%" + title + "%");
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				MovieBean bean = new MovieBean();
+				bean.setDocid(rs.getInt(1));
+				bean.setMovieSeq(rs.getString(2));
+				bean.setTitle(rs.getString(3));
+				bean.setDirectorNm(rs.getString(4));
+				bean.setActorNm(rs.getString(5));
+				bean.setPlot(rs.getString(6));
+				bean.setGenre(rs.getString(7));
+				bean.setReleaseDate(rs.getString(8));
+				bean.setRuntime(rs.getString(9));
+				bean.setPosterUrl(rs.getString(10));
+				bean.setVodUrl(rs.getString(11));
+				bean.setAudiAcc(rs.getString(12));
+				bean.setRating(rs.getString(13));
+
+				vlist.addElement(bean); // 리턴 안하는 경우 사용
+				
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return vlist;
+	}
+	
 	// 선택한 하나의 영화 상세 정보 출력
 	public MovieBean getMovie(int docid) {
 		Connection con = null;
@@ -537,6 +584,29 @@ public class MovieMgr {
 			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
 		}
 		return videoUrl;
+	}
+	
+	// 랜덤으로 포스터 url 출력
+	public String randomPosterUrl() {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		
+		try {
+			con = pool.getConnection();
+			sql = "SELECT posterUrl FROM tblmovie ORDER BY RAND() LIMIT 1;";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				posterUrl = rs.getString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return posterUrl;
 	}
 
 

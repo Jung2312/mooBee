@@ -1,12 +1,6 @@
 package UI;
 
 import javax.swing.*;
-
-import movie.MovieBean;
-import movie.MovieMgr;
-import review.ReviewBean;
-import review.ReviewMgr;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +12,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
+import movie.MovieBean;
+import movie.MovieMgr;
+import review.ReviewBean;
+import review.ReviewMgr;
 
 public class MovieInfoForm extends JFrame {
 
@@ -34,11 +33,9 @@ public class MovieInfoForm extends JFrame {
     Vector<ReviewBean> vlist;
     
     public MovieInfoForm(int docid, String userId) {
-		rMgr = new ReviewMgr();
+        rMgr = new ReviewMgr();
         mMgr = new MovieMgr();
         mBean = mMgr.getMovie(docid);
-        
-
         
         currentPage = 1;
         reviewsPerPage = 4; // 페이지당 4개의 리뷰 표시
@@ -54,15 +51,15 @@ public class MovieInfoForm extends JFrame {
         movieInfoPanel.setPreferredSize(new Dimension(1000, 450));
         movieInfoPanel.setBackground(Color.WHITE);
 
-        JButton homeButton = new JButton("홈");
-        homeButton.setBounds(30, 30, 80, 30);
+        JButton homeButton = new ControlButton("홈");
+        homeButton.setBounds(30, 36, 97, 34);
         movieInfoPanel.add(homeButton);
 
-        JButton backButton = new JButton("이전 페이지");
-        backButton.setBounds(830, 30, 100, 30);
+        // 이전 페이지 버튼의 위치를 MainForm의 메뉴 위치와 동일하게 조정
+        JButton backButton = new ControlButton("이전 페이지");
+        backButton.setBounds(826, 36, 110, 34);  // 위치를 MainForm의 메뉴 버튼 위치와 동일하게 조정
         movieInfoPanel.add(backButton);
 
-        
         JLabel titleLabel = new JLabel(mBean.getTitle(), JLabel.CENTER);
         titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 28));
         titleLabel.setBounds(250, 30, 500, 40);
@@ -87,24 +84,28 @@ public class MovieInfoForm extends JFrame {
         movieDetails.setBounds(450, 100, 400, 250);
         movieInfoPanel.add(movieDetails);
 
-        JButton goToTrailerButton = new JButton("예고편 보러 가기");
-        goToTrailerButton.setBounds(450, 360, 150, 40);
+        // "예고편 보러 가기" 버튼 크기와 위치 조정
+        JButton goToTrailerButton = new HoneyButton("예고편 보러 가기");
+        goToTrailerButton.setBounds(450, 360, 180, 40); // 가로 크기를 늘림
         movieInfoPanel.add(goToTrailerButton);
 
-        JButton bookTicketButton = new JButton("예매하러 가기");
-        bookTicketButton.setBounds(620, 360, 150, 40);
+        // "영화 예매" 버튼 크기와 위치 조정
+        JButton bookTicketButton = new HoneyButton("예매하러 가기");
+        bookTicketButton.setBounds(640, 360, 180, 40); // 가로 크기를 늘림
         movieInfoPanel.add(bookTicketButton);
 
         // 영화 줄거리 패널 추가 - JLabel 사용
+        JLabel storyLabel = new JLabel("<html><body style='width: 720px;'>" + mBean.getPlot() + "</body></html>");
+        storyLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+        storyLabel.setVerticalAlignment(JLabel.TOP);
+
+        // 패널 높이 설정
         JPanel storyPanel = new JPanel();
         storyPanel.setLayout(new BorderLayout());
-        storyPanel.setPreferredSize(new Dimension(1000, 150)); // 적절한 크기 설정
+        storyPanel.setBounds(30, 450, 826, storyLabel.getPreferredSize().height + 20); // 높이를 텍스트 내용에 따라 조정
         storyPanel.setBackground(Color.WHITE);
         storyPanel.setBorder(BorderFactory.createTitledBorder("영화 줄거리"));
 
-        JLabel storyLabel = new JLabel(mBean.getPlot());
-        storyLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
-        storyLabel.setVerticalAlignment(JLabel.TOP);
         storyPanel.add(storyLabel, BorderLayout.CENTER);
 
         reviewPanel = new JPanel();
@@ -126,7 +127,7 @@ public class MovieInfoForm extends JFrame {
         reviewInputField.setBounds(30, 80, 800, 40);
         reviewTitlePanel.add(reviewInputField);
 
-        JButton submitReviewButton = new JButton("리뷰 작성");
+        JButton submitReviewButton = new ControlButton("리뷰 작성");
         submitReviewButton.setBounds(850, 80, 100, 40);
         reviewTitlePanel.add(submitReviewButton);
         
@@ -216,21 +217,21 @@ public class MovieInfoForm extends JFrame {
         
         submitReviewButton.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				rBean = new ReviewBean();
-				rBean.setUserId(userId);
-				rBean.setTitle(titleLabel.getText());
-				rBean.setScope(5);
-				rBean.setRecommend(5);
-				rBean.setDocid(docid);
-				rBean.setContent(reviewInputField.getText());
-				rMgr.insertReview(rBean);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rBean = new ReviewBean();
+                rBean.setUserId(userId);
+                rBean.setTitle(titleLabel.getText());
+                rBean.setScope(5);
+                rBean.setRecommend(5);
+                rBean.setDocid(docid);
+                rBean.setContent(reviewInputField.getText());
+                rMgr.insertReview(rBean);
 
-				updateReviews();
-		        updatePagination(paginationPanel); // 초기 페이지네이션 설정
-			}
-		});
+                updateReviews();
+                updatePagination(paginationPanel); // 초기 페이지네이션 설정
+            }
+        });
 
         updateReviews(); // 초기 리뷰 표시
         updatePagination(paginationPanel); // 초기 페이지네이션 설정
@@ -239,7 +240,7 @@ public class MovieInfoForm extends JFrame {
 
     private void updateReviews() {
         reviewsContainer.removeAll();
-        reviews.removeAll(reviews);
+        reviews.clear();
         
         vlist = rMgr.listReview();
 
@@ -275,8 +276,10 @@ public class MovieInfoForm extends JFrame {
         int startPage = (currentPageGroup - 1) * maxPageInGroup + 1;
         int endPage = Math.min(currentPageGroup * maxPageInGroup, totalPages);
 
+        ButtonGroup pageButtonGroup = new ButtonGroup(); // 버튼 그룹으로 묶기
+
         if (currentPageGroup > 1) {
-            JButton prevGroupButton = new JButton("<");
+            JButton prevGroupButton = new ControlButton("<");
             prevGroupButton.addActionListener(e -> {
                 currentPageGroup--;
                 updatePagination(paginationPanel);
@@ -287,16 +290,20 @@ public class MovieInfoForm extends JFrame {
         }
 
         for (int i = startPage; i <= endPage; i++) {
-            JButton pageButton = new JButton(String.valueOf(i));
+            JToggleButton pageButton = new ControlToggleButton(String.valueOf(i));
+            if (i == currentPage) {
+                pageButton.setSelected(true); // 현재 페이지에 해당하는 버튼을 선택 상태로 설정
+            }
             pageButton.addActionListener(e -> {
                 currentPage = Integer.parseInt(pageButton.getText());
                 updateReviews();
             });
+            pageButtonGroup.add(pageButton); // 버튼 그룹에 추가
             paginationPanel.add(pageButton);
         }
 
         if (endPage < totalPages) {
-            JButton nextGroupButton = new JButton(">");
+            JButton nextGroupButton = new ControlButton(">");
             nextGroupButton.addActionListener(e -> {
                 currentPageGroup++;
                 updatePagination(paginationPanel);
@@ -311,7 +318,7 @@ public class MovieInfoForm extends JFrame {
     }
 
     private void addReview(JPanel container, String reviewText) {
-    	reviewPanel = new JPanel();
+        reviewPanel = new JPanel();
         reviewPanel.setLayout(new BorderLayout());
         reviewPanel.setPreferredSize(new Dimension(900, 80));
 

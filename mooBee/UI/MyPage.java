@@ -28,6 +28,7 @@ import javax.swing.SwingConstants;
 
 import review.ReviewBean;
 import review.ReviewMgr;
+import temp.TempMgr;
 import user.UserBean;
 import user.UserMgr;
 
@@ -37,6 +38,7 @@ public class MyPage {
 	private UserBean userbean;
 	private UserMgr usermgr;
 	private ReviewMgr rMgr;;
+	private TempMgr tMgr;
 	private static String userId;
 	private Vector<ReviewBean> reviewlist;
 	// Create the application.
@@ -51,6 +53,8 @@ public class MyPage {
 		userbean = usermgr.getUser(userId);
 		rMgr = new ReviewMgr();
 		reviewlist = rMgr.findMemberReview(userId);
+		tMgr = new TempMgr();
+		tMgr.deleteWarning(userId);
 		
 		frame = new JFrame();
 		frame.setResizable(false);
@@ -100,7 +104,7 @@ public class MyPage {
 		MyPage_sap.setBounds(44, 121, 827, 2);
 		MyInfoPanel.add(MyPage_sap);
 
-		JButton ViewMembership_Btn = new JButton("멤버십 혜택 보기");
+		JButton ViewMembership_Btn = new ControlButton2("멤버십 혜택 보기");
 		ViewMembership_Btn.setBounds(49, 136, 125, 23);
 		MyInfoPanel.add(ViewMembership_Btn);
 
@@ -143,18 +147,29 @@ public class MyPage {
 		Membership_Background.setBackground(new Color(204, 204, 0));
 
 		// 매너 온도 동그라미 패널 추가
-		CirclePanel mannerCircle = new CirclePanel(70, new Color(50, 205, 50)); // 동그라미의 크기와 색상을 지정
+		CirclePanel mannerCircle = new CirclePanel(70); // 동그라미의 크기와 색상을 지정
 		mannerCircle.setBounds(711, 31, 74, 70); // 위치와 크기 설정
 		MyInfoPanel.add(mannerCircle);
 		mannerCircle.setLayout(null);
 		
-		JLabel MyMannerTemp = new JLabel(userbean.getTemp()+"˚");
+		float temp = userbean.getTemp();
+
+		if(temp >= 36.5) {
+			mannerCircle.paintColor(new Color(50, 205, 50));
+		}else if(temp < 36.5 && temp >= 30.0) {
+			mannerCircle.paintColor(new Color(102,102,153));
+		}else if(temp < 30.0) {
+			mannerCircle.paintColor(new Color(204,204,204));
+		}
+		
+		JLabel MyMannerTemp = new JLabel(temp +"˚");
 		MyMannerTemp.setBounds(10, 10, 55, 55);
 		MyMannerTemp.setFont(new Font("나눔고딕", Font.PLAIN, 18));
 		MyMannerTemp.setHorizontalAlignment(SwingConstants.CENTER);
 		mannerCircle.add(MyMannerTemp);
 
-		JButton Degree_Btn = new JButton("매너온도란?");
+		
+		JButton Degree_Btn = new ControlButton2("매너온도란?");
 		Degree_Btn.setBounds(797, 10, 105, 23);
 		MyInfoPanel.add(Degree_Btn);
 
@@ -215,7 +230,7 @@ public class MyPage {
 		MyReservMovie_Label5.setBounds(12, 194, 357, 23);
 		MyReservation_Panel.add(MyReservMovie_Label5);
 
-		JButton GoMyTicket_Btn = new JButton("예매 내역 보러가기");
+		JButton GoMyTicket_Btn = new ControlButton2("예매 내역 보러가기");
 		GoMyTicket_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MyReservation mrv = new MyReservation(); // MyReservation 창 생성
@@ -251,7 +266,7 @@ public class MyPage {
 			MyReview_Panel.add(MyReviewMovie_Label);
 		}
 
-		JButton GoMyReview_Btn = new JButton("내 리뷰 보러가기");
+		JButton GoMyReview_Btn = new ControlButton2("내 리뷰 보러가기");
 		GoMyReview_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MyReview mr = new MyReview(userId); // MyReservation 창 생성
@@ -273,7 +288,7 @@ public class MyPage {
 
 		JPopupMenu popupMenu = new JPopupMenu();
 
-		JButton MenuTab = new JButton("메뉴");
+		 JButton MenuTab = new ControlButton("메뉴");
 		MenuTab.setBounds(826, 36, 97, 34);
 		MyPagePanel.add(MenuTab);
 
@@ -312,7 +327,7 @@ public class MyPage {
 		JMenuItem Logout = new JMenuItem("로그아웃");
 		popupMenu.add(Logout);
 
-		JButton HomeButton = new JButton("홈");
+		JButton HomeButton = new ControlButton("홈");
 		HomeButton.setBounds(61, 36, 97, 34);
 		MyPagePanel.add(HomeButton);
 
@@ -325,7 +340,7 @@ public class MyPage {
 			}
 		});
 
-		JButton ModifyUserInfo_Btn = new JButton("회원정보 수정");
+		JButton ModifyUserInfo_Btn = new ControlButton2("회원정보 수정");
 		ModifyUserInfo_Btn.setBounds(826, 613, 125, 23);
 		MyPagePanel.add(ModifyUserInfo_Btn);
 
@@ -388,6 +403,7 @@ public class MyPage {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					userId = "11";
 					MyPage window = new MyPage(userId);
 					window.frame.setVisible(true);
 				} catch (Exception e) {

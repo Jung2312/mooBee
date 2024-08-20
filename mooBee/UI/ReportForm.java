@@ -100,7 +100,7 @@ public class ReportForm {
 		chckbxNewCheckBox.setBounds(28, 198, 257, 23);
 		panel.add(chckbxNewCheckBox);
 
-		JButton Cancel_Btn = new JButton("취소");
+		JButton Cancel_Btn = new ControlButton("취소");
 		Cancel_Btn.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 		Cancel_Btn.setBounds(28, 233, 119, 35);
 		panel.add(Cancel_Btn);
@@ -111,7 +111,7 @@ public class ReportForm {
 			}
 		});
 
-		JButton btnNewButton_1 = new JButton("신고하기");
+		JButton btnNewButton_1 = new ControlButton("신고하기");
 		btnNewButton_1.setFont(new Font("나눔고딕", Font.BOLD, 15));
 		btnNewButton_1.setBounds(162, 233, 119, 35);
 		panel.add(btnNewButton_1);

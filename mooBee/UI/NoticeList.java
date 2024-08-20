@@ -52,8 +52,6 @@ public class NoticeList {
 	private JLabel notice_Label;
 	private JLabel noticeTitleLabel; // 클래스 멤버로 이동
 	private JLabel noticeInfoLabel; // 클래스 멤버로 이동
-	private String userid = "root"; // 로그인한 사용자 ID (테스트용)
-	private Object[] originalNotice; // 수정 취소 시 복구할 공지사항 정보
 	private static String userId;
 	private NoticeBean noticebean;
 	private NoticeMgr noticemgr;
@@ -62,7 +60,7 @@ public class NoticeList {
 	 */
 	// 생성자
 	public NoticeList(String userId) {
-		this.userid = userId;
+		this.userId = userId;
 		initialize();
 	}
 
@@ -158,7 +156,7 @@ public class NoticeList {
 		noticeListPanel.add(notice_Label);
 
 		// 관리자 계정일 경우 공지사항 작성 버튼 추가
-		if (userid.equals("root")) {
+		if (userId.equals("root")) {
 			JButton addNoticeButton = new JButton("공지사항 작성");
 			addNoticeButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 			addNoticeButton.setBounds(700, 95, 180, 33);
@@ -214,7 +212,7 @@ public class NoticeList {
 		nextButton.setBounds(94, 531, 150, 33);
 		noticeDetailPanel.add(nextButton);
 
-		if (userid.equals("root")) {
+		if (userId.equals("root")) {
 			// 관리자 전용 수정 및 삭제 버튼
 			JButton editButton = new JButton("수정");
 			editButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
@@ -404,9 +402,6 @@ public class NoticeList {
 	    }
 	    cardLayout.show(contentPane, "NoticeCreatePanel");
 	}
-
-
-
 
 	/*
 	 * // 테이블 인덱스 재정렬 (번호 열 업데이트) private void renumberTableRows() { for (int i = 0;

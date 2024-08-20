@@ -26,6 +26,9 @@ import javax.swing.JSeparator;
 import javax.swing.JEditorPane;
 import javax.swing.SwingConstants;
 
+import movie.MovieBean;
+import reservation.ReservationMgr;
+import reservation.ReservationBean;
 import review.ReviewBean;
 import review.ReviewMgr;
 import temp.TempMgr;
@@ -39,9 +42,11 @@ public class MyPage {
 	private UserMgr usermgr;
 	private ReviewMgr rMgr;;
 	private TempMgr tMgr;
+	private ReservationMgr reservMgr;
 	private static String userId;
-	private Vector<ReviewBean> reviewlist;
-	// Create the application.
+	private Vector<ReviewBean> reviewList;
+	private Vector<ReservationBean> reservationList;
+
 	public MyPage(String userId) {
 		this.userId = userId;
 		initialize();
@@ -52,9 +57,11 @@ public class MyPage {
 		userbean = new UserBean();
 		userbean = usermgr.getUser(userId);
 		rMgr = new ReviewMgr();
-		reviewlist = rMgr.findMemberReview(userId);
+		reviewList = rMgr.findMemberReview(userId);
 		tMgr = new TempMgr();
 		tMgr.deleteWarning(userId);
+		reservMgr = new ReservationMgr();
+		reservationList = reservMgr.listRSVNUserId(userId);
 		
 		frame = new JFrame();
 		frame.setResizable(false);
@@ -205,35 +212,26 @@ public class MyPage {
 		MyReservation_Label.setBounds(12, 10, 193, 42);
 		MyReservation_Panel.add(MyReservation_Label);
 
-		JLabel MyReservMovie_Label1 = new JLabel("명탐정코난 - 100만달러의 펜타그램(더빙)");
-		MyReservMovie_Label1.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReservMovie_Label1.setBounds(12, 62, 357, 23);
-		MyReservation_Panel.add(MyReservMovie_Label1);
+		int locationSize = 29;
+		
+		for (int i = 0; i < reservationList.size(); i++) {
+			if(i == 5) {
+				break;
+			}
+			locationSize += 33;
 
-		JLabel MyReservMovie_Label2 = new JLabel("파일럿");
-		MyReservMovie_Label2.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReservMovie_Label2.setBounds(12, 95, 357, 23);
-		MyReservation_Panel.add(MyReservMovie_Label2);
-
-		JLabel MyReservMovie_Label3 = new JLabel("데드풀과 울버린");
-		MyReservMovie_Label3.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReservMovie_Label3.setBounds(12, 128, 357, 23);
-		MyReservation_Panel.add(MyReservMovie_Label3);
-
-		JLabel MyReservMovie_Label4 = new JLabel("인사이드 아웃2");
-		MyReservMovie_Label4.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReservMovie_Label4.setBounds(12, 161, 357, 23);
-		MyReservation_Panel.add(MyReservMovie_Label4);
-
-		JLabel MyReservMovie_Label5 = new JLabel("사랑의 하츄핑");
-		MyReservMovie_Label5.setFont(new Font("나눔고딕", Font.PLAIN, 15));
-		MyReservMovie_Label5.setBounds(12, 194, 357, 23);
-		MyReservation_Panel.add(MyReservMovie_Label5);
+			ReservationBean rBean = reservationList.get(i);
+			MovieBean mBean = reservMgr.getMovieData(rBean.getDocid());
+			JLabel MyReservMovie_Label = new JLabel(mBean.getTitle());
+			MyReservMovie_Label.setFont(new Font("나눔고딕", Font.PLAIN, 15));
+			MyReservMovie_Label.setBounds(12, locationSize, 357, 23);
+			MyReservation_Panel.add(MyReservMovie_Label);
+		}
 
 		JButton GoMyTicket_Btn = new JButton("예매 내역 보러가기");
 		GoMyTicket_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MyReservation mrv = new MyReservation(); // MyReservation 창 생성
+				MyReservation mrv = new MyReservation(userId); // MyReservation 창 생성
 				mrv.setPreviousPage(frame); // MyPage를 이전 페이지로 설정
 				mrv.getFrame().setVisible(true); // MyReservation 창을 표시
 				frame.dispose(); // 현재 MyPage 창을 닫음
@@ -252,14 +250,14 @@ public class MyPage {
 		MyReview_Label.setBounds(12, 10, 310, 42);
 		MyReview_Panel.add(MyReview_Label);
 
-		int locationSize = 29;
+		locationSize = 29;
 
-		for (int i = 0; i < reviewlist.size(); i++) {
+		for (int i = 0; i < reviewList.size(); i++) {
 			if(i == 5) {
 				break;
 			}
 			locationSize += 33;
-			ReviewBean rBean = reviewlist.get(i);
+			ReviewBean rBean = reviewList.get(i);
 			JLabel MyReviewMovie_Label = new JLabel(rBean.getTitle());
 			MyReviewMovie_Label.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 			MyReviewMovie_Label.setBounds(12, locationSize, 341, 23);

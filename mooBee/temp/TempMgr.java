@@ -144,8 +144,12 @@ public class TempMgr {
 		ResultSet rs = null;
 		String sql = null;
 		String userId = null;
+		
 		try {
 			con = pool.getConnection();
+			System.out.println(docid);
+			System.out.println(cinemaNum);
+			System.out.println(seatId);
 			sql = "select userId from tblreservation where cinemaNum = ? and viewDate = ? and docid = ? and seatId = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, cinemaNum);
@@ -154,13 +158,14 @@ public class TempMgr {
 			pstmt.setInt(4, seatId);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				
+				userId = rs.getString(1);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
 		}
+	
 		return userId;
 	}
 	
@@ -237,6 +242,8 @@ public class TempMgr {
 		}
 		return flag;
 	}
+	
+	
 	
 	public static void main(String[] args) {
 		TempBean bean = new TempBean();

@@ -70,6 +70,16 @@ public class MainForm extends JFrame {
         JButton btnNotices = new HoneyButton("공지사항");
         btnNotices.setBounds(584, 180, 150, 50);
         MainForm_Panel.add(btnNotices);
+        
+        btnNotices.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                NoticeList NL = new NoticeList(userId);
+                setVisible(true);
+                dispose();
+			}
+		});
 
         Trailer = new BackgroundPanel();
         Trailer.setBounds(151, 251, 700, 300);

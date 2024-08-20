@@ -104,7 +104,7 @@ public class MyPage {
 		MyPage_sap.setBounds(44, 121, 827, 2);
 		MyInfoPanel.add(MyPage_sap);
 
-		JButton ViewMembership_Btn = new JButton("멤버십 혜택 보기");
+		JButton ViewMembership_Btn = new ControlButton2("멤버십 혜택 보기");
 		ViewMembership_Btn.setBounds(49, 136, 125, 23);
 		MyInfoPanel.add(ViewMembership_Btn);
 
@@ -169,7 +169,7 @@ public class MyPage {
 		mannerCircle.add(MyMannerTemp);
 
 		
-		JButton Degree_Btn = new JButton("매너온도란?");
+		JButton Degree_Btn = new ControlButton2("매너온도란?");
 		Degree_Btn.setBounds(797, 10, 105, 23);
 		MyInfoPanel.add(Degree_Btn);
 
@@ -230,7 +230,7 @@ public class MyPage {
 		MyReservMovie_Label5.setBounds(12, 194, 357, 23);
 		MyReservation_Panel.add(MyReservMovie_Label5);
 
-		JButton GoMyTicket_Btn = new JButton("예매 내역 보러가기");
+		JButton GoMyTicket_Btn = new ControlButton2("예매 내역 보러가기");
 		GoMyTicket_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MyReservation mrv = new MyReservation(); // MyReservation 창 생성
@@ -266,7 +266,7 @@ public class MyPage {
 			MyReview_Panel.add(MyReviewMovie_Label);
 		}
 
-		JButton GoMyReview_Btn = new JButton("내 리뷰 보러가기");
+		JButton GoMyReview_Btn = new ControlButton2("내 리뷰 보러가기");
 		GoMyReview_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MyReview mr = new MyReview(userId); // MyReservation 창 생성
@@ -340,7 +340,7 @@ public class MyPage {
 			}
 		});
 
-		JButton ModifyUserInfo_Btn = new JButton("회원정보 수정");
+		JButton ModifyUserInfo_Btn = new ControlButton2("회원정보 수정");
 		ModifyUserInfo_Btn.setBounds(826, 613, 125, 23);
 		MyPagePanel.add(ModifyUserInfo_Btn);
 

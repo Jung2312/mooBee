@@ -43,11 +43,11 @@ public class SeatSelectionForm extends JFrame {
         setLocationRelativeTo(null);
         setLayout(null);
 
-        JButton homeButton = new JButton("홈");
+        JButton homeButton = new ControlButton("홈");
         homeButton.setBounds(30, 30, 120, 50);
         add(homeButton);
 
-        JButton backButton = new JButton("이전 페이지");
+        JButton backButton = new ControlButton("이전 페이지");
         backButton.setBounds(1250, 30, 120, 50);
         add(backButton);
 
@@ -218,23 +218,23 @@ public class SeatSelectionForm extends JFrame {
         seatPanel.repaint();
 
         // 좌석 미리보기 버튼들
-        JButton previewButton1 = new JButton("좌석 미리보기");
+        JButton previewButton1 = new HoneyButton("좌석 미리보기");
         previewButton1.setBounds(20, 180, 120, 50);
         add(previewButton1);
 
-        JButton previewButton2 = new JButton("좌석 미리보기");
+        JButton previewButton2 = new HoneyButton("좌석 미리보기");
         previewButton2.setBounds(20, 450, 120, 50);
         add(previewButton2);
 
-        JButton previewButton3 = new JButton("좌석 미리보기");
+        JButton previewButton3 = new HoneyButton("좌석 미리보기");
         previewButton3.setBounds(1250, 180, 120, 50);
         add(previewButton3);
 
-        JButton previewButton4 = new JButton("좌석 미리보기");
+        JButton previewButton4 = new HoneyButton("좌석 미리보기");
         previewButton4.setBounds(1250, 450, 120, 50);
         add(previewButton4);
 
-        JButton payButton = new JButton("결제하기");
+        JButton payButton = new HoneyButton("결제하기");
         payButton.setBounds(1250, 870, 120, 60);
         add(payButton);
         

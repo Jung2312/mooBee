@@ -23,6 +23,8 @@ public class MainForm extends JFrame {
     private MediaPlayer mediaPlayer;
     private static String userId;
     private MovieMgr mMgr;
+    private JButton btnNext;
+    private JButton btnPrevious;
 
     public MainForm(String userId) {
         this.userId = userId;
@@ -75,20 +77,36 @@ public class MainForm extends JFrame {
         Trailer.setLayout(new BorderLayout());
         Trailer.setBackground(Color.WHITE);
         
-        try {
-            // 이미지 URL에서 이미지 로딩
-            ImageIcon imgIcon = new ImageIcon(new URL(mMgr.randomPosterUrl()), BorderLayout.CENTER);
-            Image img = imgIcon.getImage();
-            // 배경 이미지로 설정
-            Trailer.setBackgroundImage(img);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        updatePoster(); // 포스터 이미지 불러오기
 
         fxPanel = new JFXPanel();
         Trailer.add(fxPanel, BorderLayout.CENTER);
         createVideoPlayer();
 
+        btnPrevious = new JButton("<");
+        btnPrevious.setBorderPainted(false);
+        btnPrevious.setContentAreaFilled(false);
+        Trailer.add(btnPrevious, BorderLayout.WEST);
+
+        btnNext = new JButton(">");
+        btnNext.setBorderPainted(false);
+        btnNext.setContentAreaFilled(false);
+        Trailer.add(btnNext, BorderLayout.EAST);
+
+        btnPrevious.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updatePoster();
+            }
+        });
+
+        btnNext.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updatePoster();
+            }
+        });
+        
         JButton MenuTab = new ControlButton("메뉴");
         MenuTab.setBounds(826, 36, 97, 34);
         MainForm_Panel.add(MenuTab);
@@ -166,6 +184,8 @@ public class MainForm extends JFrame {
     public void createVideoPlayer() {
         Platform.runLater(() -> {
             try {
+            	btnNext.setVisible(false);
+            	btnPrevious.setVisible(false);
             	Thread.sleep(1000); // 1초 후에 재생
                 StackPane root = new StackPane();
                 Scene scene = new Scene(root, 700, 300);
@@ -194,6 +214,18 @@ public class MainForm extends JFrame {
         });
     }
 
+    public void updatePoster() {
+        try {
+            // 이미지 URL에서 이미지 로딩
+            ImageIcon imgIcon = new ImageIcon(new URL(mMgr.randomPosterUrl()), BorderLayout.CENTER);
+            Image img = imgIcon.getImage();
+            // 배경 이미지로 설정
+            Trailer.setBackgroundImage(img);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+    
     public static void main(String[] args) {
         userId = "11"; // 이 부분에 적절한 userId 값을 설정하세요
         EventQueue.invokeLater(() -> {

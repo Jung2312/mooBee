@@ -13,16 +13,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-
-
 public class ReservationForm extends JFrame {
     private static String userId;
     private ScreenBean screenbean;
     private ScreenMgr screenmgr;
-    private static int RSVdocid,RSVcinemaNum;
+    private static int RSVdocid, RSVcinemaNum;
     private static String RSVDate;
+
+    private JToggleButton selectedYouthButton = null; // 청소년 그룹에서 선택된 버튼
+    private JToggleButton selectedAdultButton = null; // 성인 그룹에서 선택된 버튼
+
     public ReservationForm(String userId) {
-    	this.userId = userId;
+        this.userId = userId;
         screenbean = new ScreenBean();
         screenmgr = new ScreenMgr();
         setTitle("영화 예매 창");
@@ -35,10 +37,10 @@ public class ReservationForm extends JFrame {
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(topPanel, BorderLayout.NORTH);
 
-        JButton homeButton = new JButton("홈");
+        JButton homeButton = new ControlButton("홈");
         topPanel.add(homeButton, BorderLayout.WEST);
 
-        JButton backButton = new JButton("이전 페이지");
+        JButton backButton = new ControlButton("이전 페이지");
         topPanel.add(backButton, BorderLayout.EAST);
 
         // 중앙 패널: 영화 선택, 극장 선택, 날짜 선택, 시간 선택 패널을 포함
@@ -58,6 +60,7 @@ public class ReservationForm extends JFrame {
         JPanel movieSelectionPanel = new JPanel();
         movieSelectionPanel.setBackground(Color.LIGHT_GRAY);
         movieSelectionPanel.setLayout(new BorderLayout());
+        movieSelectionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); 
         Vector<ScreenBean> movieList = screenmgr.listScreenMovie();
         JList<ScreenBean> movieJList = new JList<>(movieList);
         movieJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -68,8 +71,8 @@ public class ReservationForm extends JFrame {
         JLabel movieSelectionTitle = new JLabel("영화 선택", JLabel.CENTER);
         movieSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         movieSelectionTitle.setOpaque(true);
-        movieSelectionTitle.setBackground(Color.GRAY);
-        movieSelectionTitle.setForeground(Color.WHITE);
+        movieSelectionTitle.setBackground(new Color(255, 200, 0));
+        movieSelectionTitle.setForeground(Color.BLACK);
         movieSelectionPanel.add(movieSelectionTitle, BorderLayout.NORTH);
         centerPanel.add(movieSelectionPanel, gbc);
 
@@ -82,32 +85,31 @@ public class ReservationForm extends JFrame {
         JPanel theaterSelectionPanel = new JPanel();
         theaterSelectionPanel.setBackground(Color.LIGHT_GRAY);
         theaterSelectionPanel.setLayout(new BorderLayout());
-
-       
+        theaterSelectionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); 
 
         JLabel theaterSelectionTitle = new JLabel("극장 선택", JLabel.CENTER);
         theaterSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         theaterSelectionTitle.setOpaque(true);
-        theaterSelectionTitle.setBackground(Color.GRAY);
-        theaterSelectionTitle.setForeground(Color.WHITE);
+        theaterSelectionTitle.setBackground(new Color(255, 200, 0));
+        theaterSelectionTitle.setForeground(Color.BLACK);
         theaterSelectionPanel.add(theaterSelectionTitle, BorderLayout.NORTH);
         centerPanel.add(theaterSelectionPanel, gbc);
-       
+
         // 날짜 선택 패널
         gbc.gridx = 2;
-        gbc.weightx = 0.2;  
+        gbc.weightx = 0.2;
         JPanel dateSelectionPanel = new JPanel();
         dateSelectionPanel.setBackground(Color.LIGHT_GRAY);
         dateSelectionPanel.setLayout(new BorderLayout());
+        dateSelectionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
         JLabel dateSelectionTitle = new JLabel("날짜 선택", JLabel.CENTER);
         dateSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         dateSelectionTitle.setOpaque(true);
-        dateSelectionTitle.setBackground(Color.GRAY);
-        dateSelectionTitle.setForeground(Color.WHITE);
+        dateSelectionTitle.setBackground(new Color(255, 200, 0));
+        dateSelectionTitle.setForeground(Color.BLACK);
         dateSelectionPanel.add(dateSelectionTitle, BorderLayout.NORTH);
         centerPanel.add(dateSelectionPanel, gbc);
-        
 
         // 시간 선택 패널
         gbc.gridx = 3;
@@ -115,16 +117,17 @@ public class ReservationForm extends JFrame {
         JPanel timeSelectionPanel = new JPanel();
         timeSelectionPanel.setBackground(Color.LIGHT_GRAY);
         timeSelectionPanel.setLayout(new BorderLayout());
+        timeSelectionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); 
 
         JLabel timeSelectionTitle = new JLabel("시간 선택", JLabel.CENTER);
         timeSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         timeSelectionTitle.setOpaque(true);
-        timeSelectionTitle.setBackground(Color.GRAY);
-        timeSelectionTitle.setForeground(Color.WHITE);
+        timeSelectionTitle.setBackground(new Color(255, 200, 0));
+        timeSelectionTitle.setForeground(Color.BLACK);
         timeSelectionPanel.add(timeSelectionTitle, BorderLayout.NORTH);
         centerPanel.add(timeSelectionPanel, gbc);
-        
-     // 영화 선택 리스너
+
+        // 영화 선택 리스너
         movieJList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -145,8 +148,8 @@ public class ReservationForm extends JFrame {
                 JLabel theaterSelectionTitle = new JLabel("극장 선택", JLabel.CENTER);
                 theaterSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                 theaterSelectionTitle.setOpaque(true);
-                theaterSelectionTitle.setBackground(Color.GRAY);
-                theaterSelectionTitle.setForeground(Color.WHITE);
+                theaterSelectionTitle.setBackground(new Color(255, 200, 0));
+                theaterSelectionTitle.setForeground(Color.BLACK);
                 theaterSelectionPanel.add(theaterSelectionTitle, BorderLayout.NORTH);
                 theaterSelectionPanel.add(listScroller, BorderLayout.CENTER);
                 theaterSelectionPanel.revalidate();
@@ -173,8 +176,8 @@ public class ReservationForm extends JFrame {
                         JLabel dateSelectionTitle = new JLabel("날짜 선택", JLabel.CENTER);
                         dateSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                         dateSelectionTitle.setOpaque(true);
-                        dateSelectionTitle.setBackground(Color.GRAY);
-                        dateSelectionTitle.setForeground(Color.WHITE);
+                        dateSelectionTitle.setBackground(new Color(255, 200, 0));
+                        dateSelectionTitle.setForeground(Color.BLACK);
                         dateSelectionPanel.add(dateSelectionTitle, BorderLayout.NORTH);
                         dateSelectionPanel.add(dateScroller, BorderLayout.CENTER);
                         dateSelectionPanel.revalidate();
@@ -202,23 +205,23 @@ public class ReservationForm extends JFrame {
                                 JLabel timeSelectionTitle = new JLabel("시간 선택", JLabel.CENTER);
                                 timeSelectionTitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
                                 timeSelectionTitle.setOpaque(true);
-                                timeSelectionTitle.setBackground(Color.GRAY);
-                                timeSelectionTitle.setForeground(Color.WHITE);
+                                timeSelectionTitle.setBackground(new Color(255, 200, 0));
+                                timeSelectionTitle.setForeground(Color.BLACK);
                                 timeSelectionPanel.add(timeSelectionTitle, BorderLayout.NORTH);
                                 timeSelectionPanel.add(timeScroller, BorderLayout.CENTER);
                                 timeSelectionPanel.revalidate();
                                 timeSelectionPanel.repaint();
-                                
+
                                 timeJList.addListSelectionListener(new ListSelectionListener() {
-									@Override
-									public void valueChanged(ListSelectionEvent e) {
-										if (e.getValueIsAdjusting()) return; // 중복 이벤트 방지
-										ScreenBean selectedTime = timeJList.getSelectedValue();
-										RSVdocid = selectedTime.getDocid();
-										RSVcinemaNum = selectedTime.getCinemaNum();
-										RSVDate = selectedTime.getScreenDate()+selectedTime.getScreenTime();
-									}
-								});
+                                    @Override
+                                    public void valueChanged(ListSelectionEvent e) {
+                                        if (e.getValueIsAdjusting()) return; // 중복 이벤트 방지
+                                        ScreenBean selectedTime = timeJList.getSelectedValue();
+                                        RSVdocid = selectedTime.getDocid();
+                                        RSVcinemaNum = selectedTime.getCinemaNum();
+                                        RSVDate = selectedTime.getScreenDate() + selectedTime.getScreenTime();
+                                    }
+                                });
                             }
                         });
                     }
@@ -237,51 +240,67 @@ public class ReservationForm extends JFrame {
         peopleSelectionPanel.add(youthLabel);
 
         // 청소년 인원 선택 버튼들
-        ButtonGroup youthGroup = new ButtonGroup(); 
         for (int i = 1; i <= 9; i++) {
-            JToggleButton youthButton = new JToggleButton(i + "명");
-            youthGroup.add(youthButton); 
+            JToggleButton youthButton = new HoneyToggleButton(i + "명");
             peopleSelectionPanel.add(youthButton);
+
+            youthButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (selectedYouthButton != null && selectedYouthButton != youthButton) {
+                        selectedYouthButton.setSelected(false);
+                    }
+                    selectedYouthButton = youthButton.isSelected() ? youthButton : null;
+                }
+            });
         }
 
         JLabel adultLabel = new JLabel("성인", JLabel.CENTER);
         peopleSelectionPanel.add(adultLabel);
 
         // 성인 인원 선택 버튼들
-        ButtonGroup adultGroup = new ButtonGroup(); 
         for (int i = 1; i <= 9; i++) {
-            JToggleButton adultButton = new JToggleButton(i + "명");
-            adultGroup.add(adultButton); 
+            JToggleButton adultButton = new HoneyToggleButton(i + "명");
             peopleSelectionPanel.add(adultButton);
+
+            adultButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (selectedAdultButton != null && selectedAdultButton != adultButton) {
+                        selectedAdultButton.setSelected(false);
+                    }
+                    selectedAdultButton = adultButton.isSelected() ? adultButton : null;
+                }
+            });
         }
 
         bottomPanel.add(peopleSelectionPanel, BorderLayout.CENTER);
 
-        JButton seatSelectionButton = new JButton("좌석 선택");
+        JButton seatSelectionButton = new HoneyButton("좌석 선택");
         seatSelectionButton.setPreferredSize(new Dimension(100, 80));
         bottomPanel.add(seatSelectionButton, BorderLayout.EAST);
 
         seatSelectionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SeatSelectionForm(userId,RSVdocid,RSVcinemaNum,RSVDate); 
-                dispose(); 
+                new SeatSelectionForm(userId, RSVdocid, RSVcinemaNum, RSVDate);
+                dispose();
             }
         });
 
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(userId); 
-                dispose(); 
+                new MainForm(userId);
+                dispose();
             }
         });
 
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(userId); 
-                dispose(); 
+                new MainForm(userId);
+                dispose();
             }
         });
 

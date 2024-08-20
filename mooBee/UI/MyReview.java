@@ -154,6 +154,7 @@ public class MyReview {
 			separator1.setBackground(new Color(192, 192, 192));
 			separator1.setBounds(56, size5, 866, 2);
 			panel.add(separator1);
+			
 			size1 += 142;
 			size2 += 142;
 			size3 += 142;

@@ -18,6 +18,8 @@ public class MovieListForm extends JFrame {
 	private static String userId;
 	MovieMgr mMgr;
 	Vector<MovieBean> vlist;
+	Vector<MovieBean> searchList;
+	private JPanel moviePanel;
 
     public MovieListForm() {
 
@@ -49,11 +51,20 @@ public class MovieListForm extends JFrame {
         searchField.setBounds(250, 80, 450, 40);
         mainPanel.add(searchField);
 
-        JButton searchButton = new JButton("검색");
-        searchButton.setBounds(700, 80, 60, 40);
-        mainPanel.add(searchButton);
+		JButton searchButton = new JButton("검색");
+		searchButton.setBounds(700, 80, 60, 40);
+		mainPanel.add(searchButton);
+		searchButton.addActionListener(new ActionListener() {
 
-        JPanel moviePanel = new JPanel();
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				searchList = mMgr.searchMovie(searchField.getText());
+				updateMoviePanel(searchList);
+				searchField.setText("");
+			}
+		});
+
+		moviePanel = new JPanel();
         moviePanel.setLayout(new GridLayout(0, 4, 20, 20)); // n행 4열로 설정
         moviePanel.setLocation(EXIT_ON_CLOSE, ABORT);
         moviePanel.setBounds(100, 150, 800, 1400);
@@ -62,31 +73,7 @@ public class MovieListForm extends JFrame {
         vlist = mMgr.rankListMovie();
         moviePanel.removeAll();
         
-        for (int i = 0; i < 16; i++) {
-            MovieBean bean = vlist.get(i);
-       
-            JPanel posterPanel = new JPanel();
-            posterPanel.setPreferredSize(new Dimension(220, 330));
-            JLabel posterLabel = new JLabel();
-            try {
-            	ImageIcon imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
-                Image img = imgIcon.getImage();  
-                Image scaledImg = img.getScaledInstance(220, 330, Image.SCALE_SMOOTH); 
-                posterLabel.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH)); 
-                posterLabel.addMouseListener(new MouseAdapter() {
-                	@Override
-					public void mouseClicked(MouseEvent e) {
-						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid(), "11");
-						movieInfoForm.setVisible(true);
-						dispose();
-					}
-				});
-            } catch (Exception e) {
-                posterLabel.setText("Image not available");
-            }
-            posterPanel.add(posterLabel);
-            moviePanel.add(posterPanel);
-        }
+		updateMoviePanel(vlist);
         
 
         // 스크롤 패널 설정
@@ -106,7 +93,36 @@ public class MovieListForm extends JFrame {
         setVisible(true);
     }
     
+	private void updateMoviePanel(Vector<MovieBean> movies) {
+		moviePanel.removeAll();
+		for (int i = 0; i < Math.min(movies.size(), 16); i++) {
+			MovieBean bean = movies.get(i);
 
+			JPanel posterPanel = new JPanel();
+			posterPanel.setPreferredSize(new Dimension(220, 330));
+			JLabel posterLabel = new JLabel();
+			try {
+				ImageIcon imgIcon = new ImageIcon(new URL(bean.getPosterUrl()));
+				Image img = imgIcon.getImage();
+				Image scaledImg = img.getScaledInstance(220, 330, Image.SCALE_SMOOTH);
+				posterLabel.setIcon(new ImageIcon(scaledImg, BorderLayout.NORTH));
+				posterLabel.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid(), "11");
+						movieInfoForm.setVisible(true);
+						dispose();
+					}
+				});
+			} catch (Exception e) {
+				posterLabel.setText("Image not available");
+			}
+			posterPanel.add(posterLabel);
+			moviePanel.add(posterPanel);
+		}
+	    moviePanel.revalidate(); // 레이아웃 재계산
+	    moviePanel.repaint(); // UI 업데이트
+	}
 
     public static void main(String[] args) {
         new MovieListForm();

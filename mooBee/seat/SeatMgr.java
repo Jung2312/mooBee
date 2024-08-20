@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.Vector;
 
 import DAO.DBConnectionMgr;
+import user.UserBean;
 
 public class SeatMgr {
 	
@@ -23,7 +24,7 @@ public class SeatMgr {
 		Vector<SeatBean>vlist = new Vector<SeatBean>();
 		try {
 			con = pool.getConnection();
-			sql = "select seatNum,seatId from tblseat where cinemaNum = ?";
+			sql = "select seatNum,seatId,seatChk from tblseat where cinemaNum = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, cinemaNum);
 			rs = pstmt.executeQuery();
@@ -31,6 +32,7 @@ public class SeatMgr {
 				SeatBean bean = new SeatBean();
 				bean.setSeatNum(rs.getString(1));
 				bean.setSeatId(rs.getInt(2));
+				bean.setSeatChk(rs.getBoolean(3));
 				vlist.addElement(bean);
 			}
 		} catch (Exception e) {
@@ -40,6 +42,7 @@ public class SeatMgr {
 		}
 		return vlist;
 	}
+	//좌석 선택되어있는지여부
 	public SeatBean getSeat(int seatId) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -48,17 +51,12 @@ public class SeatMgr {
 		SeatBean bean = new SeatBean();
 		try {
 			con = pool.getConnection();
-			sql = "select * from tblseat where seatId = ?";
+			sql = "select seatChk from tblseat where seatId = ?";
 		 	pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, seatId);
 			rs = pstmt.executeQuery();
-			if(rs.next()) { //2개 이상의 레코드는 절대 리턴되지않음
-				bean.setSeatId(rs.getInt(1));
-				bean.setSeatNum(rs.getString(2));
-				bean.setCinemaNum(rs.getInt(3));
-				bean.setSeatAmount(rs.getInt(4));
-				bean.setSeatImg(rs.getString(5));
-				bean.setSeatView(rs.getBoolean(6));
+			if(rs.next()) {
+				bean.setSeatChk(rs.getBoolean(1));
 			}	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,6 +64,26 @@ public class SeatMgr {
 			pool.freeConnection(con, pstmt, rs);
 		}
 		return bean;
+	}
+	//좌석 결제시 선택했다고 설정
+	public boolean updateSeatChk(SeatBean bean) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "update  tblseat SET SeatChk = ? WHERE SeatId = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setBoolean(1, bean.isSeatChk());
+			pstmt.setInt(2, bean.getSeatId());
+			if(pstmt.executeUpdate()==1) flag =true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flag;
 	}
 	public static void main(String[] args) {
 		SeatBean bean = new SeatBean();

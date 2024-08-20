@@ -273,7 +273,7 @@ public class MyPage {
 
 		JPopupMenu popupMenu = new JPopupMenu();
 
-		JButton MenuTab = new JButton("메뉴");
+		 JButton MenuTab = new ControlButton("메뉴");
 		MenuTab.setBounds(826, 36, 97, 34);
 		MyPagePanel.add(MenuTab);
 
@@ -312,7 +312,7 @@ public class MyPage {
 		JMenuItem Logout = new JMenuItem("로그아웃");
 		popupMenu.add(Logout);
 
-		JButton HomeButton = new JButton("홈");
+		JButton HomeButton = new ControlButton("홈");
 		HomeButton.setBounds(61, 36, 97, 34);
 		MyPagePanel.add(HomeButton);
 

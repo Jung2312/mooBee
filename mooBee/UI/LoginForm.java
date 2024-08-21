@@ -3,6 +3,7 @@ package UI;
 
 import javax.swing.*;
 
+import mail.MailSender;
 import user.UserBean;
 import user.UserMgr;
 
@@ -15,7 +16,7 @@ import java.awt.event.MouseEvent;
 public class LoginForm extends JFrame {
 
     UserMgr mgr;
-
+    
     public LoginForm() {
         mgr = new UserMgr();
         setTitle("MooBee");
@@ -81,7 +82,7 @@ public class LoginForm extends JFrame {
 
         loginSubmitButton.addActionListener(e -> handleLogin(loginFrame, loginEmailField, loginPasswordField));
 
-        JLabel forgotPasswordLabel = new JLabel("<HTML><U>비밀번호 찾기</U></HTML>"); // 밑줄 추가
+        JLabel forgotPasswordLabel = new JLabel("<HTML><U>비밀번호 재설정</U></HTML>"); // 밑줄 추가
         forgotPasswordLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         forgotPasswordLabel.setBounds(50, 220, 300, 30);
         forgotPasswordLabel.setForeground(Color.BLACK);
@@ -228,7 +229,7 @@ public class LoginForm extends JFrame {
     }
 
     private void openForgotPasswordWindow() {
-        JFrame forgotPasswordFrame = new JFrame("비밀번호 찾기 창");
+        JFrame forgotPasswordFrame = new JFrame("비밀번호 재설정 창");
         forgotPasswordFrame.setSize(400, 400); // 창 사이즈 확대
         forgotPasswordFrame.setLocationRelativeTo(null);
         forgotPasswordFrame.setLayout(null);
@@ -260,24 +261,47 @@ public class LoginForm extends JFrame {
         forgotPasswordPhoneField.setBounds(50, 210, 300, 40);
         forgotPasswordFrame.add(forgotPasswordPhoneField);
 
-        JButton forgotPasswordSubmitButton = new HoneyButton("비밀번호 찾기");
+        JButton forgotPasswordSubmitButton = new HoneyButton("비밀번호 재설정");
         forgotPasswordSubmitButton.setBounds(50, 270, 300, 40);
         forgotPasswordFrame.add(forgotPasswordSubmitButton);
 
         forgotPasswordSubmitButton.addActionListener(e -> {
-            forgotPasswordFrame.dispose(); // 창 닫기
-            openVerificationWindow(); // 인증번호 창 열기
+        	if(1 <= mgr.findUser(forgotPasswordEmailField.getText(),forgotPasswordNameField.getText(), forgotPasswordPhoneField.getText())) {
+                // 메시지 다이얼로그 표시
+                int result = JOptionPane.showConfirmDialog(
+                    forgotPasswordFrame, 
+                    "메일에 전송된 인증 번호를 입력하세요.", 
+                    "인증번호 확인", 
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+
+                // 확인 버튼 클릭 여부 확인
+                if (result == JOptionPane.OK_OPTION) {
+                    // 확인 버튼이 클릭된 경우 다음 단계로 넘어가기
+                	openVerificationWindow(forgotPasswordEmailField.getText(), forgotPasswordEmailField.getText()); // 인증번호 창 열기
+                    forgotPasswordFrame.dispose(); // 창 닫기
+                } else {
+                    // 취소 버튼이 클릭된 경우
+                    JOptionPane.showMessageDialog(forgotPasswordFrame, "인증 번호 확인 절차가 취소되었습니다.", "취소", JOptionPane.INFORMATION_MESSAGE);
+                }
+        	}else {
+        		JOptionPane.showMessageDialog(forgotPasswordFrame, "올바르지 않은 정보입니다.");
+        	}
         });
 
         forgotPasswordFrame.setVisible(true);
     }
 
-    private void openVerificationWindow() {
+
+	private void openVerificationWindow(String userId, String email) {
         JFrame verificationFrame = new JFrame("인증번호 입력");
         verificationFrame.setSize(400, 200);
         verificationFrame.setLocationRelativeTo(null);
         verificationFrame.setLayout(null);
 
+        MailSender mailSender = new MailSender(email);
+        
         JLabel verificationLabel = new JLabel("인증번호");
         verificationLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         verificationLabel.setBounds(50, 20, 300, 30);
@@ -291,8 +315,16 @@ public class LoginForm extends JFrame {
         verifyButton.setBounds(50, 100, 300, 40);
         verificationFrame.add(verifyButton);
 
-        verifyButton.addActionListener(e -> verificationFrame.dispose()); // 창 닫기
-
+        verifyButton.addActionListener(e -> {
+            if(mailSender.randomToken.equals(verificationField.getText())) {
+            	// 비밀번호 재설정
+            	new FindPassword(userId);
+            	verificationFrame.dispose();
+            }else {
+            	JOptionPane.showMessageDialog(verificationFrame, "인증번호가 틀렸습니다. 다시 입력해주세요.");
+            }
+        }); 
+        
         verificationFrame.setVisible(true);
     }
 

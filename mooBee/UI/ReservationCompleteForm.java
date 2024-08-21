@@ -11,12 +11,11 @@ import java.awt.event.ActionListener;
 
 public class ReservationCompleteForm extends JFrame {
 	private static String userId,ViewDate,RSVseat;
-	private static int pay,RSVdocid,RSVcinemaNum, Allcount;
+	private static int RSVdocid,RSVcinemaNum, Allcount;
     private ReservationBean rsvbean;
     private ReservationMgr rsvmgr;
-    public ReservationCompleteForm(String userId, int pay,int RSVdocid, int RSVcinemaNum, String ViewDate, int Allcount, String RSVSeat) {
+    public ReservationCompleteForm(String userId, int RSVdocid, int RSVcinemaNum, String ViewDate, int Allcount, String RSVSeat) {
     	this.userId = userId;
-    	this.pay = pay;
     	this.RSVcinemaNum = RSVcinemaNum;
     	this.RSVdocid = RSVdocid;
     	this.ViewDate = ViewDate;
@@ -63,24 +62,15 @@ public class ReservationCompleteForm extends JFrame {
             e.printStackTrace();  // 잘못된 형식의 숫자일 때 예외 처리
         }
         for (int i = 0; i < seatStrings.length; i++) {
-        	if(i < seatStrings.length-1) seat+=", ";
+        	
 			seat+=rsvmgr.getSeat(seatNumbers[i]);
-			
+			if(i < seatStrings.length-1) seat+=", ";
 		}
         
         String[] infoLabels = {"예매자 : "+rsvmgr.getName(userId) ,"영화 제목 : "+rsvmgr.getMoive(RSVdocid), 
         		"극장 : "+rsvmgr.getCinema(RSVcinemaNum) +"  "+ rsvmgr.gettheaterNum(RSVcinemaNum)+"관", 
-        		"일시 : "+ViewDate, "인원 : "+Allcount + " 명", "좌석 : "+seat, "결제 금액 : " + String.valueOf(pay)};
-        String[] vlaues = { 
-        		userId,
-        		rsvmgr.getMoive(RSVdocid),
-        		rsvmgr.getCinema(RSVcinemaNum),
-        		ViewDate,
-        		Allcount + " 명",
-        		seat,
-        		String.valueOf(pay)
-        		
-        };
+        		"일시 : "+ViewDate, "인원 : "+Allcount + " 명", "좌석 : "+seat, "결제 금액 : " + String.valueOf(Allcount*15000)};
+    
         for (String label : infoLabels) {
             JLabel infoLabel = new JLabel(label);
             infoLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
@@ -109,6 +99,6 @@ public class ReservationCompleteForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ReservationCompleteForm(userId,pay, RSVcinemaNum, RSVcinemaNum, ViewDate, Allcount, RSVseat);
+        new ReservationCompleteForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, Allcount, RSVseat);
     }
 }

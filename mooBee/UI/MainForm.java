@@ -89,15 +89,6 @@ public class MainForm extends JFrame {
             }
         });
 
-        // 현재 상영작 버튼 클릭 시 MovieListForm으로 이동
-        btnNowShowing.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MovieListForm movieListForm = new MovieListForm();
-                movieListForm.setVisible(true);
-                dispose();  // 현재 창을 닫음
-            }
-        });
 
         Trailer = new BackgroundPanel();
         Trailer.setBounds(151, 251, 700, 300);

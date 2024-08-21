@@ -29,4 +29,4 @@ mooBee/DAO/Config.java
 mooBee/DAO
 mooBee/javafx-sdk-22.0.2
 javafx-sdk-22.0.2
-mooBee/mail
+mooBee/mail/MailSender.java

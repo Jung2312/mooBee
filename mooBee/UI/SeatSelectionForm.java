@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.Vector;
 
 public class SeatSelectionForm extends JFrame {
-	private static String userId, ViewDate;
+	private static String userId, ViewDate, RSVSeat = "";
 	private static int RSVdocid, RSVcinemaNum, YouthCount, AdultCount;
 	private SeatBean seatbean;
 	private SeatMgr seatmgr;
@@ -29,7 +29,9 @@ public class SeatSelectionForm extends JFrame {
 	private JLabel TempLabel;
 	private UserBean userbean;
 	private UserMgr usermgr;
-
+	private static int pay;
+	private static int Allcount;
+	
 	public SeatSelectionForm(String userId, int RSVdocid, int RSVcinemaNum, String ViewDate, int YouthCount,
 			int AdultCount) {
 		this.userId = userId;
@@ -38,6 +40,8 @@ public class SeatSelectionForm extends JFrame {
 		this.RSVdocid = RSVdocid;
 		this.YouthCount = YouthCount;
 		this.AdultCount = AdultCount;
+		
+		Allcount = YouthCount+AdultCount;
 		seatbean = new SeatBean();
 		seatmgr = new SeatMgr();
 		RSVbean = new ReservationBean();
@@ -302,7 +306,7 @@ public class SeatSelectionForm extends JFrame {
 				// 모든 좌석이 선택 가능한 상태인 경우 결제 처리
 				int currentYouthCount = 0;
 				int currentAdultCount = 0;
-
+				
 				for (Integer seatId : selectedSeatIds) {
 					RSVbean.setUserId(userId);
 					RSVbean.setDocid(RSVdocid);
@@ -320,11 +324,12 @@ public class SeatSelectionForm extends JFrame {
 					}
 					RSVmgr.insertRsvn(RSVbean);
 					seatbean.setSeatId(seatId);
+					RSVSeat+=seatId+",";
 					seatbean.setSeatChk(true); // 좌석을 예약 상태로 변경
 					seatmgr.updateSeatChk(seatbean);
 
 					usermgr.getpay(userId);
-					int pay = userbean.getPaymentAmount();
+					pay = userbean.getPaymentAmount();
 
 					pay += 15000;
 
@@ -332,7 +337,7 @@ public class SeatSelectionForm extends JFrame {
 					userbean.setPaymentAmount(pay);
 					usermgr.updatepay(userbean);
 				}
-				new ReservationCompleteForm(); // 예약 완료 화면으로 이동
+				new ReservationCompleteForm(userId,pay, RSVcinemaNum, RSVcinemaNum, ViewDate, Allcount,RSVSeat); // 예약 완료 화면으로 이동
 				dispose(); // 현재 창을 닫음
 			}
 		});

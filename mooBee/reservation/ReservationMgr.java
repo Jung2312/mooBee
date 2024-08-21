@@ -19,7 +19,6 @@ public class ReservationMgr {
 	public ReservationMgr() {
 		pool = DBConnectionMgr.getInstance();
 	}
-
 	// 예매 post
 	public boolean insertRsvn(ReservationBean bean) {
 		Connection con = null;
@@ -28,11 +27,11 @@ public class ReservationMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "INSERT INTO tblreservation (userID, cinemaNum, RSVDATE, docid, seatID, price, ageGroup) VALUES (?, ?, ?, ?, ?, ?, ?)";
+			sql = "INSERT INTO tblreservation (userID, cinemaNum, ViewDate, docid, seatID, price, ageGroup) VALUES (?, ?, ?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getUserId());
 			pstmt.setInt(2, bean.getCinemaNum());
-			pstmt.setString(3, bean.getRSVDATE());
+			pstmt.setString(3, bean.getViewDate());
 			pstmt.setInt(4, bean.getDocid());
 			pstmt.setInt(5, bean.getSeatId());
 			pstmt.setInt(6, bean.getPrice());

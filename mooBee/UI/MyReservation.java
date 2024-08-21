@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +26,6 @@ import javax.swing.SwingConstants;
 import movie.MovieBean;
 import reservation.ReservationBean;
 import reservation.ReservationMgr;
-import review.ReviewBean;
 
 public class MyReservation {
 
@@ -254,7 +252,6 @@ public class MyReservation {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					userId = "root";
 					MyReservation window = new MyReservation(userId);
 					window.frame.setVisible(true);
 				} catch (Exception e) {

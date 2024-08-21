@@ -22,7 +22,7 @@ public class NoticeMgr {
         boolean flag = false;
         try {
             con = pool.getConnection();
-            sql = "insert into tblnotice values (null,?,?,?,null)";
+            sql = "insert into tblnotice values (null,?,?,?,now())";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, bean.getTitle());
             pstmt.setString(2, bean.getContent());
@@ -47,7 +47,7 @@ public class NoticeMgr {
         Vector<NoticeBean> vlist = new Vector<NoticeBean>();
         try {
             con = pool.getConnection();
-            sql = "SELECT * FROM tblnotice";
+            sql = "SELECT * FROM tblnotice ORDER BY noticeNum DESC";
             pstmt = con.prepareStatement(sql);
             rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -102,11 +102,12 @@ public class NoticeMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update  tblnotice set title = ?, content = ?, noticeImg = ?";
+			sql = "update  tblnotice set title = ?, content = ?, noticeImg = ? where noticeNum = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1,bean.getTitle());
 			pstmt.setString(2,bean.getContent());
 			pstmt.setString(3,bean.getNoticeImg());
+			pstmt.setInt(4, bean.getNoticeNum());
 			if(pstmt.executeUpdate()==1) flag =true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,7 +124,7 @@ public class NoticeMgr {
 			boolean flag = false;
 			try {
 				con = pool.getConnection();
-				sql = "delete from tblmember where noticeNum = ?";
+				sql = "delete from tblnotice where noticeNum = ?";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, noticeNum);
 				if(pstmt.executeUpdate()==1) flag = true;

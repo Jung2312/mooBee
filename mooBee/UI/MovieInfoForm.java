@@ -60,13 +60,20 @@ public class MovieInfoForm extends JFrame {
         backButton.setBounds(826, 36, 110, 34);  // 위치를 MainForm의 메뉴 버튼 위치와 동일하게 조정
         movieInfoPanel.add(backButton);
 
-        JLabel titleLabel = new JLabel(mBean.getTitle(), JLabel.CENTER);
+        // 영화 제목에 줄바꿈 기능 추가 및 크기 동적 설정
+        JLabel titleLabel = new JLabel("<html><body style='text-align:center;'>" + mBean.getTitle() + "</body></html>", JLabel.CENTER);
         titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 28));
-        titleLabel.setBounds(250, 30, 500, 40);
+        
+        // 제목 높이를 자동으로 계산하여 JLabel 크기를 설정
+        int titleHeight = titleLabel.getPreferredSize().height;
+        titleLabel.setBounds(150, 30, 700, titleHeight); // 위치 및 크기 설정
         movieInfoPanel.add(titleLabel);
 
+        // 패널 크기 조정
+        movieInfoPanel.setPreferredSize(new Dimension(1000, 450 + titleHeight - 40));
+
         JLabel moviePoster = new JLabel();
-        moviePoster.setBounds(150, 100, 250, 350);
+        moviePoster.setBounds(150, 100 + titleHeight - 40, 250, 350);
         moviePoster.setOpaque(true);
         ImageIcon imgIcon;
         try {
@@ -81,17 +88,17 @@ public class MovieInfoForm extends JFrame {
 
         JLabel movieDetails = new JLabel("<html>개봉일: " + mBean.getReleaseDate() + "<br><br>관람시간: " + mBean.getRuntime() + "분<br><br>감독: " + mBean.getDirectorNm() + "<br><br>주연 배우: " + mBean.getActorNm() + "<br></html>");
         movieDetails.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
-        movieDetails.setBounds(450, 100, 400, 250);
+        movieDetails.setBounds(450, 100 + titleHeight - 40, 400, 250);
         movieInfoPanel.add(movieDetails);
 
         // "예고편 보러 가기" 버튼 크기와 위치 조정
         JButton goToTrailerButton = new HoneyButton("예고편 보러 가기");
-        goToTrailerButton.setBounds(450, 360, 180, 40); // 가로 크기를 늘림
+        goToTrailerButton.setBounds(450, 360 + titleHeight - 40, 180, 40); // 가로 크기를 늘림
         movieInfoPanel.add(goToTrailerButton);
 
         // "영화 예매" 버튼 크기와 위치 조정
         JButton bookTicketButton = new HoneyButton("예매하러 가기");
-        bookTicketButton.setBounds(640, 360, 180, 40); // 가로 크기를 늘림
+        bookTicketButton.setBounds(640, 360 + titleHeight - 40, 180, 40); // 가로 크기를 늘림
         movieInfoPanel.add(bookTicketButton);
 
         // 영화 줄거리 패널 추가 - JLabel 사용
@@ -102,7 +109,7 @@ public class MovieInfoForm extends JFrame {
         // 패널 높이 설정
         JPanel storyPanel = new JPanel();
         storyPanel.setLayout(new BorderLayout());
-        storyPanel.setBounds(30, 450, 826, storyLabel.getPreferredSize().height + 20); // 높이를 텍스트 내용에 따라 조정
+        storyPanel.setBounds(30, 450 + titleHeight - 40, 826, storyLabel.getPreferredSize().height + 20); // 높이를 텍스트 내용에 따라 조정
         storyPanel.setBackground(Color.WHITE);
         storyPanel.setBorder(BorderFactory.createTitledBorder("영화 줄거리"));
 

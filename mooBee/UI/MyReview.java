@@ -114,7 +114,7 @@ public class MyReview {
 		separator.setBounds(40, 111, 895, 2);
 		panel.add(separator);
 
-		reviewList = rMgr.findMemberReview("11");
+		reviewList = rMgr.findMemberReview(userId);
 
 		int size1 = 123;
 		int size2 = 171;

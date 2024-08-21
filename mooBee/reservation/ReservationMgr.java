@@ -19,7 +19,6 @@ public class ReservationMgr {
 	public ReservationMgr() {
 		pool = DBConnectionMgr.getInstance();
 	}
-
 	// 예매 post
 	public boolean insertRsvn(ReservationBean bean) {
 		Connection con = null;

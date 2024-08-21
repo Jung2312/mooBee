@@ -322,6 +322,15 @@ public class MyPage {
 		JMenuItem GoNotice = new JMenuItem("공지사항");
 		popupMenu.add(GoNotice);
 
+		GoNotice.addActionListener(new ActionListener() {
+            		@Override
+            		public void actionPerformed(ActionEvent e) {
+                		NoticeList NL = new NoticeList(userId);
+                		frame.setVisible(true);
+                		frame.dispose();
+            		}
+       		 });
+
 		JMenuItem Logout = new JMenuItem("로그아웃");
 		popupMenu.add(Logout);
 

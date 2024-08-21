@@ -30,6 +30,12 @@ public class ReservationCompleteForm extends JFrame {
         setLocationRelativeTo(null);
         setLayout(null);
        
+     // Main logo image
+        ImageIcon logoIcon = new ImageIcon("./UI/images/mainlogo.png");
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setBounds(80, 20, 320, 200); 
+        add(logoLabel);
+        
         JLabel completionLabel = new JLabel("예매가 완료되었습니다.", JLabel.CENTER);
         completionLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         completionLabel.setBounds(100, 150, 300, 30);

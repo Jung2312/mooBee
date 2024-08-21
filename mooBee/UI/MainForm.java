@@ -60,7 +60,6 @@ public class MainForm extends JFrame {
 
         JButton btnMovieBooking = new HoneyButton("영화 예매");
         btnMovieBooking.setBounds(250, 180, 150, 50);
-
         MainForm_Panel.add(btnMovieBooking);
 
         JButton btnNowShowing = new HoneyButton("현재 상영작");
@@ -82,14 +81,14 @@ public class MainForm extends JFrame {
         MainForm_Panel.add(btnNotices);
         
         btnNotices.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 NoticeList NL = new NoticeList(userId);
                 setVisible(true);
                 dispose();
-			}
-		});
+            }
+        });
+
 
         Trailer = new BackgroundPanel();
         Trailer.setBounds(151, 251, 700, 300);
@@ -176,7 +175,10 @@ public class MainForm extends JFrame {
                         JOptionPane.QUESTION_MESSAGE);
 
                 if (response == JOptionPane.YES_OPTION) {
-                    dispose(); // 현재 창을 닫고 로그아웃 처리 (예를 들어 로그인 화면으로 돌아가기)
+    				// 로그아웃 처리 후 LoginForm 창을 엽니다.
+    				LoginForm loginForm = new LoginForm();  // LoginForm 객체 생성
+    				loginForm.setVisible(true);  // LoginForm 창 표시
+    				dispose();  // 현재 MyPage 창 닫기
                 }
             }
         });

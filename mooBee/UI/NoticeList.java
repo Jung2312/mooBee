@@ -157,7 +157,7 @@ public class NoticeList {
 
 		// 관리자 계정일 경우 공지사항 작성 버튼 추가
 		if (userId.equals("root")) {
-			JButton addNoticeButton = new JButton("공지사항 작성");
+			JButton addNoticeButton = new ControlButton("공지사항 작성");
 			addNoticeButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 			addNoticeButton.setBounds(700, 95, 180, 33);
 			noticeListPanel.add(addNoticeButton);
@@ -196,25 +196,25 @@ public class NoticeList {
 		noticeDetailTextArea.setEditable(false);
 		noticeDetailPanel.add(noticeDetailTextArea);
 
-		JButton backButton = new JButton("목록");
+		JButton backButton = new ControlButton("목록");
 		backButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 		backButton.setBounds(430, 597, 94, 43);
 		noticeDetailPanel.add(backButton);
 
 		// 이전 글, 다음 글 버튼
-		prevButton = new JButton("이전 글");
+		prevButton = new ControlButton2("이전 글");
 		prevButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 		prevButton.setBounds(94, 488, 150, 33);
 		noticeDetailPanel.add(prevButton);
 
-		nextButton = new JButton("다음 글");
+		nextButton = new ControlButton2("다음 글");
 		nextButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 		nextButton.setBounds(94, 531, 150, 33);
 		noticeDetailPanel.add(nextButton);
 
 		if (userId.equals("root")) {
 			// 관리자 전용 수정 및 삭제 버튼
-			JButton editButton = new JButton("수정");
+			JButton editButton = new ControlButton("수정");
 			editButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 			editButton.setBounds(687, 488, 94, 33);
 			noticeDetailPanel.add(editButton);
@@ -229,7 +229,7 @@ public class NoticeList {
 			        showNoticeCreatePanel(true, noticebean);
 			    }
 			});
-			JButton deleteButton = new JButton("삭제");
+			JButton deleteButton = new ControlButton("삭제");
 			deleteButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 			deleteButton.setBounds(787, 488, 94, 33);
 			noticeDetailPanel.add(deleteButton);
@@ -354,12 +354,12 @@ public class NoticeList {
 	        createNoticeTextArea.setWrapStyleWord(true);
 	        noticeCreatePanel.add(createNoticeTextArea);
 
-	        JButton saveButton = new JButton("저장");
+	        JButton saveButton = new ControlButton("저장");
 	        saveButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 	        saveButton.setBounds(459, 566, 94, 43);
 	        noticeCreatePanel.add(saveButton);
 
-	        JButton cancelButton = new JButton("취소");
+	        JButton cancelButton = new ControlButton("취소");
 	        cancelButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 	        cancelButton.setBounds(300, 566, 94, 43);
 	        noticeCreatePanel.add(cancelButton);

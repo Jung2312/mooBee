@@ -322,6 +322,15 @@ public class MyPage {
 		JMenuItem GoNotice = new JMenuItem("공지사항");
 		popupMenu.add(GoNotice);
 
+		GoNotice.addActionListener(new ActionListener() {
+            		@Override
+            		public void actionPerformed(ActionEvent e) {
+                		NoticeList NL = new NoticeList(userId);
+                		frame.setVisible(true);
+                		frame.dispose();
+            		}
+       		 });
+
 		JMenuItem Logout = new JMenuItem("로그아웃");
 		popupMenu.add(Logout);
 
@@ -371,8 +380,10 @@ public class MyPage {
 						JOptionPane.QUESTION_MESSAGE);
 
 				if (response == JOptionPane.YES_OPTION) {
-					// 로그아웃 처리
-					frame.dispose(); // 현재 창을 닫고 로그아웃 처리 (예를 들어 로그인 화면으로 돌아가기)
+					// 로그아웃 처리 후 LoginForm 창을 엽니다.
+					LoginForm loginForm = new LoginForm();  // LoginForm 객체 생성
+					loginForm.setVisible(true);  // LoginForm 창 표시
+					frame.dispose();  // 현재 MyPage 창 닫기
 				}
 				// 아니오를 누르면 아무 일도 하지 않음 (팝업 창만 닫힘)
 			}

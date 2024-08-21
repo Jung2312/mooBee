@@ -1,6 +1,7 @@
 package UI;
 
 import java.awt.EventQueue;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,6 +32,7 @@ public class FindPassword {
 			public void run() {
 				try {
 					FindPassword window = new FindPassword(userId);
+
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -44,6 +46,7 @@ public class FindPassword {
 	 */
 	public FindPassword(String userId) {
 		this.userId = userId;
+
 		initialize();
 	}
 

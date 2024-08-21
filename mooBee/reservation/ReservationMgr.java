@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import DAO.DBConnectionMgr;
 import movie.MovieBean;
+import seat.SeatBean;
 
 public class ReservationMgr {
 
@@ -283,7 +284,7 @@ public class ReservationMgr {
 
 	}
 
-// 예매한 영화(docid)를 통해 영화 정보 가져오기
+	// 예매한 영화(docid)를 통해 영화 정보 가져오기
 	public MovieBean getMovieData(int docid) {
 		MovieBean bean = new MovieBean();
 		Connection con = null;
@@ -355,7 +356,101 @@ public class ReservationMgr {
 		}
 		return flag;
 	}
+	// 영화찾기
+	public String getMoive(int docid) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		String MovieName = null;
 
+		try {
+			con = pool.getConnection();
+			sql = "select title from tblmovie where docid = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, docid);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				MovieName = rs.getString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return MovieName;
+	}
+	//좌석 찾기
+	public String getSeat(int seaId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		String seatNum = null;
+
+		try {
+			con = pool.getConnection();
+			sql = "select seatNum from tblseat where seatId = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, seaId);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				seatNum = rs.getString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return seatNum;
+	}
+	//예매자 이름찾기
+	public String getName(String userId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		String userName = null;
+
+		try {
+			con = pool.getConnection();
+			sql = "select name from tbluser where userId = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				userName = rs.getString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return userName;
+	}
+	public int gettheaterNum(int cinemaNum) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		int theaterNum = 0;
+
+		try {
+			con = pool.getConnection();
+			sql = "select theaterNum from tblcinema where cinemaNum = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, cinemaNum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				theaterNum = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
+		}
+		return theaterNum;
+	}
 	public static void main(String[] args) {
 		ReservationBean bean = new ReservationBean();
 		ReservationMgr mgr = new ReservationMgr();

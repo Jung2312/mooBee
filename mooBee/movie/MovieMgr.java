@@ -7,12 +7,18 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.CompletableFuture;
+
+import javax.sql.DataSource;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,6 +28,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import DAO.Config;
 import DAO.DBConnectionMgr;
@@ -212,293 +219,209 @@ public class MovieMgr {
 	}
 
 	// http를 통해 api 응답을 저장하는 메소드
-	public void getResponse(String fullApiUrl) {
-		try {
-			URL url = new URL(fullApiUrl);
-			// http 연결
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.setRequestProperty("Accept", "application/json");
 
-			// 200이 아닌 경우 오류 메시지 출력
-			if (conn.getResponseCode() != 200) {
-				throw new RuntimeException("HTTP GET Request Failed with Error code : " + conn.getResponseCode());
-			}
+	    // API 응답을 저장하는 메소드
+	    public String getResponse(String fullApiUrl) {
+	        try {
+	            URL url = new URL(fullApiUrl);
+	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            conn.setRequestMethod("GET");
+	            conn.setRequestProperty("Accept", "application/json");
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			response = new StringBuilder();
-			String output;
-			while ((output = br.readLine()) != null) {
-				response.append(output);
-			}
-			br.close();
+	            if (conn.getResponseCode() != 200) {
+	                throw new RuntimeException("HTTP GET Request Failed with Error code : " + conn.getResponseCode());
+	            }
 
-			conn.disconnect();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	            response = new StringBuilder();
+	            String output;
+	            while ((output = br.readLine()) != null) {
+	                response.append(output);
+	            }
+	            br.close();
 
-	// 영화 진흥원의 영화 대표 코드 검색
-	public String getMovieCd(String title, String directorNm) {
-		apiUrl = getListURL + "?key=" + apiKEY;
-		String movieCd = null;
-		try {
-			// URL Encoding
-			String encodedMovieNm = java.net.URLEncoder.encode(title, "UTF-8");
-			String encodedDirectorNm = java.net.URLEncoder.encode(directorNm, "UTF-8");
+	            conn.disconnect();
+	            return response.toString();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return null;
+	    }
 
-			String fullApiUrl = apiUrl + "&movieNm=" + encodedMovieNm + "&directorNm=" + encodedDirectorNm;
+	    // 영화 진흥원의 영화 대표 코드 검색
+	    public CompletableFuture<String> getMovieCdAsync(String title, String directorNm) {
+	        return CompletableFuture.supplyAsync(() -> {
+	            String movieCd = null;
+	            try {
+	                String encodedMovieNm = URLEncoder.encode(title, "UTF-8");
+	                String encodedDirectorNm = URLEncoder.encode(directorNm, "UTF-8");
+	                String fullApiUrl = getListURL + "?key=" + apiKEY + "&movieNm=" + encodedMovieNm + "&directorNm=" + encodedDirectorNm;
 
-			getResponse(fullApiUrl);
+	                String jsonResponseStr = getResponse(fullApiUrl);
+	                if (jsonResponseStr != null) {
+	                    JSONObject jsonResponse = new JSONObject(jsonResponseStr);
+	                    if (jsonResponse.has("movieListResult")) {
+	                        JSONObject movieListResult = jsonResponse.getJSONObject("movieListResult");
+	                        if (movieListResult.has("movieList")) {
+	                            JSONArray movieList = movieListResult.getJSONArray("movieList");
+	                            if (movieList.length() > 0) {
+	                                JSONObject movie = movieList.getJSONObject(0);
+	                                movieCd = movie.getString("movieCd");
+	                            }
+	                        }
+	                    }
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	            return movieCd;
+	        });
+	    }
 
-			// json parse
-			JSONObject jsonResponse = new JSONObject(response.toString());
+	    // 일별 박스오피스 순위 API 값 추출
+	    public CompletableFuture<Void> getBoxOfficeDataAsync(MovieBean bean) {
+	        return CompletableFuture.runAsync(() -> {
+	            try {
+	                String movieCd = bean.getMovieCd();
+	                String fullApiUrl = getBoxOfficeURL + "?key=" + apiKEY2 + "&movieCd=" + movieCd + "&targetDt=" + getDateFormat(1);
 
-			// "movieListResult" 존재 여부 확인
-			if (jsonResponse.has("movieListResult")) {
-				JSONObject movieListResult = jsonResponse.getJSONObject("movieListResult");
+	                String jsonResponseStr = getResponse(fullApiUrl);
+	                if (jsonResponseStr != null) {
+	                    JSONObject jsonResponse = new JSONObject(jsonResponseStr);
+	                    if (jsonResponse.has("boxOfficeResult")) {
+	                        JSONObject boxOfficeResult = jsonResponse.getJSONObject("boxOfficeResult");
+	                        if (boxOfficeResult.has("dailyBoxOfficeList")) {
+	                            JSONArray dailyBoxOfficeList = boxOfficeResult.getJSONArray("dailyBoxOfficeList");
+	                            for (int i = 0; i < dailyBoxOfficeList.length(); i++) {
+	                                JSONObject movieData = dailyBoxOfficeList.getJSONObject(i);
+	                                if (movieData.getString("movieCd").equals(movieCd)) {
+	                                    bean.setBoxofficeType("일간 박스오피스");
+	                                    bean.setRuum(movieData.optString("rnum"));
+	                                    bean.setRank(movieData.optString("rank"));
+	                                    bean.setMovieCd(movieData.optString("movieCd"));
+	                                    bean.setMovieNm(movieData.optString("movieNm"));
+	                                    bean.setOpenDt(movieData.optString("openDt"));
+	                                    bean.setAudiAcc(movieData.optString("audiAcc"));
+	                                    break;
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        });
+	    }
 
-				// "movieList" 존재 여부 확인
-				if (movieListResult.has("movieList")) {
-					JSONArray movieList = movieListResult.getJSONArray("movieList");
-					// 빈 결과가 아니라면 영화 코드 추출
-					if (movieList.length() > 0) {
-						JSONObject movie = movieList.getJSONObject(0);
-						movieCd = movie.getString("movieCd");
-					}
-				} else {
-					System.out.println("No 'movieList' field in response.");
-				}
-			} else {
-				System.out.println("No 'movieListResult' field in response.");
-			}
+	    // 상영 중인 영화 리스트 출력
+	    public List<MovieBean> listMovie() {
+	        List<MovieBean> vlist = new ArrayList<>();
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return movieCd;
-	}
+	        try {
+	            con = pool.getConnection();
+	            String sql = "SELECT docid, movieSeq, title, directorNm, actorNm, plot, genre, releaseDate, runtime, posterUrl, vodUrl, audiAcc, rating FROM tblmovie";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
 
-	// 일별 박스오피스 순위 api 값 추출
-	public void getBoxOfficeData(MovieBean bean) {
-		String movieCd = bean.getMovieCd();
+	            Map<String, MovieBean> movieMap = new HashMap<>();
 
-		apiUrl = getBoxOfficeURL + "?key=" + apiKEY2;
-		try {
+	            while (rs.next()) {
+	                if (vlist.size() >= 16) break; // Stop if size is 16
 
-			String fullApiUrl = apiUrl + "&movieCd=" + movieCd + "&targetDt=" + getDateFormat(1);
+	                MovieBean bean = new MovieBean();
+	                bean.setDocid(rs.getInt("docid"));
+	                bean.setMovieSeq(rs.getString("movieSeq"));
+	                bean.setTitle(rs.getString("title"));
+	                bean.setDirectorNm(rs.getString("directorNm"));
+	                bean.setActorNm(rs.getString("actorNm"));
+	                bean.setPlot(rs.getString("plot"));
+	                bean.setGenre(rs.getString("genre"));
+	                bean.setReleaseDate(rs.getString("releaseDate"));
+	                bean.setRuntime(rs.getString("runtime"));
+	                bean.setPosterUrl(rs.getString("posterUrl"));
+	                bean.setVodUrl(rs.getString("vodUrl"));
+	                bean.setAudiAcc(rs.getString("audiAcc"));
+	                bean.setRating(rs.getString("rating"));
 
-			getResponse(fullApiUrl);
+	                movieMap.put(bean.getMovieSeq(), bean);
+	            }
 
-			// json parse
-			JSONObject jsonResponse = new JSONObject(response.toString());
+	            List<CompletableFuture<Void>> futures = new ArrayList<>();
+	            for (MovieBean bean : movieMap.values()) {
+	                CompletableFuture<String> movieCdFuture = getMovieCdAsync(bean.getTitle(), bean.getDirectorNm());
+	                futures.add(movieCdFuture.thenCompose(movieCd -> {
+	                    if (movieCd != null) {
+	                        bean.setMovieCd(movieCd);
+	                        return getBoxOfficeDataAsync(bean);
+	                    }
+	                    return CompletableFuture.completedFuture(null);
+	                }));
+	            }
 
-			// "boxOfficeResult" 존재 여부 확인
-			if (jsonResponse.has("boxOfficeResult")) {
-				JSONObject boxOfficeResult = jsonResponse.getJSONObject("boxOfficeResult");
-				// "dailyBoxOfficeList" 존재 여부 확인
-				if (boxOfficeResult.has("dailyBoxOfficeList")) {
-					JSONArray dailyBoxOfficeList = boxOfficeResult.getJSONArray("dailyBoxOfficeList");
+	            // Wait for all futures to complete
+	            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
-					// 빈 결과가 아니라면 영화 코드 추출
-					for (int i = 0; i < dailyBoxOfficeList.length(); i++) {
-						JSONObject movieData = dailyBoxOfficeList.getJSONObject(i);
+	            // Filter, sort, and limit results
+	            vlist = new ArrayList<>(movieMap.values());
+	            vlist.removeIf(bean -> bean.getRank() == null);
+	            vlist.sort(Comparator.comparingInt(bean -> Integer.parseInt(bean.getRank())));
+	            if (vlist.size() > 16) {
+	                vlist = vlist.subList(0, 16);
+	            }
 
-						if (movieData.getString("movieCd").equals(movieCd)) {
-							bean.setBoxofficeType("일간 박스오피스");
-							bean.setRuum(movieData.optString("rnum"));
-							bean.setRank(movieData.optString("rank"));
-							bean.setMovieCd(movieData.optString("movieCd"));
-							bean.setMovieNm(movieData.optString("movieNm"));
-							bean.setOpenDt(movieData.optString("openDt"));
-							bean.setAudiAcc(movieData.optString("audiAcc"));
-							break;
-						}
-					}
-				} else {
-					System.out.println("No 'dailyBoxOfficeList' field in response.");
-				}
-			} else {
-				System.out.println("No 'boxOfficeResult' field in response.");
-			}
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+	        return vlist;
+	    }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	// 박스오피스 랭킹 순위 오름차순 영화 리스트 출력
-	public Vector<MovieBean> rankListMovie() {
-		Vector<MovieBean> vlist = listMovie();
-		Vector<MovieBean> vlist2 = new Vector<MovieBean>();
-		Vector<MovieBean> vlist3 = new Vector<MovieBean>();
-
-		for (int i = 0; i < vlist.size(); i++) {
-			MovieBean bean = vlist.get(i);
-			MovieBean bean2 = new MovieBean();
-			if (bean.getRank() != null) {
-				bean2.setDocid(bean.getDocid());
-				bean2.setMovieSeq(bean.getMovieSeq());
-				bean2.setTitle(bean.getTitle());
-				bean2.setDirectorNm(bean.getDirectorNm());
-				bean2.setActorNm(bean.getActorNm());
-				bean2.setPlot(bean.getPlot());
-				bean2.setGenre(bean.getGenre());
-				bean2.setReleaseDate(bean.getReleaseDate());
-				bean2.setRuntime(bean.getRuntime());
-				bean2.setPosterUrl(bean.getPosterUrl());
-				bean2.setVodUrl(bean.getVodUrl());
-				bean2.setAudiAcc(bean.getAudiAcc());
-				bean2.setRating(bean.getRating());
-
-				bean2.setBoxofficeType(bean.getBoxofficeType());
-				bean2.setRuum(bean.getRuum());
-				bean2.setRank(bean.getRank());
-				bean2.setMovieCd(bean.getMovieCd());
-				bean2.setMovieNm(bean.getMovieNm());
-				bean2.setOpenDt(bean.getOpenDt());
-				bean2.setAudiAcc(bean.getAudiAcc());
-
-				vlist2.addElement(bean2); // 리턴 안하는 경우 사용
-			}else {
-				bean2.setDocid(bean.getDocid());
-				bean2.setMovieSeq(bean.getMovieSeq());
-				bean2.setTitle(bean.getTitle());
-				bean2.setDirectorNm(bean.getDirectorNm());
-				bean2.setActorNm(bean.getActorNm());
-				bean2.setPlot(bean.getPlot());
-				bean2.setGenre(bean.getGenre());
-				bean2.setReleaseDate(bean.getReleaseDate());
-				bean2.setRuntime(bean.getRuntime());
-				bean2.setPosterUrl(bean.getPosterUrl());
-				bean2.setVodUrl(bean.getVodUrl());
-				bean2.setAudiAcc(bean.getAudiAcc());
-				bean2.setRating(bean.getRating());
-
-				bean2.setBoxofficeType(bean.getBoxofficeType());
-				bean2.setRuum(bean.getRuum());
-				bean2.setRank(bean.getRank());
-				bean2.setMovieCd(bean.getMovieCd());
-				bean2.setMovieNm(bean.getMovieNm());
-				bean2.setOpenDt(bean.getOpenDt());
-				bean2.setAudiAcc(bean.getAudiAcc());
-
-				vlist3.addElement(bean2); // 리턴 안하는 경우 사용
-			}
-            if (vlist3.size() == 16) {
-                break;
-            }
-
-		}
-
-		// 오름차순으로 정렬
-		Collections.sort(vlist2, new Comparator<MovieBean>() {
-			@Override
-			public int compare(MovieBean m1, MovieBean m2) {
-				// String rank를 Integer로 변환하여 비교
-				Integer rank1 = Integer.parseInt(m1.getRank());
-				Integer rank2 = Integer.parseInt(m2.getRank());
-				return Integer.compare(rank1, rank2); // rank를 기준으로 정렬
-			}
-		});
-		vlist2.addAll(vlist3);
-		return vlist2;
-	}
-
-	// 상영 중인 영화 리스트 출력
-	public Vector<MovieBean> listMovie() {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = null;
-		Vector<MovieBean> vlist = new Vector<MovieBean>();
-		try {
-			con = pool.getConnection();
-			sql = "select * from tblmovie";
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				MovieBean bean = new MovieBean();
-				bean.setDocid(rs.getInt(1));
-				bean.setMovieSeq(rs.getString(2));
-				bean.setTitle(rs.getString(3));
-				bean.setDirectorNm(rs.getString(4));
-				bean.setActorNm(rs.getString(5));
-				bean.setPlot(rs.getString(6));
-				bean.setGenre(rs.getString(7));
-				bean.setReleaseDate(rs.getString(8));
-				bean.setRuntime(rs.getString(9));
-				bean.setPosterUrl(rs.getString(10));
-				bean.setVodUrl(rs.getString(11));
-				bean.setAudiAcc(rs.getString(12));
-				bean.setRating(rs.getString(13));
-
-				/*
-				 * 영화진흥원 영화목록 조회 API 서비스와 movie 테이블에서 영화 제목, 감독명 비교 후 movieCd 가져와서 일별 박스오피스 API
-				 * 서비스에서 이용 setboxofficeType setruum setrank setmovieCd setmovieNm setopenDt
-				 * setaudiAcc
-				 */
-
-				String movieCd = getMovieCd(bean.getTitle(), bean.getDirectorNm()); // 영화진흥원 대표 코드 가져오기
-				if (movieCd != null) {
-					bean.setMovieCd(movieCd);
-					getBoxOfficeData(bean);
-				}
-
-				vlist.addElement(bean); // 리턴 안하는 경우 사용
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
-		}
-		return vlist;
-	}
 
 	// 영화 검색
-	public Vector<MovieBean> searchMovie(String title) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = null;
-		Vector<MovieBean> vlist = new Vector<MovieBean>();
+	    public List<MovieBean> searchMovie(String title) {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        String sql = null;
+	        List<MovieBean> vlist = new ArrayList<>(); // Changed from Vector to ArrayList
 
-		try {
-			con = pool.getConnection();
-			sql = "SELECT * FROM tblmovie WHERE title LIKE ?";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, "%" + title + "%");
-			rs = pstmt.executeQuery();
+	        try {
+	            con = pool.getConnection();
+	            sql = "SELECT * FROM tblmovie WHERE title LIKE ?";
+	            pstmt = con.prepareStatement(sql);
+	            pstmt.setString(1, "%" + title + "%");
+	            rs = pstmt.executeQuery();
 
-			while (rs.next()) {
-				MovieBean bean = new MovieBean();
-				bean.setDocid(rs.getInt(1));
-				bean.setMovieSeq(rs.getString(2));
-				bean.setTitle(rs.getString(3));
-				bean.setDirectorNm(rs.getString(4));
-				bean.setActorNm(rs.getString(5));
-				bean.setPlot(rs.getString(6));
-				bean.setGenre(rs.getString(7));
-				bean.setReleaseDate(rs.getString(8));
-				bean.setRuntime(rs.getString(9));
-				bean.setPosterUrl(rs.getString(10));
-				bean.setVodUrl(rs.getString(11));
-				bean.setAudiAcc(rs.getString(12));
-				bean.setRating(rs.getString(13));
+	            while (rs.next()) {
+	                MovieBean bean = new MovieBean();
+	                bean.setDocid(rs.getInt(1));
+	                bean.setMovieSeq(rs.getString(2));
+	                bean.setTitle(rs.getString(3));
+	                bean.setDirectorNm(rs.getString(4));
+	                bean.setActorNm(rs.getString(5));
+	                bean.setPlot(rs.getString(6));
+	                bean.setGenre(rs.getString(7));
+	                bean.setReleaseDate(rs.getString(8));
+	                bean.setRuntime(rs.getString(9));
+	                bean.setPosterUrl(rs.getString(10));
+	                bean.setVodUrl(rs.getString(11));
+	                bean.setAudiAcc(rs.getString(12));
+	                bean.setRating(rs.getString(13));
 
-				vlist.addElement(bean); // 리턴 안하는 경우 사용
-				
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt, rs); // con은 반납, pstmt/rs는 close
-		}
-		return vlist;
-	}
+	                vlist.add(bean); // Add to ArrayList instead of Vector
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs); // Ensure connection, statement, and result set are closed
+	        }
+	        return vlist;
+	    }
 	
 	// 선택한 하나의 영화 상세 정보 출력
 	public MovieBean getMovie(int docid) {

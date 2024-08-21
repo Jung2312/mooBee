@@ -66,6 +66,16 @@ public class MainForm extends JFrame {
         JButton btnNowShowing = new HoneyButton("현재 상영작");
         btnNowShowing.setBounds(417, 180, 150, 50);
         MainForm_Panel.add(btnNowShowing);
+        
+        btnNowShowing.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new MovieListForm(userId);
+                setVisible(true);
+                dispose();
+			}
+		});
 
         JButton btnNotices = new HoneyButton("공지사항");
         btnNotices.setBounds(584, 180, 150, 50);

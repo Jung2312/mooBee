@@ -5,6 +5,9 @@ import reservation.ReservationBean;
 import reservation.ReservationMgr;
 import seat.SeatBean;
 import seat.SeatMgr;
+import user.UserBean;
+import user.UserMgr;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +27,8 @@ public class SeatSelectionForm extends JFrame {
     private JLabel youthLabel;
     private JLabel adultLabel;
     private JLabel TempLabel;
+    private UserBean userbean;
+    private UserMgr usermgr;
     public SeatSelectionForm(String userId, int RSVdocid, int RSVcinemaNum, String ViewDate, int YouthCount, int AdultCount) {
         this.userId = userId;
         this.ViewDate = ViewDate;
@@ -35,6 +40,8 @@ public class SeatSelectionForm extends JFrame {
         seatmgr = new SeatMgr();
         RSVbean = new ReservationBean();
         RSVmgr = new ReservationMgr();
+        userbean = new UserBean();
+        usermgr = new UserMgr();
         selectedSeatIds = new HashSet<>(); // 선택된 좌석 ID 초기화
 
         setTitle("좌석 선택 화면");
@@ -147,9 +154,9 @@ public class SeatSelectionForm extends JFrame {
                         defaultColor = Color.BLACK;
                     }
 
-                    if (currentSeat != null && currentSeat.isSeatChk()) {
+                    if (currentSeat.isSeatChk()) {
                     	ReservationBean Temp = RSVmgr.getTemp(seatId);
-                    	if (Temp.getTemp() <= 30) {
+                    	if (Temp.getTemp() <= 30.0) {
                             // 온도가 30 이하인 경우 좌석을 빨간색으로 변경
                             seatButton.setBackground(Color.RED);
                         } else {
@@ -296,7 +303,6 @@ public class SeatSelectionForm extends JFrame {
                     RSVbean.setCinemaNum(RSVcinemaNum);
                     RSVbean.setSeatId(seatId);
                     RSVbean.setPrice(15000); // 가격 설정
-
                     // 선택된 좌석에 따라 나이 그룹 설정
                     if (currentYouthCount < YouthCount) {
                         RSVbean.setAgeGroup("청소년");
@@ -305,12 +311,19 @@ public class SeatSelectionForm extends JFrame {
                         RSVbean.setAgeGroup("성인");
                         currentAdultCount++;
                     }
-
                     RSVmgr.insertRsvn(RSVbean);
-
                     seatbean.setSeatId(seatId);
                     seatbean.setSeatChk(true); // 좌석을 예약 상태로 변경
                     seatmgr.updateSeatChk(seatbean);
+                    
+                    usermgr.getpay(userId);
+                    int pay = userbean.getPaymentAmount();
+                    
+                    pay +=15000;
+
+                    userbean.setUserId(userId);
+                    userbean.setPaymentAmount(pay);
+                    usermgr.updatepay(userbean);
                 }
                 new ReservationCompleteForm(); // 예약 완료 화면으로 이동
                 dispose(); // 현재 창을 닫음
@@ -342,7 +355,7 @@ public class SeatSelectionForm extends JFrame {
         Vector<ReservationBean> agelist = RSVmgr.listAgeGroup(RSVcinemaNum);
 
         for (ReservationBean reservation : agelist) {
-            String ageGroup = reservation.getAgeGroup(); // ageGroup을 가져옵니다.
+            String ageGroup = reservation.getAgeGroup(); 
             if (ageGroup.contains("청소년")) {
                 cinemaYouth++; // 청소년 카운트 증가
             } else if (ageGroup.contains("성인")) {

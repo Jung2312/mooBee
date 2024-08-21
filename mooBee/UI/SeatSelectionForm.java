@@ -11,6 +11,7 @@ import user.UserMgr;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -328,17 +329,29 @@ public class SeatSelectionForm extends JFrame {
 					seatbean.setSeatChk(true); // 좌석을 예약 상태로 변경
 					seatmgr.updateSeatChk(seatbean);
 
-					usermgr.getpay(userId);
-					pay = userbean.getPaymentAmount();
-
+					pay =usermgr.getpay(userId);
 					pay += 15000;
-
-					userbean.setUserId(userId);
-					userbean.setPaymentAmount(pay);
-					usermgr.updatepay(userbean);
+					usermgr.updatepay(pay,userId);
 				}
-				new ReservationCompleteForm(userId,pay, RSVcinemaNum, RSVcinemaNum, ViewDate, Allcount,RSVSeat); // 예약 완료 화면으로 이동
+				
+				new ReservationCompleteForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, Allcount,RSVSeat); // 예약 완료 화면으로 이동
 				dispose(); // 현재 창을 닫음
+				 try {
+			            // 열고자 하는 URL
+			            URI url = new URI("http://113.198.238.93/pay/payForm.jsp");
+
+			            // Desktop 객체를 얻어오기
+			            Desktop desktop = Desktop.getDesktop();
+
+			            // 웹 브라우저로 URL 열기
+			            if (desktop.isSupported(Desktop.Action.BROWSE)) {
+			                desktop.browse(url);
+			            } else {
+			                System.out.println("브라우저 열기를 지원하지 않습니다.");
+			            }
+			        } catch (Exception e1) {
+			            e1.printStackTrace();
+			        }
 			}
 		});
 

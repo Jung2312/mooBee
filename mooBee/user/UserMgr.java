@@ -224,12 +224,12 @@ public class UserMgr {
 	}
 
 	// 결제 금액 검색
-	public UserBean getpay(String userId) {
+	public int getpay(String userId) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql = null;
-		UserBean bean = new UserBean();
+		int pay = 0;
 		try {
 			con = pool.getConnection();
 			sql = "select PaymentAmount from tbluser where userId = ?";
@@ -237,7 +237,7 @@ public class UserMgr {
 			pstmt.setString(1, userId);
 			rs = pstmt.executeQuery();
 			if (rs.next()) { // 2개 이상의 레코드는 절대 리턴되지않음
-				bean.setPaymentAmount(rs.getInt(1));
+				pay =rs.getInt(1);
 
 			}
 		} catch (Exception e) {
@@ -245,11 +245,11 @@ public class UserMgr {
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
 		}
-		return bean;
+		return pay;
 	}
 	// 결제금액 업데이트
 
-	public boolean updatepay(UserBean bean) {
+	public boolean updatepay(int pay , String userId) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		String sql = null;
@@ -258,8 +258,8 @@ public class UserMgr {
 			con = pool.getConnection();
 			sql = "update  tbluser set paymentAmount = ? WHERE userId = ?";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, bean.getPaymentAmount());
-			pstmt.setString(2, bean.getUserId());
+			pstmt.setInt(1, pay);
+			pstmt.setString(2, userId);
 			if (pstmt.executeUpdate() == 1)
 				flag = true;
 		} catch (Exception e) {

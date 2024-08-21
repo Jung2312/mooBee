@@ -175,7 +175,10 @@ public class MainForm extends JFrame {
                         JOptionPane.QUESTION_MESSAGE);
 
                 if (response == JOptionPane.YES_OPTION) {
-                    dispose(); // 현재 창을 닫고 로그아웃 처리 (예를 들어 로그인 화면으로 돌아가기)
+    				// 로그아웃 처리 후 LoginForm 창을 엽니다.
+    				LoginForm loginForm = new LoginForm();  // LoginForm 객체 생성
+    				loginForm.setVisible(true);  // LoginForm 창 표시
+    				dispose();  // 현재 MyPage 창 닫기
                 }
             }
         });

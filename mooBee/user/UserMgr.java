@@ -166,6 +166,51 @@ public class UserMgr {
 		}
 		return flag;
 	}
+	//결제 금액 검색
+		public UserBean getpay(String userId) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql = null;
+			UserBean bean = new UserBean();
+			try {
+				con = pool.getConnection();
+				sql = "select PaymentAmount from tbluser where userId = ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, userId);
+				rs = pstmt.executeQuery();
+				if(rs.next()) { //2개 이상의 레코드는 절대 리턴되지않음
+					bean.setPaymentAmount(rs.getInt(1));
+					
+				}	
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			return bean;
+		}
+	//결제금액 업데이트
+	
+	public boolean updatepay(UserBean bean) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "update  tbluser set paymentAmount = ? WHERE userId = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, bean.getPaymentAmount());
+			pstmt.setString(2, bean.getUserId());
+			if(pstmt.executeUpdate()==1) flag =true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flag;
+	}
 	public static void main(String[] args) {
 		UserMgr mgr = new UserMgr();
 		UserBean bean = new UserBean();

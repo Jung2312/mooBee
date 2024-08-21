@@ -159,8 +159,9 @@ public class SeatSelectionForm extends JFrame {
                     	if (Temp.getTemp() <= 30.0) {
                             // 온도가 30 이하인 경우 좌석을 빨간색으로 변경
                             seatButton.setBackground(Color.RED);
-                        } else {
-                            // 온도가 30 초과 또는 Temp가 null인 경우 기본 회색으로 설정
+                            
+                        } else if(Temp.getTemp()>30) {
+                            // 온도가 30 초과인 경우 기본 회색으로 설정
                             seatButton.setBackground(Color.GRAY);
                         }
                         seatButton.setEnabled(false);

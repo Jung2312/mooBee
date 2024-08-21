@@ -12,16 +12,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public class MovieListForm extends JFrame {
 	private static String userId;
 	MovieMgr mMgr;
-	Vector<MovieBean> vlist;
-	Vector<MovieBean> searchList;
+	List<MovieBean> vlist;
+	List<MovieBean> searchList;
 	private JPanel moviePanel;
 
-    public MovieListForm() {
+    public MovieListForm(String userId) {
 
         setTitle("현재 상영작");
         setSize(1000, 700);
@@ -70,12 +72,11 @@ public class MovieListForm extends JFrame {
         moviePanel.setBounds(100, 150, 800, 1400);
         mainPanel.add(moviePanel);
 
-        vlist = mMgr.rankListMovie();
+        vlist = mMgr.listMovie();
         moviePanel.removeAll();
         
 		updateMoviePanel(vlist);
         
-
         // 스크롤 패널 설정
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -93,7 +94,7 @@ public class MovieListForm extends JFrame {
         setVisible(true);
     }
     
-	private void updateMoviePanel(Vector<MovieBean> movies) {
+	private void updateMoviePanel(List<MovieBean> movies) {
 		moviePanel.removeAll();
 		for (int i = 0; i < Math.min(movies.size(), 16); i++) {
 			MovieBean bean = movies.get(i);
@@ -109,7 +110,7 @@ public class MovieListForm extends JFrame {
 				posterLabel.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid(), "11");
+						MovieInfoForm movieInfoForm = new MovieInfoForm(bean.getDocid(), userId);
 						movieInfoForm.setVisible(true);
 						dispose();
 					}
@@ -125,6 +126,6 @@ public class MovieListForm extends JFrame {
 	}
 
     public static void main(String[] args) {
-        new MovieListForm();
+        new MovieListForm(userId);
     }
 }

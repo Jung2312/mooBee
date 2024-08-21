@@ -174,7 +174,7 @@ public class MovieInfoForm extends JFrame {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainForm(""); // MainForm으로 이동
+                new MainForm(userId); // MainForm으로 이동
                 dispose(); // 현재 창 닫기
             }
         });
@@ -182,7 +182,7 @@ public class MovieInfoForm extends JFrame {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MovieListForm(); // MovieListForm으로 이동
+                new MovieListForm(userId); // MovieListForm으로 이동
                 dispose(); // 현재 창 닫기
             }
         });

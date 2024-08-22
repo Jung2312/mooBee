@@ -8,7 +8,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import user.UserBean;
+import user.UserMgr;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
 
@@ -23,6 +28,8 @@ public class ModifyUser {
 	private JLabel PhoneNumber;
 	private JPasswordField ChangePwd_Field;
 	private JPasswordField ChkPwd_Field;
+	private UserMgr userMgr;
+	private static String userId;
 
 	/**
 	 * Launch the application.
@@ -31,7 +38,8 @@ public class ModifyUser {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ModifyUser window = new ModifyUser();
+					userId = userId;
+					ModifyUser window = new ModifyUser(userId);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -43,7 +51,8 @@ public class ModifyUser {
 	/**
 	 * Create the application.
 	 */
-	public ModifyUser() {
+	public ModifyUser(String userId) {
+		this.userId = userId;
 		initialize();
 	}
 
@@ -65,6 +74,9 @@ public class ModifyUser {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	
+	
+	
 	public void initialize() {
 		frame = new JFrame();
 		frame.setResizable(false);
@@ -116,6 +128,38 @@ public class ModifyUser {
 		JButton Modify_Btn = new ControlButton("수정");
 		Modify_Btn.setBounds(222, 401, 135, 39);
 		panel.add(Modify_Btn);
+		
+		Modify_Btn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userMgr = new UserMgr();
+				String password = new String(ChangePwd_Field.getPassword());
+				String rePassword = new String(ChkPwd_Field.getPassword());
+				String name = Name_Field.getText();
+				String phone = PhoneNumber_Field.getText();
+				if(password.equals("") || name.equals("") || phone.equals("")) {
+					JOptionPane.showMessageDialog(frame, "빈칸 없이 모두 입력하세요.");
+				}else {
+					if(password.equals(rePassword)) {
+						UserBean bean = new UserBean();
+						bean.setName(name);
+						bean.setPhone(phone);
+						bean.setPassword(password);
+						bean.setUserId(userId);
+						if(userMgr.updateUser(bean)) {
+							JOptionPane.showMessageDialog(frame, bean.getName()+"님의 정보가 수정 되었습니다.", "수정 완료", JOptionPane.INFORMATION_MESSAGE);
+							frame.dispose();
+						}else {
+							JOptionPane.showMessageDialog(frame, "올바른 정보를 입력하세요.");
+						}
+					}else {
+						JOptionPane.showMessageDialog(frame, "비밀번호가 다릅니다. 다시 입력하세요.");
+					}
+				}
+				
+			}
+		});
 
 		ChangePwd_Field = new JPasswordField();
 		ChangePwd_Field.setBounds(27, 145, 330, 39);

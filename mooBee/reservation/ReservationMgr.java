@@ -389,9 +389,10 @@ public class ReservationMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update from tblSeat set seatChk = 0 where seatId = ?";
+			sql = "update tblSeat set seatChk = ? where seatId = ?";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, seatId);
+			pstmt.setBoolean(1, false);
+			pstmt.setInt(2, seatId);
 			if (pstmt.executeUpdate() == 1)
 				flag = true;
 		} catch (Exception e) {

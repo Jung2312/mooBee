@@ -59,6 +59,8 @@ public class NoticeList {
 	private static String userId;
 	private NoticeBean noticebean;
 	private NoticeMgr noticemgr;
+	private int noticeNum;
+	private boolean isEditMode;
 	/**
 	 * Create the application.
 	 */
@@ -169,7 +171,8 @@ public class NoticeList {
 			addNoticeButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					// 공지사항 작성 화면으로 이동
-					showNoticeCreatePanel(false, noticebean);
+			        isEditMode = false;
+					showNoticeCreatePanel(noticebean);
 				}
 			});
 		}
@@ -229,12 +232,13 @@ public class NoticeList {
 
 			editButton.addActionListener(new ActionListener() {
 			    public void actionPerformed(ActionEvent e) {
-			        int noticeNum = (int) tableModel.getValueAt(currentIndex, 0); // 현재 선택된 공지사항 번호
+
+			        noticeNum = (int) tableModel.getValueAt(currentIndex, 0); // 현재 선택된 공지사항 번호
 			        noticemgr = new NoticeMgr();
 			        noticebean = noticemgr.getNotice(noticeNum);
-			        
+			        isEditMode = true;
 			        // 공지사항 수정 화면으로 이동
-			        showNoticeCreatePanel(true, noticebean);
+			        showNoticeCreatePanel(noticebean);
 			    }
 			});
 			JButton deleteButton = new ControlButton("삭제");
@@ -245,8 +249,7 @@ public class NoticeList {
 			// 공지사항 삭제 버튼 클릭 시
 			deleteButton.addActionListener(new ActionListener() {
 			    public void actionPerformed(ActionEvent e) {
-			    	int noticeNum = (int) tableModel.getValueAt(currentIndex, 0);
-			    	System.out.print(noticeNum);
+			    	noticeNum = (int) tableModel.getValueAt(currentIndex, 0);
 			        tableModel.removeRow(currentIndex); // 현재 선택된 행 삭제
 			        noticemgr = new NoticeMgr();
 			        noticemgr.deleteNotice(noticeNum);
@@ -369,7 +372,7 @@ public class NoticeList {
 	}
 
 	// 공지사항 작성/수정 패널로 이동
-    private void showNoticeCreatePanel(boolean isEditMode, NoticeBean notice) {
+    private void showNoticeCreatePanel(NoticeBean notice) {
         if (noticeCreatePanel == null) {
             noticeCreatePanel = new JPanel();
             noticeCreatePanel.setLayout(null);
@@ -409,6 +412,8 @@ public class NoticeList {
             imageScrollPane.setBounds(94, 320, 200, 220); // 이미지 스크롤 패널의 위치와 크기
             noticeCreatePanel.add(imageScrollPane);
 
+            noticeNum = noticebean.getNoticeNum();
+            
             imageButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -437,13 +442,14 @@ public class NoticeList {
                     cardLayout.show(contentPane, "NoticeListPanel");
                 }
             });
-
+            
             saveButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     NoticeMgr noticemgr = new NoticeMgr();
                     NoticeBean noticebean = new NoticeBean();
 
-                    noticebean.setNoticeNum(notice != null ? notice.getNoticeNum() : 0); // 수정 시 번호 설정
+                    // 수정 모드일 경우 기존 공지사항 번호를 사용, 새로운 공지사항일 경우 번호를 0으로 설정
+                    noticebean.setNoticeNum(isEditMode ? noticeNum : 0);
                     noticebean.setTitle(createNoticeTitleField.getText());
                     noticebean.setContent(createNoticeTextArea.getText());
                     noticebean.setNoticeImg(selectedImagePath); // 이미지 경로 저장
@@ -458,6 +464,8 @@ public class NoticeList {
                     cardLayout.show(contentPane, "NoticeListPanel");
                 }
             });
+
+
         }
 
         // 수정 모드 초기화

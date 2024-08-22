@@ -12,15 +12,17 @@ import java.awt.event.ActionListener;
 public class ReservationCompleteForm extends JFrame {
 	private static String userId,ViewDate,RSVseat;
 	private static int RSVdocid,RSVcinemaNum, Allcount;
+	private static double pay;
     private ReservationBean rsvbean;
     private ReservationMgr rsvmgr;
-    public ReservationCompleteForm(String userId, int RSVdocid, int RSVcinemaNum, String ViewDate, int Allcount, String RSVSeat) {
+    public ReservationCompleteForm(String userId, int RSVdocid, int RSVcinemaNum, String ViewDate, double pay,int Allcount, String RSVSeat) {
     	this.userId = userId;
     	this.RSVcinemaNum = RSVcinemaNum;
     	this.RSVdocid = RSVdocid;
     	this.ViewDate = ViewDate;
     	this.Allcount = Allcount;
     	this.RSVseat = RSVSeat;
+    	this.pay = pay;
     	rsvbean = new ReservationBean();
     	rsvmgr = new ReservationMgr();
         setTitle("예매 상세 정보");
@@ -69,7 +71,7 @@ public class ReservationCompleteForm extends JFrame {
         
         String[] infoLabels = {"예매자 : "+rsvmgr.getName(userId) ,"영화 제목 : "+rsvmgr.getMoive(RSVdocid), 
         		"극장 : "+rsvmgr.getCinema(RSVcinemaNum) +"  "+ rsvmgr.gettheaterNum(RSVcinemaNum)+"관", 
-        		"일시 : "+ViewDate, "인원 : "+Allcount + " 명", "좌석 : "+seat, "결제 금액 : " + String.valueOf(Allcount*15000)};
+        		"일시 : "+ViewDate, "인원 : "+Allcount + " 명", "좌석 : "+seat, "결제 금액 : " + pay};
     
         for (String label : infoLabels) {
             JLabel infoLabel = new JLabel(label);
@@ -99,6 +101,6 @@ public class ReservationCompleteForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ReservationCompleteForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, Allcount, RSVseat);
+        new ReservationCompleteForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, pay ,Allcount, RSVseat);
     }
 }

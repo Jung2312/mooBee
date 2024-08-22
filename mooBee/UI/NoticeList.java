@@ -2,6 +2,7 @@ package UI;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -268,7 +269,9 @@ public class NoticeList {
 		// 목록 버튼 클릭 시
 		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				noticeDetailPanel.repaint();
 				cardLayout.show(contentPane, "NoticeListPanel");
+			     // 기존 컴포넌트를 제거
 			}
 		});
 
@@ -320,6 +323,11 @@ public class NoticeList {
     private String selectedImagePath; // 선택된 이미지 경로 저장
 	// 공지사항 세부 내용 패널로 이동
 	private void showNoticeDetail(int noticeNum) {
+		for (Component component : noticeDetailPanel.getComponents()) {
+	        if (component instanceof JScrollPane) {
+	            noticeDetailPanel.remove(component);
+	        }
+	    }
 		NoticeMgr noticemgr = new NoticeMgr();
         NoticeBean noticeList = noticemgr.getNotice((int) (tableModel.getValueAt(noticeNum, 0)));
         String content = noticeList.getContent();
@@ -333,9 +341,14 @@ public class NoticeList {
 		noticeInfoLabel.setText("작성일: " + date);
 		
 		noticeDetailTextArea.setText(content);
-		JScrollPane textScrollPane = new JScrollPane(noticeDetailTextArea);
+	    noticeDetailTextArea.setCaretPosition(0);
+	    
+	    JScrollPane textScrollPane = new JScrollPane(noticeDetailTextArea);
 	    textScrollPane.setBounds(94, 134, 787, 150); // 스크롤 패널의 위치와 크기 설정
 	    noticeDetailPanel.add(textScrollPane);
+	   
+	    noticeDetailPanel.add(textScrollPane);
+	    
 		 // 이미지 표시
         if (imagePath != null) {
             ImageIcon imageIcon = new ImageIcon(new ImageIcon(imagePath).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
@@ -350,7 +363,8 @@ public class NoticeList {
 		// 이전 글/다음 글 버튼 활성화 여부 설정
 		prevButton.setEnabled(noticeNum > 0);
 		nextButton.setEnabled(noticeNum < tableModel.getRowCount() - 1);
-
+		noticeDetailPanel.revalidate();
+	    noticeDetailPanel.repaint();
 		cardLayout.show(contentPane, "NoticeDetailPanel");
 	}
 

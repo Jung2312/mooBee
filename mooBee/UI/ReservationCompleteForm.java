@@ -101,6 +101,6 @@ public class ReservationCompleteForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ReservationCompleteForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, pay ,Allcount, RSVseat);
+        new ReservationCompleteForm(userId, RSVdocid, RSVcinemaNum, ViewDate, pay ,Allcount, RSVseat);
     }
 }

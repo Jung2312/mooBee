@@ -221,7 +221,7 @@ public class MyReservation {
 	                int confirm = JOptionPane.showConfirmDialog(frame, "영화를 취소하시겠습니까?", "확인", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 	                if (confirm == JOptionPane.YES_OPTION) {
 	                	reservMgr.deleteRsvn(rBean.getRSVNNum());
-	                	//reservMgr.cancleSeat(rBean.getSeatId());
+	                	reservMgr.cancleSeat(rBean.getSeatId());
 	                    JOptionPane.showMessageDialog(frame, "영화가 취소되었습니다.", "취소 완료", JOptionPane.INFORMATION_MESSAGE);
 	                    new MyPage(userId);
 	                    frame.dispose();

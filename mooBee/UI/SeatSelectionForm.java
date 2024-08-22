@@ -42,7 +42,7 @@ public class SeatSelectionForm extends JFrame {
         this.RSVdocid = RSVdocid;
         this.YouthCount = YouthCount;
         this.AdultCount = AdultCount;
-
+        RSVSeat = "";
         Allcount = YouthCount + AdultCount;
         seatbean = new SeatBean();
         seatmgr = new SeatMgr();
@@ -342,7 +342,7 @@ public class SeatSelectionForm extends JFrame {
                     pay = (15000 - (15000 * discount)) * Allcount;
                 }
 
-                new ReservationCompleteForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, pay, Allcount, RSVSeat); // 예약 완료 화면으로 이동
+                new ReservationCompleteForm(userId, RSVdocid, RSVcinemaNum, ViewDate, pay, Allcount, RSVSeat); // 예약 완료 화면으로 이동
                 dispose(); // 현재 창을 닫음
                 try {
                     // 열고자 하는 URL

@@ -199,7 +199,7 @@ public class MyReservation {
 	        MyReservationMovie_Panel.add(PayNumber);
 
 	        
-	        JButton Report_Btn = new ControlButton("비매너 신고");
+	        JButton Report_Btn = new ReportButton("비매너 신고");
 	        Report_Btn.setFont(new Font("나눔고딕", Font.PLAIN, 15));
 	        Report_Btn.setBounds(640, 171, 111, 45);
 	        MyReservationMovie_Panel.add(Report_Btn);

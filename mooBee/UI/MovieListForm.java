@@ -52,7 +52,7 @@ public class MovieListForm extends JFrame {
 		searchField.setBounds(250, 80, 450, 40);
 		mainPanel.add(searchField);
 
-		JButton searchButton = new ControlButton("검색");
+		JButton searchButton = new HoneyButton2("검색");
 		searchButton.setBounds(700, 80, 60, 40);
 		mainPanel.add(searchButton);
 		

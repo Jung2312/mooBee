@@ -28,14 +28,12 @@ public class MainForm extends JFrame {
 
     public MainForm(String userId) {
         this.userId = userId;
-
         initialize();
-
     }
 
     private void initialize() {
         mMgr = new MovieMgr();
-        // mMgr.insertMovie(); 최종에 데이터 다시 입력
+        // mMgr.insertMovie();
         setTitle("MooBee");
         setSize(1000, 700);
 
@@ -249,7 +247,6 @@ public class MainForm extends JFrame {
     }
     
     public static void main(String[] args) {
-        userId = "11"; // 이 부분에 적절한 userId 값을 설정하세요
         EventQueue.invokeLater(() -> {
             try {
                 MainForm window = new MainForm(userId);

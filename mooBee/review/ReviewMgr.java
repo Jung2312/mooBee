@@ -42,7 +42,7 @@ public class ReviewMgr {
 		return flag;
 	}
 	//리뷰 리스트
-	public Vector<ReviewBean> listReview(){
+	public Vector<ReviewBean> listReview(int docid){
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -50,8 +50,9 @@ public class ReviewMgr {
 		Vector<ReviewBean>vlist = new Vector<ReviewBean>();
 		try {
 			con = pool.getConnection();
-			sql = "select * from tblreview ORDER BY reviewNum DESC;";
+			sql = "select * from tblreview where docid = ? ORDER BY reviewNum DESC;";
 			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, docid);
 			rs = pstmt.executeQuery();
 			while (rs.next()) { 
 				ReviewBean bean = new ReviewBean();

@@ -31,8 +31,10 @@ public class MovieInfoForm extends JFrame {
     ReviewMgr rMgr;
     ReviewBean rBean;
     Vector<ReviewBean> vlist;
+	private static String userId;
     
     public MovieInfoForm(int docid, String userId) {
+    	this.userId = userId;
         rMgr = new ReviewMgr();
         mMgr = new MovieMgr();
         mBean = mMgr.getMovie(docid);
@@ -206,9 +208,11 @@ public class MovieInfoForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String url = mMgr.getVideoUrl(docid);
-                if (url.equals("")) {
-                    goToTrailerButton.setBackground(Color.GRAY);
+                
+                if (url == null || url.isEmpty()) {
+                	JOptionPane.showMessageDialog(movieInfoPanel, "예고편을 제공하지 않는 영화입니다.");
                 } else {
+                    goToTrailerButton.setEnabled(true); 
                     if (Desktop.isDesktopSupported()) {
                         Desktop desktop = Desktop.getDesktop();
                         try {
@@ -228,33 +232,36 @@ public class MovieInfoForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 rBean = new ReviewBean();
                 rBean.setUserId(userId);
-                rBean.setTitle(titleLabel.getText());
+                rBean.setTitle(mBean.getTitle());
+                System.out.println(userId);
                 rBean.setScope(5);
                 rBean.setRecommend(5);
                 rBean.setDocid(docid);
                 rBean.setContent(reviewInputField.getText());
                 rMgr.insertReview(rBean);
 
-                updateReviews();
-                updatePagination(paginationPanel); // 초기 페이지네이션 설정
+                updateReviews(rBean.getDocid());
+                updatePagination(paginationPanel, docid); // 초기 페이지네이션 설정
             }
         });
 
-        updateReviews(); // 초기 리뷰 표시
-        updatePagination(paginationPanel); // 초기 페이지네이션 설정
+        updateReviews(docid); // 초기 리뷰 표시
+        updatePagination(paginationPanel, docid); // 초기 페이지네이션 설정
         setVisible(true);
     }
 
-    private void updateReviews() {
+    private void updateReviews(int docid) {
         reviewsContainer.removeAll();
         reviews.clear();
         
-        vlist = rMgr.listReview();
+        vlist = rMgr.listReview(docid);
 
+        
         // 리뷰 추가 (각 페이지에 4개씩 배치)
         for (int i = 0; i < vlist.size(); i++) {
             ReviewBean rBean = vlist.get(i);
-            reviews.add("   "+rBean.getUserId() + " : " + rBean.getContent());
+            String[] id = rBean.getUserId().split("@");
+            reviews.add("   "+ id[0] + " : " + rBean.getContent());
         }
         int start = (currentPage - 1) * reviewsPerPage;
         int end = Math.min(start + reviewsPerPage, reviews.size());
@@ -275,7 +282,7 @@ public class MovieInfoForm extends JFrame {
         reviewsContainer.repaint();
     }
 
-    private void updatePagination(JPanel paginationPanel) {
+    private void updatePagination(JPanel paginationPanel, int docid) {
         paginationPanel.removeAll();
 
         int totalPages = (int) Math.ceil((double) reviews.size() / reviewsPerPage);
@@ -289,9 +296,9 @@ public class MovieInfoForm extends JFrame {
             JButton prevGroupButton = new ControlButton("<");
             prevGroupButton.addActionListener(e -> {
                 currentPageGroup--;
-                updatePagination(paginationPanel);
+                updatePagination(paginationPanel, docid);
                 currentPage = (currentPageGroup - 1) * maxPageInGroup + 1;
-                updateReviews();
+                updateReviews(docid);
             });
             paginationPanel.add(prevGroupButton);
         }
@@ -303,7 +310,7 @@ public class MovieInfoForm extends JFrame {
             }
             pageButton.addActionListener(e -> {
                 currentPage = Integer.parseInt(pageButton.getText());
-                updateReviews();
+                updateReviews(docid);
             });
             pageButtonGroup.add(pageButton); // 버튼 그룹에 추가
             paginationPanel.add(pageButton);
@@ -313,9 +320,9 @@ public class MovieInfoForm extends JFrame {
             JButton nextGroupButton = new ControlButton(">");
             nextGroupButton.addActionListener(e -> {
                 currentPageGroup++;
-                updatePagination(paginationPanel);
+                updatePagination(paginationPanel, docid);
                 currentPage = (currentPageGroup - 1) * maxPageInGroup + 1;
-                updateReviews();
+                updateReviews(docid);
             });
             paginationPanel.add(nextGroupButton);
         }
@@ -341,7 +348,4 @@ public class MovieInfoForm extends JFrame {
         container.add(separator);
     }
 
-    public static void main(String[] args) {
-        new MovieInfoForm(1,"11");
-    }
 }

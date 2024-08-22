@@ -269,7 +269,52 @@ public class UserMgr {
 		}
 		return flag;
 	}
-
+	// 등급검색
+	public String SelectGrade(String userId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		String grade = "";
+		try {
+			con = pool.getConnection();
+			sql = "select grade from tbluser where userId = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery();
+			if (rs.next()) { // 2개 이상의 레코드는 절대 리턴되지않음
+				grade = rs.getNString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return grade;
+	}
+	// 할인율검색
+		public double SelectDiscount(String grade) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql = null;
+			double discoint =  0;
+			try {
+				con = pool.getConnection();
+				sql = "select discount from tblmembership where grade = ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, grade);
+				rs = pstmt.executeQuery();
+				if (rs.next()) { // 2개 이상의 레코드는 절대 리턴되지않음
+					discoint=rs.getDouble(1); // 1은 첫번째 컬럼
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			return discoint;
+		}
 	public static void main(String[] args) {
 		UserMgr mgr = new UserMgr();
 		UserBean bean = new UserBean();

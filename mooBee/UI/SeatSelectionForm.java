@@ -30,7 +30,8 @@ public class SeatSelectionForm extends JFrame {
 	private JLabel TempLabel;
 	private UserBean userbean;
 	private UserMgr usermgr;
-	private static int pay;
+	private static double pay;
+	private static int Amount;
 	private static int Allcount;
 	
 	public SeatSelectionForm(String userId, int RSVdocid, int RSVcinemaNum, String ViewDate, int YouthCount,
@@ -328,13 +329,14 @@ public class SeatSelectionForm extends JFrame {
 					RSVSeat+=seatId+",";
 					seatbean.setSeatChk(true); // 좌석을 예약 상태로 변경
 					seatmgr.updateSeatChk(seatbean);
-
-					pay =usermgr.getpay(userId);
-					pay += 15000;
-					usermgr.updatepay(pay,userId);
+					double discount = usermgr.SelectDiscount(usermgr.SelectGrade(userId));
+					Amount =usermgr.getpay(userId);
+					Amount += 15000-(15000*discount);
+					usermgr.updatepay(Amount,userId);
+					pay = (15000-(15000*discount))*Allcount;
 				}
 				
-				new ReservationCompleteForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, Allcount,RSVSeat); // 예약 완료 화면으로 이동
+				new ReservationCompleteForm(userId, RSVcinemaNum, RSVcinemaNum, ViewDate, pay,Allcount,RSVSeat); // 예약 완료 화면으로 이동
 				dispose(); // 현재 창을 닫음
 				 try {
 			            // 열고자 하는 URL

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +13,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -190,12 +193,16 @@ public class NoticeList {
 		// 공지 내용 텍스트 에어리어
 		noticeDetailTextArea = new JTextArea();
 		noticeDetailTextArea.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-		noticeDetailTextArea.setBounds(94, 134, 787, 344);
+		noticeDetailTextArea.setBounds(94, 134, 787, 500);
 		noticeDetailTextArea.setLineWrap(true);
 		noticeDetailTextArea.setWrapStyleWord(true);
 		noticeDetailTextArea.setEditable(false);
 		noticeDetailPanel.add(noticeDetailTextArea);
-
+		
+		imageLabel = new JLabel();  // 여기에 imageLabel 초기화 추가
+		imageLabel.setBounds(94, 300, 787, 800);  // 이미지 위치와 크기 설정
+		noticeDetailPanel.add(imageLabel);  // 패널에 추가
+		
 		JButton backButton = new ControlButton("목록");
 		backButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
 		backButton.setBounds(430, 597, 94, 43);
@@ -309,21 +316,37 @@ public class NoticeList {
 	        tableModel.addRow(row);
 	    }
 	}
-
+	private JLabel imageLabel; // 이미지 표시를 위한 JLabel
+    private String selectedImagePath; // 선택된 이미지 경로 저장
 	// 공지사항 세부 내용 패널로 이동
 	private void showNoticeDetail(int noticeNum) {
-
-		String title = (String) tableModel.getValueAt(noticeNum, 1);
-		String content; 
-		String date;
 		NoticeMgr noticemgr = new NoticeMgr();
-		NoticeBean noticeList = noticemgr.getNotice((int)(tableModel.getValueAt(noticeNum, 0)));
+        NoticeBean noticeList = noticemgr.getNotice((int) (tableModel.getValueAt(noticeNum, 0)));
+        String content = noticeList.getContent();
+        String date = noticeList.getNoticeDate();
+        String imagePath = noticeList.getNoticeImg(); 
+		String title = (String) tableModel.getValueAt(noticeNum, 1);
 		content = noticeList.getContent();
 		date = noticeList.getNoticeDate();
+		
 		noticeTitleLabel.setText(title);
 		noticeInfoLabel.setText("작성일: " + date);
-		// 내용 표시
+		
 		noticeDetailTextArea.setText(content);
+		JScrollPane textScrollPane = new JScrollPane(noticeDetailTextArea);
+	    textScrollPane.setBounds(94, 134, 787, 150); // 스크롤 패널의 위치와 크기 설정
+	    noticeDetailPanel.add(textScrollPane);
+		 // 이미지 표시
+        if (imagePath != null) {
+            ImageIcon imageIcon = new ImageIcon(new ImageIcon(imagePath).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
+            imageLabel.setIcon(imageIcon);
+        } else {
+            imageLabel.setIcon(null);
+        }
+        // 이미지 스크롤을 위한 JScrollPane 설정
+        JScrollPane imageScrollPane = new JScrollPane(imageLabel);
+        imageScrollPane.setBounds(94, 300, 787, 180); // 스크롤패인 크기 설정
+        noticeDetailPanel.add(imageScrollPane);
 		// 이전 글/다음 글 버튼 활성화 여부 설정
 		prevButton.setEnabled(noticeNum > 0);
 		nextButton.setEnabled(noticeNum < tableModel.getRowCount() - 1);
@@ -331,77 +354,119 @@ public class NoticeList {
 		cardLayout.show(contentPane, "NoticeDetailPanel");
 	}
 
-	private void showNoticeCreatePanel(boolean isEditMode, NoticeBean notice) {
-	    if (noticeCreatePanel == null) {
-	        noticeCreatePanel = new JPanel();
-	        noticeCreatePanel.setLayout(null);
-	        contentPane.add(noticeCreatePanel, "NoticeCreatePanel");
+	// 공지사항 작성/수정 패널로 이동
+    private void showNoticeCreatePanel(boolean isEditMode, NoticeBean notice) {
+        if (noticeCreatePanel == null) {
+            noticeCreatePanel = new JPanel();
+            noticeCreatePanel.setLayout(null);
+            contentPane.add(noticeCreatePanel, "NoticeCreatePanel");
 
-	        JLabel titleLabel = new JLabel("제목:");
-	        titleLabel.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-	        titleLabel.setBounds(94, 50, 100, 30);
-	        noticeCreatePanel.add(titleLabel);
+            JLabel titleLabel = new JLabel("제목:");
+            titleLabel.setFont(new Font("나눔고딕", Font.PLAIN, 20));
+            titleLabel.setBounds(94, 50, 100, 30);
+            noticeCreatePanel.add(titleLabel);
 
-	        createNoticeTitleField = new JTextField();
-	        createNoticeTitleField.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-	        createNoticeTitleField.setBounds(200, 50, 681, 30);
-	        noticeCreatePanel.add(createNoticeTitleField);
+            createNoticeTitleField = new JTextField();
+            createNoticeTitleField.setFont(new Font("나눔고딕", Font.PLAIN, 20));
+            createNoticeTitleField.setBounds(200, 50, 681, 30);
+            noticeCreatePanel.add(createNoticeTitleField);
 
-	        createNoticeTextArea = new JTextArea();
-	        createNoticeTextArea.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-	        createNoticeTextArea.setBounds(94, 118, 787, 389);
-	        createNoticeTextArea.setLineWrap(true);
-	        createNoticeTextArea.setWrapStyleWord(true);
-	        noticeCreatePanel.add(createNoticeTextArea);
+            createNoticeTextArea = new JTextArea();
+            createNoticeTextArea.setFont(new Font("나눔고딕", Font.PLAIN, 20));
+            createNoticeTextArea.setBounds(94, 118, 787, 500);
+            createNoticeTextArea.setLineWrap(true);
+            createNoticeTextArea.setWrapStyleWord(true);
+            
+            noticeCreatePanel.add(createNoticeTextArea);
+            JScrollPane textScrollPane = new JScrollPane(createNoticeTextArea);
+            textScrollPane.setBounds(94, 118, 787, 150); // 스크롤 패널의 위치와 크기
+            noticeCreatePanel.add(textScrollPane);
+            
+            // 이미지 파일 선택 버튼
+            JButton imageButton = new ControlButton("이미지 선택");
+            imageButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
+            imageButton.setBounds(94, 280, 150, 30);
+            noticeCreatePanel.add(imageButton);
 
-	        JButton saveButton = new ControlButton("저장");
-	        saveButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-	        saveButton.setBounds(459, 566, 94, 43);
-	        noticeCreatePanel.add(saveButton);
+            // 이미지 미리보기 레이블
+            imageLabel = new JLabel();
+            imageLabel.setHorizontalAlignment(JLabel.CENTER); // 이미지 중앙 정렬
+            JScrollPane imageScrollPane = new JScrollPane(imageLabel);
+            imageScrollPane.setBounds(94, 320, 200, 220); // 이미지 스크롤 패널의 위치와 크기
+            noticeCreatePanel.add(imageScrollPane);
 
-	        JButton cancelButton = new ControlButton("취소");
-	        cancelButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
-	        cancelButton.setBounds(300, 566, 94, 43);
-	        noticeCreatePanel.add(cancelButton);
+            imageButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JFileChooser fileChooser = new JFileChooser();
+                    int result = fileChooser.showOpenDialog(frame);
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        selectedImagePath = fileChooser.getSelectedFile().getAbsolutePath();
+                        ImageIcon imageIcon = new ImageIcon(new ImageIcon(selectedImagePath).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
+                        imageLabel.setIcon(imageIcon);
+                    }
+                }
+            });
 
-	        cancelButton.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent e) {
-	                cardLayout.show(contentPane, "NoticeListPanel");
-	            }
-	        });
+            JButton saveButton = new ControlButton("저장");
+            saveButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
+            saveButton.setBounds(459, 566, 94, 43);
+            noticeCreatePanel.add(saveButton);
 
-	        saveButton.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent e) {
-	                NoticeMgr noticemgr = new NoticeMgr();
-	                NoticeBean noticebean = new NoticeBean();
-	                
-	                noticebean.setNoticeNum(notice != null ? notice.getNoticeNum() : 0); // 수정 시 번호 설정
-	                noticebean.setTitle(createNoticeTitleField.getText());
-	                noticebean.setContent(createNoticeTextArea.getText());
+            JButton cancelButton = new ControlButton("취소");
+            cancelButton.setFont(new Font("나눔고딕", Font.PLAIN, 20));
+            cancelButton.setBounds(300, 566, 94, 43);
+            noticeCreatePanel.add(cancelButton);
 
-	                if (isEditMode) {
-	                    noticemgr.updateNotice(noticebean); // 공지사항 수정
-	                } else {
-	                    noticemgr.insertNotice(noticebean); // 새 공지사항 추가
-	                }
+            cancelButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    cardLayout.show(contentPane, "NoticeListPanel");
+                }
+            });
 
-	                loadNoticeList();
-	                //renumberTableRows(); // 번호 재정렬
-	                cardLayout.show(contentPane, "NoticeListPanel");
-	            }
-	        });
-	    }
+            saveButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    NoticeMgr noticemgr = new NoticeMgr();
+                    NoticeBean noticebean = new NoticeBean();
 
-	    // 수정 모드 초기화
-	    if (isEditMode && notice != null) {
-	        createNoticeTitleField.setText(notice.getTitle());
-	        createNoticeTextArea.setText(notice.getContent());
-	    } else {
-	        createNoticeTitleField.setText("");
-	        createNoticeTextArea.setText("");
-	    }
-	    cardLayout.show(contentPane, "NoticeCreatePanel");
-	}
+                    noticebean.setNoticeNum(notice != null ? notice.getNoticeNum() : 0); // 수정 시 번호 설정
+                    noticebean.setTitle(createNoticeTitleField.getText());
+                    noticebean.setContent(createNoticeTextArea.getText());
+                    noticebean.setNoticeImg(selectedImagePath); // 이미지 경로 저장
+
+                    if (isEditMode) {
+                        noticemgr.updateNotice(noticebean); // 공지사항 수정
+                    } else {
+                        noticemgr.insertNotice(noticebean); // 새 공지사항 추가
+                    }
+
+                    loadNoticeList();
+                    cardLayout.show(contentPane, "NoticeListPanel");
+                }
+            });
+        }
+
+        // 수정 모드 초기화
+        if (isEditMode && notice != null) {
+            createNoticeTitleField.setText(notice.getTitle());
+            createNoticeTextArea.setText(notice.getContent());
+            selectedImagePath = notice.getNoticeImg();
+
+            // 기존 이미지 미리보기 표시
+            if (selectedImagePath != null) {
+                ImageIcon imageIcon = new ImageIcon(new ImageIcon(selectedImagePath).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
+                imageLabel.setIcon(imageIcon);
+            } else {
+                imageLabel.setIcon(null);
+            }
+        } else {
+            createNoticeTitleField.setText("");
+            createNoticeTextArea.setText("");
+            imageLabel.setIcon(null);
+            selectedImagePath = null;
+        }
+        cardLayout.show(contentPane, "NoticeCreatePanel");
+    }
 
 	/*
 	 * // 테이블 인덱스 재정렬 (번호 열 업데이트) private void renumberTableRows() { for (int i = 0;

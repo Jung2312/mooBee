@@ -228,7 +228,7 @@ public class MyPage {
 			MyReservation_Panel.add(MyReservMovie_Label);
 		}
 
-		JButton GoMyTicket_Btn = new ControlButton2("예매 내역 보러가기");
+		JButton GoMyTicket_Btn = new HoneyButton2("예매 내역 보러가기");
 		GoMyTicket_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MyReservation mrv = new MyReservation(userId); // MyReservation 창 생성
@@ -264,7 +264,7 @@ public class MyPage {
 			MyReview_Panel.add(MyReviewMovie_Label);
 		}
 
-		JButton GoMyReview_Btn = new ControlButton2("내 리뷰 보러가기");
+		JButton GoMyReview_Btn = new HoneyButton2("내 리뷰 보러가기");
 		GoMyReview_Btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MyReview mr = new MyReview(userId); // MyReservation 창 생성

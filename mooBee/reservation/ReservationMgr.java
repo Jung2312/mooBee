@@ -380,6 +380,28 @@ public class ReservationMgr {
 		}
 		return MovieName;
 	}
+	
+	// 좌석 취소
+	public boolean cancleSeat(int seatId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "update from tblSeat set seatChk = 0 where seatId = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, seatId);
+			if (pstmt.executeUpdate() == 1)
+				flag = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flag;
+	}
+	
 	//좌석 찾기
 	public String getSeat(int seaId) {
 		Connection con = null;

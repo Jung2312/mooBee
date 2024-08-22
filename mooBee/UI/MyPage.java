@@ -355,7 +355,7 @@ public class MyPage {
 			public void actionPerformed(ActionEvent e) {
 				Point buttonLocation = ModifyUserInfo_Btn.getLocationOnScreen();
 				// ModifyUser 창을 열기
-				ModifyUser modifyUserWindow = new ModifyUser();
+				ModifyUser modifyUserWindow = new ModifyUser(userId);
 
 				int parentX = frame.getX();
 				int parentY = frame.getY();
@@ -412,7 +412,7 @@ public class MyPage {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					userId = "11";
+					userId = userId;
 					MyPage window = new MyPage(userId);
 					window.frame.setVisible(true);
 				} catch (Exception e) {

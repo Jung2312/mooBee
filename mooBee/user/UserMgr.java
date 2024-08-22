@@ -185,13 +185,12 @@ public class UserMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update  tbluser set name =?, password = ?, birthDate = ? ,phone = ? WHERE userId = ?";
+			sql = "update  tbluser set name =?, password = ?,phone = ? WHERE userId = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getName());
 			pstmt.setString(2, SHA256.encrypt(bean.getPassword()));
-			pstmt.setString(3, bean.getBirthDate());
-			pstmt.setString(4, bean.getPhone());
-			pstmt.setString(5, bean.getUserId());
+			pstmt.setString(3, bean.getPhone());
+			pstmt.setString(4, bean.getUserId());
 			if (pstmt.executeUpdate() == 1)
 				flag = true;
 		} catch (Exception e) {
